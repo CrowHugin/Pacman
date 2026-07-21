@@ -1,0 +1,37 @@
+name: pacman
+
+on:  
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13.13"]
+
+
+    steps:
+      - name: Code
+        uses: actions/checkout@v4
+
+      - name: Installing python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: dependencies install
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 mypy
+
+      - name: run flake8 .
+        run: flake8
+
+      - name: run mypy strict
+        run: |
+          mypy --strict .
+
+      - name: run tests
+        run: python3 -m unittest Test/test.py
