@@ -1,3 +1,7 @@
-import mazegenerator
+from mazegenerator import MazeGenerator
 
-__all__ = ["mazegenerator"]
+mzgn = MazeGenerator(size=(20, 20), seed=42)
+for items in mzgn.maze:
+    for item in items:
+        print(f"{item:2d}", end=" ")
+    print()
