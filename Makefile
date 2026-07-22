@@ -22,8 +22,8 @@ clean:
 	@rm -rf $(ENV_NAME)
 
 lint: install
-	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME)
-	./$(ENV_NAME)/bin/mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN)
+	./$(ENV_NAME)/bin/mypy --exclude $(ENV_NAME) __exclude $(MAZE_GEN) . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict: install
 	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN) 
