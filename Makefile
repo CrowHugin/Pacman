@@ -31,9 +31,9 @@ lint-strict: install
 tests: install
 	./$(VENV_PATH) -m unittest Test/test.py
 
-build: install
-	./$(ENV_NAME)/bin/pip3 install --upgrade build
-	./$(VENV_PATH) -m build
+# build: install
+#	 ./$(ENV_NAME)/bin/pip3 install --upgrade build
+#	 ./$(VENV_PATH) -m build
 
 .PHONY: all install run debug clean lint lint-strict
 
