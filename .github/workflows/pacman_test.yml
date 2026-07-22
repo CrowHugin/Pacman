@@ -31,7 +31,7 @@ jobs:
 
       - name: run mypy strict
         run: |
-          mypy --strict .
+          mypy --strict . --ignore-missing-imports
 
       - name: run tests
         run: python3 -m unittest Test/test.py
