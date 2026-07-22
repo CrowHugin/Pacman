@@ -1,13 +1,22 @@
 import json
 import logging
+import copy
 from typing import Any, Dict
 
-DEFAULT_MAZE_CONFIG = {
+DEFAULT_MAZE_CONFIG: Dict[str, Any] = {
     "highscore_filename": "score.json",
-    "number_level": 2,
+    "number_level": 10,
     "level_size": [
         {"width": 10, "height": 10},
-        {"width": 10, "height": 10}
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
+        {"width": 10, "height": 10},
     ],
     "lives": 3,
     "pacgum": 42,
@@ -31,120 +40,103 @@ def json_with_comment(file: str) -> Dict[str, Any]:
         content = "".join(json_stripped)
         if not content:
             return {}
-        return json.loads(content)
-    except FileNotFoundError as e:
+        res: Dict[str, Any] = json.loads(content)
+        return res
+    except FileNotFoundError:
         logging.warning(f"can't read the file {file}")
+        return {}
 
 
-def validate_json(file: str) -> list[str, Any]:
+def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
+    """ """
+    default_width, default_height = 15, 15
+
+    if not isinstance(level_size, dict):
+        return default_width, default_height, True
+
+    level_width = level_size.get("width")
+    level_height = level_size.get("height")
+    flag = False
+
+    if isinstance(level_width, int) and level_width >= 10:
+        width = level_width
+    else:
+        width = default_width
+        flag = True
+
+    if isinstance(level_height, int) and level_height >= 10:
+        height = level_height
+    else:
+        height = default_height
+        flag = True
+
+    return width, height, flag
+
+
+def validate_int_field(field: str, json_data: Dict[str, Any],
+                       def_val: int, min_val: int) -> int:
+    if field in json_data:
+        val = json_data[field]
+        if isinstance(val, int) and val > min_val:
+            return val
+        logging.warning(f"Invalid value for {field}, default value used")
+    return def_val
+
+
+def validate_json(file: str) -> dict[str, Any]:
     json_data = json_with_comment(file)
-    config = DEFAULT_MAZE_CONFIG.copy()
+    config = copy.deepcopy(DEFAULT_MAZE_CONFIG)
 
-    def check_level_sive(level_size: dict) -> tuple[int,int, bool]:
-        default_height = 15
-        default_width = 15
-        flag = False
-        if not isinstance(level_size, dict):
-            return default_width, default_height
-        if "width" in level_size and "height" in level_size:
-            level_width = level_size.get("width")
-            level_height = level_size.get("height")
-            if not isinstance(level_width,int) and level_width < 10:
-                level_width = default_width
-                flag = True
-            if not isinstance(level_height, int) and level_height < 10:
-                level_height = default_height 
-                flag = True
-        return level_width, level_height,flag
-    
-    if "lives" in json_data:
-        val = json_data["lives"]
-        if isinstance(val, int) and val > 0:
-            config["lives"] = val
-        else:
-            logging.warning(f"Invalid value for lives, default value used")
+    config["lives"] = validate_int_field(
+        "lives", json_data, config["lives"], 2)
 
-    if "pacgum" in json_data:
-        val = json_data["pacgum"]
-        if isinstance(val, int) and val > 0:
-            config["pacgum"] = val
-        else:
-            logging.warning(f"Invalid value for pacgum, default value used")
+    config["pacgum"] = validate_int_field(
+        "pacgum", json_data, config["pacgum"], 0)
+    config["points_per_pacgum"] = validate_int_field(
+        "points_per_pacgum",
+        json_data, config["points_per_pacgum"], 0)
+    config["points_per_super_pacgum"] = validate_int_field(
+        "points_per_super_pacgum",
+        json_data, config["points_per_super_pacgum"], 0)
 
-    if "points_per_pacgum" in json_data:
-        val = json_data["points_per_pacgum"]
-        if isinstance(val, int) and val > 0:
-            config["points_per_pacgum"] = val
-        else:
-            logging.warning(f"Invalid value for points per pacgum,"
-                            f"default value used")
-    if "points_per_super_pacgum" in json_data:
-        val = json_data["points_per_super_pacgum"]
-        if isinstance(val, int) and val > 0:
-            config["points_per_super_pacgum"] = val
-        else:
-            logging.warning(f"Invalid value for points per super pacgum,"
-                            f"default value used")
-    if "points_per_ghost" in json_data:
-        val = json_data["points_per_ghost"]
-        if isinstance(val, int) and val > 0:
-            config["points_per_ghost"] = val
-        else:
-            logging.warning(f"Invalid value for points per ghost,"
-                            f"default value used")
+    config["points_per_ghost"] = validate_int_field(
+        "points_per_ghost", json_data, config["points_per_ghost"], 0)
 
-    if "seed" in json_data:
-        val = json_data["seed"]
-        if isinstance(val, int) and val > 0:
-            config["seed"] = val
-        else:
-            logging.warning(f"Invalid value for seed,"
-                            f"default value used")
+    config["seed"] = validate_int_field(
+        "seed", json_data, config["seed"], 0)
 
-    if "level_max_time" in json_data:
-        val = json_data["level_max_time"]
-        if isinstance(val, int) and val > 60:
-            config["level_max_time"] = val
-        else:
-            logging.warning(f"Invalid value for points level max time,"
-                            f"default value used")
+    config["level_max_time"] = validate_int_field(
+        "level_max_time", json_data, config["level_max_time"], 59)
 
-    if "highscore_filename" in json_data:
-        val = json_data["highscore_filename"]
-        if isinstance(val, str) and val.endswith(".json"):
-            config["highscore_filename"] = val
-        else:
-            logging.warning(f"Invalid value for highscore filename,"
-                            f"default value used")
-
-    if "number_level" in json_data:
-        val = json_data["number_level"]
-        if isinstance(val, int) and val >= 10:
-            config["number_level"] = val
-        else:
-            logging.warning(f"Invalid value for number level,"
-                            f"default value used")
+    config["number_level"] = validate_int_field(
+        "number_level", json_data, config["number_level"], 9)
 
     if "level_size" in json_data:
         list_level = json_data["level_size"]
-        len_list = len(list_level)
-        # if len_list == config["number_level"]:
-        if len_list == 2:
-            if isinstance(list_level, list):
-                for level in list_level:
-                    width,height,flag = check_level_sive(level)
-                    print(level["width"])
-                # if all(isinstance(value, dict) for value in list_level):
-                #     for level in list_level:
-                #         for val in level:
-                #             if (isinstance(val, str) and (val == "width" or val == "height")
-                #                and isinstance(level[val], int) and level[val] > 0):
-
+        count_level = json_data["number_level"]
+        if isinstance(list_level, list):
+            len_list = len(list_level)
+            if len_list < count_level:
+                for i in range(len_list, count_level - 1):
+                    config["level_size"].append(config["level_size"][0])
+            elif len_list > count_level:
+                list_level = list_level[:count_level]
+            for i, level in enumerate(list_level):
+                width, height, flag = validate_level_size(level)
+                config["level_size"][i]["width"] = width
+                config["level_size"][i]["height"] = height
+                if flag:
+                    logging.warning("Invalid level size value, "
+                                    "default value used")
         else:
-            logging.warning(f"Invalid level size value,"
-                            f"default value used")
+            logging.warning("Invalid level size value, "
+                            "default value used")
 
     return config
 
 
 text = validate_json("config.json")
+for line in text:
+    print(f"{line} : {text[line]}\n")
+
+print(len(text["level_size"]))
