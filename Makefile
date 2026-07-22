@@ -1,6 +1,7 @@
 ENV_NAME = Pacman
 VENV_PATH=./$(ENV_NAME)/bin/python3
 NAME_SCRIPT=pac-man.py
+MAZE_GEN=lib
 
 all: run
 
@@ -25,8 +26,8 @@ lint: install
 	./$(ENV_NAME)/bin/mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict: install
-	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME)
-	./$(ENV_NAME)/bin/mypy --strict . --ignore-missing-imports
+	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN) 
+	./$(ENV_NAME)/bin/mypy --strict --exclude $(MAZE_GEN) . --ignore-missing-imports 
 
 tests: install
 	./$(VENV_PATH) -m unittest Test/test.py
