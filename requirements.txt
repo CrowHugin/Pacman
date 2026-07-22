@@ -1,6 +1,7 @@
-flake8
 mypy
 build
+flake8
+pygame
 pydantic
 python-dotenv
 lib/mazegenerator-2.1.0-py3-none-any.whl
