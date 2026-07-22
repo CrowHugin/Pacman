@@ -1,0 +1,6 @@
+flake8
+mypy
+build
+pydantic
+python-dotenv
+mazegenerator-00001/mazegenerator-2.1.0-py3-none-any.whl
