@@ -1,0 +1,39 @@
+ENV_NAME = Pacman
+VENV_PATH=./$(ENV_NAME)/bin/python3
+NAME_SCRIPT=pac-man.py
+
+all: run
+
+install:
+	python3 -m venv $(ENV_NAME)
+	./$(ENV_NAME)/bin/pip3 -q install -r requirements.txt 
+
+run: install
+	$(VENV_PATH) $(NAME_SCRIPT) config.json
+	@rm -rf .env
+
+debug: install
+	$(VENV_PATH) -m pdb $(NAME_SCRIPT) config.json
+
+clean:
+	@rm -rf .mypy_cache	*/.mypy_cache
+	@rm -rf __pycache__ */__pycache__
+	@rm -rf $(ENV_NAME)
+
+lint: install
+	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME)
+	./$(ENV_NAME)/bin/mypy . --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+
+lint-strict: install
+	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME)
+	./$(ENV_NAME)/bin/mypy --strict . --ignore-missing-imports
+
+tests: install
+	./$(VENV_PATH) -m unittest Test/test.py
+
+build: install
+	./$(ENV_NAME)/bin/pip3 install --upgrade build
+	./$(VENV_PATH) -m build
+
+.PHONY: all install run debug clean lint lint-strict
+
