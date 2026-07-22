@@ -1,21 +1,7 @@
-import os
-from mazegenerator import MazeGenerator
-
-
-def create_maze() -> list[list[str]]:
-    mzgn = MazeGenerator(size=(20, 20), seed=42)
-    maze: list[list[str]] = mzgn.maze
-    return (maze)
-
-
-def print_maze(maze: list[list[str]]) -> None:
-    for items in maze:
-        for item in items:
-            print(f"{item:2d}", end=" ")
-        print()
+from UI.Maze.Maze import Maze
+from UI.level_1.level_1 import create_level_1
 
 
 if __name__ == '__main__':
-    os.system("clear")
-    maze = create_maze()
-    print_maze(maze)
+    maze = Maze(20, 20, 42)
+    create_level_1(maze)
