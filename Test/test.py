@@ -1,5 +1,5 @@
 import unittest
-from levels.level_1 import Maze
+from UI.Maze.Maze import Maze
 
 
 class Test_level_Creation(unittest.TestCase):
