@@ -15,8 +15,6 @@ def print_maze(maze: list[list[str]]) -> None:
         print()
 
 
-
-
 if __name__ == '__main__':
     os.system("clear")
     maze = create_maze()
