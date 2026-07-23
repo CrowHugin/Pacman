@@ -1,6 +1,6 @@
+from parsing import validate_json 
 from UI.Maze.Maze import Maze
 from UI.level_1.level_1 import run_level_1
-
 
 # Function to raise an error, will be changed when json parsing is done
 def check_value(width: int, height: int, seed: int | None) -> None:
@@ -23,4 +23,10 @@ def run() -> None:
 
 
 if __name__ == '__main__':
-    run()
+    config = validate_json("config.json")
+    for level in config["level_size"]:
+        width = level["width"]
+        height = level["height"]
+        
+    print(f" longueur final de config level size{len(config["level_size"])}")
+    print(f" le contenu final de level size {config["level_size"]}")

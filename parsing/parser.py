@@ -120,28 +120,20 @@ def validate_json(file: str) -> dict[str, Any]:
             list_level = json_data["level_size"]
             count_level = json_data["number_level"]
             if isinstance(list_level, list):
-                len_list = len(list_level)
-                if len_list < count_level:
-                    for i in range(len_list, count_level - 1):
-                        config["level_size"].append(
-                            DEFAULT_MAZE_CONFIG["level_size"][0])
-                elif len_list > count_level:
-                    list_level = list_level[:count_level]
-                for i, level in enumerate(list_level):
-                    width, height, flag = validate_level_size(level)
-                    config["level_size"][i]["width"] = width
-                    config["level_size"][i]["height"] = height
-                    if flag:
-                        logging.warning("Invalid level size value, "
-                                        "default value used")
-            else:
-                logging.warning("Invalid level size value, "
-                                "default value used")
+                for i in range(count_level):
+                    try:
+                        width, height, flag = validate_level_size(list_level[i])
+                        config["level_size"][i]["width"] = width
+                        config["level_size"][i]["height"] = height
+                        if flag:
+                            logging.warning("Invalid level size value, "
+                                            "default value used")
+                    except:
+                        if(count_level < len(list_level)):
+                            logging.warning("Too much level size")
+                        else:
+                            logging.warning("Not enough of level size")
+                            config["level_size"][i] = DEFAULT_MAZE_CONFIG["level_size"][0]
     except (ValueError,FileNotFoundError) as e:
         logging.warning(f"{e}, default value used")
     return config
-
-
-text = validate_json("config.json")
-for line in text:
-    print(f"{line} : {text[line]}\n")
