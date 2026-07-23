@@ -1,4 +1,3 @@
-import enum
 import unittest
 from UI.Maze.Maze import Maze, Cell
 
@@ -26,9 +25,22 @@ class Test_level_Creation(unittest.TestCase):
         self.maze = None
         self.cases = {}
 
-
     def test_cases_content(self):
         if self.maze:
             for ind_row, row in enumerate(self.maze):
                 for ind_col, col in enumerate(row):
                     self.assertTrue(0 <= self.cases[(ind_col, ind_row)].content <= 15)
+
+    def test_walls(self):
+        if self.maze:
+            for ind_row, row in enumerate(self.maze):
+                for ind_col, col in enumerate(row):
+                    if (self.cases[(ind_col, ind_row)].content & 1
+                        and self.cases[(ind_col, ind_row)].content & 4):
+                        pass
+                    if self.cases[(ind_col, ind_row)].content & 2:
+                        pass
+                    if self.cases[(ind_col, ind_row)].content & 4:
+                        pass
+                    if self.cases[(ind_col, ind_row)].content & 8:
+                        pass
