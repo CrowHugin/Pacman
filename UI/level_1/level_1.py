@@ -8,8 +8,8 @@ if TYPE_CHECKING:
 
 
 def draw_maze(window: pygame.Surface,
-                   maze: "Maze",
-                   CELL_SIZE: int) -> None:
+              maze: "Maze",
+              CELL_SIZE: int) -> None:
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
     WALL_THICKNESS = 2
@@ -68,7 +68,6 @@ def draw_maze(window: pygame.Surface,
                                  top_left,
                                  bottom_left,
                                  WALL_THICKNESS)
-
 
 
 def run_level_1(maze: "Maze") -> None:
