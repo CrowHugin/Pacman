@@ -8,10 +8,11 @@ if TYPE_CHECKING:
 
 
 def create_level_1(maze: "Maze") -> None:
-    CELL_SIZE = 20
+    CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
     BLACK = (0, 0, 0)
+    WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
     WALL_THICKNESS = 2
 
@@ -42,6 +43,11 @@ def create_level_1(maze: "Maze") -> None:
                 bottom_left = (left, bottom)
                 bottom_right = (rigth, bottom)
 
+                if cell_value == 15:
+                    pygame.draw.rect(window,
+                                     WHITE,
+                                     (x, y, CELL_SIZE, CELL_SIZE)
+                                     )
                 # Bit 0 (1) -> Mur en HAUT
                 if cell_value & 1:
                     pygame.draw.line(window,
