@@ -6,6 +6,7 @@ class Cell:
         self.x = x
         self.y = y
         self.content = content
+        self.is_42: bool = False
 
 
 class Maze:
@@ -18,4 +19,11 @@ class Maze:
 
         for idx_row, row in enumerate(self.maze):
             for idx_col, item in enumerate(row):
-                self.cases[(idx_col, idx_row)] = Cell(idx_col, idx_row, item)
+                if item == 0:
+                    self.cases[(idx_col, idx_row)] = Cell(idx_col,
+                                                          idx_row,
+                                                          item)
+                else:
+                    self.cases[(idx_col, idx_row)] = Cell(idx_col,
+                                                          idx_row,
+                                                          item)
