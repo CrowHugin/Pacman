@@ -6,24 +6,21 @@ class Cell:
         self.x = x
         self.y = y
         self.content = content
-        self.is_42: bool = False
 
 
 class Maze:
     def __init__(self, width: int, height: int, seed: int):
         self.width = width
         self.height = height
-        generator = MazeGenerator(size=(width, height), seed=seed)
+        if seed:
+            generator = MazeGenerator(size=(width, height), seed=seed)
+        else:
+            generator = MazeGenerator(size=(width, height), seed=seed)
         self.maze = generator.maze
         self.cases: dict[tuple[int, int], Cell] = {}
 
         for idx_row, row in enumerate(self.maze):
             for idx_col, item in enumerate(row):
-                if item == 0:
-                    self.cases[(idx_col, idx_row)] = Cell(idx_col,
-                                                          idx_row,
-                                                          item)
-                else:
-                    self.cases[(idx_col, idx_row)] = Cell(idx_col,
-                                                          idx_row,
-                                                          item)
+                self.cases[(idx_col, idx_row)] = Cell(idx_col,
+                                                      idx_row,
+                                                      item)
