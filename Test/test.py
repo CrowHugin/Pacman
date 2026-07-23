@@ -3,7 +3,16 @@ from UI.Maze.Maze import Maze, Cell
 
 
 class Test_level_Creation(unittest.TestCase):
+    """
+        Function to test level creation:
+            Test with a 30*25 maze with a 42 seed (no random)
+            Test if cases content to be between 0 and 15
+            Test if walls are correct
+    """
     def setUp(self) -> None:
+        """
+            Setup function to create the maze before each test
+        """
         self.width: int | None = 30
         self.height: int | None = 25
         self.seed: int | None = 42
@@ -18,29 +27,63 @@ class Test_level_Creation(unittest.TestCase):
                                                           idx_row,
                                                           int(item))
 
-    def tearDown(self):
+    def tearDown(self) -> None:
+        """
+            Clean up function to clean variable at the end of each test
+        """
         self.width = None
         self.height = None
         self.seed = None
         self.maze = None
         self.cases = {}
 
-    def test_cases_content(self):
+    def test_cases_content(self) -> None:
+        """
+            Function to test the content of each test
+        """
         if self.maze:
             for ind_row, row in enumerate(self.maze):
                 for ind_col, col in enumerate(row):
-                    self.assertTrue(0 <= self.cases[(ind_col, ind_row)].content <= 15)
+                    content: int = self.cases[(ind_col, ind_row)].content
+                    self.assertTrue(0 <= content <= 15)
 
-    def test_walls(self):
-        if self.maze:
+    def test_walls(self) -> None:
+        """
+            Function to test of walls are correct:
+                If there is a wall to the right of the cell
+                Then a wall should be at the left of the next cell
+        """
+        if self.maze and self.width and self.height:
             for ind_row, row in enumerate(self.maze):
                 for ind_col, col in enumerate(row):
-                    if (self.cases[(ind_col, ind_row)].content & 1
-                        and self.cases[(ind_col, ind_row)].content & 4):
-                        pass
+                    # Check if there's an upper wall
+                    if (self.cases[(ind_col, ind_row)].content & 1):
+                        if ind_row != 0:
+                            up_content: int = self.cases[(ind_col,
+                                                          ind_row - 1
+                                                          )].content
+                            self.assertTrue(up_content & 4)
+
+                    # Check if there's a rigth wall
                     if self.cases[(ind_col, ind_row)].content & 2:
-                        pass
+                        if ind_col != self.width - 1:
+                            right_content: int = self.cases[(ind_col + 1,
+                                                             ind_row
+                                                             )].content
+                            self.assertTrue(right_content & 8)
+
+                    # Check if there's a bottom wall
                     if self.cases[(ind_col, ind_row)].content & 4:
-                        pass
+                        if ind_row != self.height - 1:
+                            bot_content: int = self.cases[(ind_col,
+                                                           ind_row + 1
+                                                           )].content
+                            self.assertTrue(bot_content & 1)
+
+                    # Check if there's a left wall
                     if self.cases[(ind_col, ind_row)].content & 8:
-                        pass
+                        if ind_col != 0:
+                            left_content: int = self.cases[(ind_col - 1,
+                                                            ind_row
+                                                            )].content
+                            self.assertTrue(left_content & 2)
