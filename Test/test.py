@@ -137,7 +137,7 @@ class TestMazeRender(unittest.TestCase):
 
         self.surface.fill((0, 0, 0))
 
-        draw_maze(self.surface, mock_maze, self.cell_size)
+        draw_maze(self.surface, mock_maze, self.cell_size, None, None)
 
         pixel_color = self.surface.get_at((10, 0))[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
