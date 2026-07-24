@@ -3,6 +3,8 @@ VENV_PATH=./$(ENV_NAME)/bin/python3
 NAME_SCRIPT=pac-man.py
 MAZE_GEN=lib
 
+.SILENT:
+
 all: run
 
 install:
@@ -10,16 +12,16 @@ install:
 	./$(ENV_NAME)/bin/pip3 -q install -r requirements.txt 
 
 run: install
-	$(VENV_PATH) $(NAME_SCRIPT) config.json
-	@rm -rf .env
+	PYGAME_HIDE_SUPPORT_PROMPT=hide $(VENV_PATH) $(NAME_SCRIPT) config.json
+	rm -rf .env
 
 debug: install
 	$(VENV_PATH) -m pdb $(NAME_SCRIPT) config.json
 
 clean:
-	@rm -rf .mypy_cache	*/.mypy_cache
-	@rm -rf __pycache__ */__pycache__
-	@rm -rf $(ENV_NAME)
+	rm -rf .mypy_cache	*/.mypy_cache
+	rm -rf __pycache__ */__pycache__
+	rm -rf $(ENV_NAME)
 
 lint: install
 	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN)
@@ -30,7 +32,7 @@ lint-strict: install
 	./$(ENV_NAME)/bin/mypy --strict --exclude $(MAZE_GEN) . --ignore-missing-imports 
 
 tests: install
-	./$(VENV_PATH) -m unittest Test/test.py
+	PYGAME_HIDE_SUPPORT_PROMPT=hide ./$(VENV_PATH) -m unittest Test/test.py
 
 # build: install
 #	 ./$(ENV_NAME)/bin/pip3 install --upgrade build
