@@ -4,6 +4,9 @@ import unittest
 from unittest.mock import MagicMock
 from UI.Maze.Maze import Maze, Cell
 from UI.level_1.level_1 import draw_maze
+import importlib
+pac_man = importlib.import_module("pac-man")
+check_value = pac_man.check_value
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
@@ -93,6 +96,22 @@ class Test_level_Creation(unittest.TestCase):
                                                             ind_row
                                                             )].content
                             self.assertTrue(left_content & 2)
+
+
+class TestCheckValue(unittest.TestCase):
+    def test_invalid_width_raises_error(self) -> None:
+        with self.assertRaises(ValueError) as context:
+            check_value(-30, 25, 42)
+
+        expected_message = "ERROR:\nWidth cannot be negative or equal to 0"
+        self.assertEqual(str(context.exception), expected_message)
+
+    def test_invalid_height_raises_error(self) -> None:
+        with self.assertRaises(ValueError) as context:
+            check_value(30, -25, 42)
+
+        expected_message = "ERROR:\nHeight cannot be negative or equal to 0"
+        self.assertEqual(str(context.exception), expected_message)
 
 
 class TestMazeRender(unittest.TestCase):
