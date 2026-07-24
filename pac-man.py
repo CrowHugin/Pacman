@@ -19,7 +19,7 @@ def run(config: dict[str, Any]) -> None:
     seed: int = config["seed"]
     try:
         check_value(width, height, seed)
-        player = Player(3, 1, ((width // 2) - 1, height // 2))
+        player = Player(((width // 2) - 1, height // 2), 3)
         red = Ghosts(1, (0, 0), (255, 0, 0))
         green = Ghosts(1, (0, height - 1), (0, 128, 0))
         blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
