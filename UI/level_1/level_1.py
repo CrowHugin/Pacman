@@ -122,15 +122,15 @@ def run_level_1(maze: "Maze",
                 if event.key == pygame.K_ESCAPE:
                     running = False
                 if event.key == pygame.K_UP:
-                    player.move_up()
+                    player.move_up(maze)
                 elif event.key == pygame.K_DOWN:
-                    player.move_down()
+                    player.move_down(maze)
                 elif event.key == pygame.K_RIGHT:
-                    player.move_right()
+                    player.move_right(maze)
                 elif event.key == pygame.K_LEFT:
-                    player.move_left()
+                    player.move_left(maze)
                 for ghost in ghost_tuple:
-                    ghost.movements()
+                    ghost.movements(maze)
                 time.sleep(0.1)
 
         window.fill(BLACK)

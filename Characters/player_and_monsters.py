@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any
 import random
+from UI.Maze.Maze import Maze
 
 
 class Mobs(ABC):
@@ -9,21 +10,25 @@ class Mobs(ABC):
         self.coords_spawn = coords_spawn
         self.coords = self.coords_spawn
 
-    def move_up(self) -> None:
+    def move_up(self, maze: "Maze") -> None:
         x, y = self.coords
-        self.coords = (x, y - 1)
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 1:
+            self.coords = (x, y - 1)
 
-    def move_right(self) -> None:
+    def move_right(self, maze: "Maze") -> None:
         x, y = self.coords
-        self.coords = (x + 1, y)
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 2:
+            self.coords = (x + 1, y)
 
-    def move_down(self) -> None:
+    def move_down(self, maze: "Maze") -> None:
         x, y = self.coords
-        self.coords = (x, y + 1)
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 4:
+            self.coords = (x, y + 1)
 
-    def move_left(self) -> None:
+    def move_left(self, maze: "Maze") -> None:
         x, y = self.coords
-        self.coords = (x - 1, y)
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 8:
+            self.coords = (x - 1, y)
 
     @abstractmethod
     def eat(self, target: Any) -> None:
@@ -54,12 +59,12 @@ class Ghosts(Mobs):
         self.speed = speed
         self.color = color
 
-    def movements(self) -> None:
+    def movements(self, maze: "Maze") -> None:
         directions = [self.move_up,
                       self.move_down,
                       self.move_left,
                       self.move_right]
-        random.choice(directions)()
+        random.choice(directions)(maze)
 
     def eat(self, target: Any) -> None:
         # if self.coords == target.coords:
