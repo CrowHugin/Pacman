@@ -18,7 +18,6 @@ def draw_maze(window: pygame.Surface,
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
     PLAYER_COLOR = (255, 255, 0)
-    RED = (255, 0, 0)
     WALL_THICKNESS = 2
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -93,7 +92,7 @@ def draw_maze(window: pygame.Surface,
             radius = (CELL_SIZE // 2 - 2) - 5
 
             pygame.draw.circle(window,
-                               RED,
+                               ghost.color,
                                (x, y),
                                radius)
 
@@ -130,6 +129,8 @@ def run_level_1(maze: "Maze",
                     player.move_right()
                 elif event.key == pygame.K_LEFT:
                     player.move_left()
+                for ghost in ghost_tuple:
+                    ghost.movements()
                 time.sleep(0.1)
 
         window.fill(BLACK)
