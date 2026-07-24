@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any
-# import random
+import random
 
 
 class Mobs(ABC):
@@ -49,14 +49,17 @@ class Ghosts(Mobs):
     def __init__(self,
                  speed: float,
                  coords_spawn: tuple[int, int],
-                 color: str) -> None:
+                 color: tuple[int, int, int]) -> None:
         super().__init__(coords_spawn)
         self.speed = speed
         self.color = color
 
-    def movements(self, coords: tuple[int, int]) -> None:
-        # movements random dans la limites des cas possibles
-        pass
+    def movements(self) -> None:
+        directions = [self.move_up,
+                      self.move_down,
+                      self.move_left,
+                      self.move_right]
+        random.choice(directions)()
 
     def eat(self, target: Any) -> None:
         # if self.coords == target.coords:
