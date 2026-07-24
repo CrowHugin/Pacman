@@ -79,7 +79,8 @@ def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
 
 
 def validate_int_field(field: str, json_data: Dict[str, Any],
-                       def_val: int, min_val: int) -> int:
+                       def_val: int, min_val: int | None
+                       ) -> int:
     """For every int field, check if we have valide value"""
     if field in json_data:
         val = json_data.get(field)
