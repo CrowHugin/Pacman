@@ -40,7 +40,7 @@ class Player(Mobs):
 
 class Ghosts(Mobs):
     def __init__(self,
-                 speed,
+                 speed: float,
                  coords_spawn: tuple[int, int],
                  color: str) -> None:
         super().__init__(speed, coords_spawn)
