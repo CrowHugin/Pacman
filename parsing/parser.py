@@ -39,7 +39,6 @@ def json_with_comment(file: str) -> Dict[str, Any]:
                 if line_stripped:
                     json_stripped.append(line_stripped)
         content = "".join(json_stripped)
-
         if not content:
             return {}
         content = re.sub(r",\s*([\]}])", r"\1", content)
@@ -47,9 +46,11 @@ def json_with_comment(file: str) -> Dict[str, Any]:
             res: Dict[str, Any] = json.loads(content)
             return res
         except ValueError as e:
-            raise ValueError(f"ERROR {e}")
+            logging.warning(f"Invalid JSON format in {file}: {e}")
+            return {}
     except FileNotFoundError as e:
-        raise FileNotFoundError(f"{e}")
+        logging.warning(f"Configuration file not found: {file}")
+        return {}
 
 
 def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
@@ -74,28 +75,26 @@ def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
     else:
         height = default_height
         flag = True
-
     return width, height, flag
 
 
 def validate_int_field(field: str, json_data: Dict[str, Any],
-                       def_val: int, min_val: int) -> int:
+                       def_val: int, min_val: int | None
+                       ) -> int:
     """For every int field, check if we have valide value"""
     if field in json_data:
         val = json_data[field]
-        if isinstance(val, int) and val > min_val:
-            return val
+        if isinstance(val, int) and not isinstance(val, bool):
+            if min_val is None or val > min_val:
+                return val
         logging.warning(f"Invalid value for {field}, default value used")
     else:
         logging.warning(f"Value {field} not present, default value used")
-    json_data[field] = def_val
     return def_val
 
 
 def validate_json(file: str) -> dict[str, Any]:
-    """For every field, check if the field is valid
-        if not, we use a default value.
-    """
+    """Validate config fields"""
     config = copy.deepcopy(DEFAULT_MAZE_CONFIG)
     try:
         json_data = json_with_comment(file)
@@ -115,7 +114,7 @@ def validate_json(file: str) -> dict[str, Any]:
             "points_per_ghost", json_data, config["points_per_ghost"], 0)
 
         config["seed"] = validate_int_field(
-            "seed", json_data, config["seed"], 0)
+            "seed", json_data, config["seed"], None)
 
         config["level_max_time"] = validate_int_field(
             "level_max_time", json_data, config["level_max_time"], 59)
@@ -124,21 +123,23 @@ def validate_json(file: str) -> dict[str, Any]:
             "number_level", json_data, config["number_level"], 9)
 
         if "highscore_filename" in json_data:
-            if (isinstance(json_data["highscore_filename"], str)
-                    and json_data["highscore_filename"].endswith(".json")):
-                config["highscore_filename"] = json_data["highscore_filename"]
+            score_filename = json_data["highscore_filename"]
+            if (isinstance(score_filename, str)
+                    and score_filename.endswith(".json")):
+                config["highscore_filename"] = score_filename
             else:
-                logging.warning(f"{json_data['highscore_filename']} "
+                logging.warning(f"{score_filename} "
                                 f"is not a valid value"
                                 f", default value used")
         else:
             logging.warning(
                 "highscore filename not present, default value used")
 
+        number_level = config["number_level"]
         if "level_size" in json_data:
-            list_level = json_data["level_size"]
-            number_level = config["number_level"]
-            if isinstance(list_level, list):
+            json_level = json_data["level_size"]
+            if isinstance(json_level, list):
+                list_level = list(json_level)
                 len_level_list = len(list_level)
                 if number_level < len_level_list:
                     logging.warning("Too much level size")
@@ -161,8 +162,10 @@ def validate_json(file: str) -> dict[str, Any]:
             else:
                 logging.warning("level size is not a list,"
                                 "default value use")
-
-                config["level_size"] = validate_level
+                config["level_size"] = [
+                        {"width": 15, "height": 15} for _ in 
+                        range(number_level)
+                    ]
         else:
             logging.warning(
                 "level_size missing or invalid, default values used")
