@@ -1,7 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import Any
+import time
 import random
+from typing import Any
 from UI.Maze.Maze import Maze
+from abc import ABC, abstractmethod
 
 
 class Mobs(ABC):
@@ -66,8 +67,7 @@ class Ghosts(Mobs):
                       self.move_right]
         random.choice(directions)(maze)
 
-    def eat(self, target: Any) -> None:
-        # if self.coords == target.coords:
-        #   player lives = -1
-        #   player respawn on the center
-        pass
+    def eat(self, target: Player) -> None:
+        time.sleep(0.2)
+        target.nb_lives -= 1
+        target.coords = target.coords_spawn
