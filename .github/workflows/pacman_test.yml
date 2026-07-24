@@ -34,4 +34,4 @@ jobs:
           mypy --strict . --ignore-missing-imports
 
       - name: run tests
-        run: python3 -m unittest Test/test.py
+        run: python3 -m unittest discover -s Test -p "test_*.py"
