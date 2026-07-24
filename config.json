@@ -1,8 +1,8 @@
 {
-    "highscore_filename":"",
-    "number_level":12,
+    "highscore_filename":"score.json",
+    "number_level":10,
     "level_size":[
-        {"width":-11, "height":10},
+        {"width":10, "height":10},
         {"width":20, "height":10},
         {"width":30, "height":10},
         {"width":40, "height":10},
@@ -13,8 +13,8 @@
         {"width":49, "height":10},
         {"width":48, "height":10},
         {"width":12, "height":10},
-        {"width":12, "height":10},
-        {"width":12, "height":10}
+        {"width":13, "height":10},
+        {"width":14, "height":10}
     ],
     "pacgum":42,
     "lives":3,
