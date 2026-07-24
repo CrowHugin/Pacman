@@ -4,12 +4,11 @@ from typing import Any
 
 class Mobs(ABC):
     def __init__(self,
-                 status: str,
-                 color: str,
-                 coords: tuple[int, int]) -> None:
-        self.status = status
-        self.color = color
-        self.coords = coords
+                 speed: float,
+                 coords_spawn: tuple[int, int]) -> None:
+        self.speed = speed
+        self.coords_spawn = coords_spawn
+        self.coords = self.coords_spawn
 
     @abstractmethod
     def movements(self, coords: tuple[int, int]) -> None:
@@ -23,13 +22,10 @@ class Mobs(ABC):
 class Player(Mobs):
     def __init__(self,
                  nb_lives: int,
-                 status: str,
-                 color: str,
-                 coords: tuple[int, int]) -> None:
-        self.coords: tuple[int, int] = coords
-        self.color = color
+                 speed: float,
+                 coords_spawn: tuple[int, int]) -> None:
+        super().__init__(speed, coords_spawn)
         self.nb_lives = nb_lives
-        self.status = status
 
     def movements(self, coords: tuple[int, int]) -> None:
         # if x is pressed go to the Z direction
@@ -44,10 +40,11 @@ class Player(Mobs):
 
 class Ghosts(Mobs):
     def __init__(self,
-                 status: str,
-                 color: str,
-                 coords: tuple[int, int]) -> None:
-        super().__init__(status, color, coords)
+                 speed,
+                 coords_spawn: tuple[int, int],
+                 color: str) -> None:
+        super().__init__(speed, coords_spawn)
+        self.color = color
 
     def movements(self, coords: tuple[int, int]) -> None:
         # movements random dans la limites des cas possibles
