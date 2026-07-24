@@ -1,7 +1,7 @@
 import sys
 import time
 import pygame
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 
 if TYPE_CHECKING:
@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 def draw_maze(window: pygame.Surface,
               maze: "Maze",
               CELL_SIZE: int,
-              player_coords: tuple[int, int],
-              ghosts_tuple: tuple["Ghosts", "Ghosts", "Ghosts", "Ghosts"]
+              player_coords: Optional[tuple[int, int]],
+              ghosts_tuple: Optional[tuple["Ghosts", ...]]
               ) -> None:
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
@@ -29,14 +29,14 @@ def draw_maze(window: pygame.Surface,
             cell_value = maze.maze[row_idx][col_idx]
 
             left = x
-            rigth = min(x + CELL_SIZE - 1, SCREEN_WIDTH - 1)
+            right = min(x + CELL_SIZE - 1, SCREEN_WIDTH - 1)
             top = y
             bottom = min(y + CELL_SIZE - 1, SCREEN_HEIGHT - 1)
 
             top_left = (left, top)
-            top_right = (rigth, top)
+            top_right = (right, top)
             bottom_left = (left, bottom)
-            bottom_right = (rigth, bottom)
+            bottom_right = (right, bottom)
 
             if cell_value == 15:
                 pygame.draw.rect(window,
@@ -86,20 +86,21 @@ def draw_maze(window: pygame.Surface,
                                (player_x, player_y),
                                radius)
 
-        for ghost in ghosts_tuple:
-            x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2
-            y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2
-            radius = (CELL_SIZE // 2 - 2) - 5
+        if ghosts_tuple:
+            for ghost in ghosts_tuple:
+                x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2
+                y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2
+                radius = (CELL_SIZE // 2 - 2) - 5
 
-            pygame.draw.circle(window,
-                               ghost.color,
-                               (x, y),
-                               radius)
+                pygame.draw.circle(window,
+                                   ghost.color,
+                                   (x, y),
+                                   radius)
 
 
 def run_level_1(maze: "Maze",
-                player: "Player",
-                ghost_tuple: tuple["Ghosts", "Ghosts", "Ghosts", "Ghosts"]
+                player: Optional["Player"],
+                ghost_tuple: Optional[tuple["Ghosts", ...]]
                 ) -> None:
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
@@ -121,20 +122,24 @@ def run_level_1(maze: "Maze",
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if event.key == pygame.K_UP:
-                    player.move_up(maze)
-                elif event.key == pygame.K_DOWN:
-                    player.move_down(maze)
-                elif event.key == pygame.K_RIGHT:
-                    player.move_right(maze)
-                elif event.key == pygame.K_LEFT:
-                    player.move_left(maze)
-                for ghost in ghost_tuple:
-                    ghost.movements(maze)
-                time.sleep(0.1)
+                if player and ghost_tuple:
+                    if event.key == pygame.K_UP:
+                        player.move_up(maze)
+                    elif event.key == pygame.K_DOWN:
+                        player.move_down(maze)
+                    elif event.key == pygame.K_RIGHT:
+                        player.move_right(maze)
+                    elif event.key == pygame.K_LEFT:
+                        player.move_left(maze)
+
+        if ghost_tuple:
+            for ghost in ghost_tuple:
+                ghost.movements(maze)
+        time.sleep(0.1)
 
         window.fill(BLACK)
-        draw_maze(window, maze, CELL_SIZE, player.coords, ghost_tuple)
+        player_coords = player.coords if player else None
+        draw_maze(window, maze, CELL_SIZE, player_coords, ghost_tuple)
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
