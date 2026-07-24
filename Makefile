@@ -32,7 +32,7 @@ lint-strict: install
 	./$(ENV_NAME)/bin/mypy --strict --exclude $(MAZE_GEN) . --ignore-missing-imports 
 
 tests: install
-	PYGAME_HIDE_SUPPORT_PROMPT=hide ./$(VENV_PATH) -m unittest Test/test.py
+	PYGAME_HIDE_SUPPORT_PROMPT=hide ./$(VENV_PATH) -m unittest discover -s Test -p "test_*.py"
 
 # build: install
 #	 ./$(ENV_NAME)/bin/pip3 install --upgrade build
