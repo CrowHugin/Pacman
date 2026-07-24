@@ -14,7 +14,6 @@ def check_value(width: int, height: int, seed: int | None) -> None:
 
 def run(config: dict[str, Any]) -> None:
     level = config["level_size"][0]
-    print(config["level_size"])
     width = level['width']
     height = level['height']
     seed: int = config["seed"]

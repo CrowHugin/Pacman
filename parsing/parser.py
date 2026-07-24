@@ -136,28 +136,27 @@ def validate_json(file: str) -> dict[str, Any]:
                 "highscore filename not present, default value used")
 
         if "level_size" in json_data:
-            list_level = config["level_size"]
+            list_level = json_data["level_size"]
             number_level = config["number_level"]
             if isinstance(list_level, list):
                 len_level_list = len(list_level)
                 if number_level < len_level_list:
-                    list_level = list_level[:number_level]
                     logging.warning("Too much level size")
+                    list_level = list_level[:number_level]
                 elif number_level > len_level_list:
                     logging.warning("Not enough of level size")
                     missing_level = number_level - len_level_list
                     list_level.extend(
-                        [DEFAULT_MAZE_CONFIG["level_size"][0]]
+                        [{"width": 15, "height": 15}]
                         * missing_level)
                 validate_level = []
                 for level in list_level:
-                    build_level_size_list
-                    # width, height, flag = validate_level_size(
-                    #     level)
-                    # validate_level.append({"width": width, "height": height})
-                    # if flag:
-                    #     logging.warning("Invalid level size value, "
-                    #                     "default value used")
+                    width, height, flag = validate_level_size(
+                        level)
+                    validate_level.append({"width": width, "height": height})
+                    if flag:
+                        logging.warning("Invalid level size value, "
+                                        "default value used")
                 config["level_size"] = validate_level
             else:
                 logging.warning("level size is not a list,"
@@ -165,24 +164,11 @@ def validate_json(file: str) -> dict[str, Any]:
 
                 config["level_size"] = validate_level
         else:
-            logging.warning("level size not present,"
-                            "default value use")
-            validate_level = []
-            for _ in range(config["number_level"]):
-                width, height, _ = validate_level_size(None)
-                validate_level.append({"width": width, "height": height})
-            config["level_size"] = validate_level
+            logging.warning(
+                "level_size missing or invalid, default values used")
+            config["level_size"] = [
+                {"width": 15, "height": 15} for _ in range(number_level)
+            ]
     except (ValueError, FileNotFoundError) as e:
         logging.warning(f"{e}, default value used")
     return config
-
-
-def build_level_size_list(source: list | None, number_level: int) -> list[dict]
-    validate_level = []
-    for _ in range(number_level):
-            width, height, flag = validate_level_size(source)
-            validate_level.append({"width": width, "height": height})
-            if flag:
-                logging.warning("Invalid level size value, "
-                                "default value used")
-    return validate_level
