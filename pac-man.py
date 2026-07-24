@@ -19,7 +19,7 @@ def run(config: dict[str, Any]) -> None:
     seed: int = config["seed"]
     try:
         check_value(width, height, seed)
-        player = Player(3, 1, (0, 0))
+        player = Player(3, 1, ((width // 2) - 1, height // 2))
         maze = Maze(width, height, seed)
         run_level_1(maze, player)
     except ValueError as e:
