@@ -38,9 +38,8 @@ class Mobs(ABC):
 
 class Player(Mobs):
     def __init__(self,
-                 nb_lives: int,
-                 speed: float,
-                 coords_spawn: tuple[int, int]) -> None:
+                 coords_spawn: tuple[int, int],
+                 nb_lives: int = 3) -> None:
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
 

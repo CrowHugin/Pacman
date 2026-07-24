@@ -109,5 +109,3 @@ class TestCheckValue(unittest.TestCase):
 
         expected_message = "ERROR:\nHeight cannot be negative or equal to 0"
         self.assertEqual(str(context.exception), expected_message)
-
-

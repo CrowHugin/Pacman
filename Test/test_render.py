@@ -31,4 +31,3 @@ class TestMazeRender(unittest.TestCase):
 
         pixel_color = self.surface.get_at((10, 0))[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
-
