@@ -20,8 +20,18 @@ def run(config: dict[str, Any]) -> None:
     try:
         check_value(width, height, seed)
         player = Player(3, 1, ((width // 2) - 1, height // 2))
+        red = Ghosts(1, (0, 0), "red")
+        green = Ghosts(1, (0, height - 1), "green")
+        blue = Ghosts(1, (width - 1, 0), "blue")
+        pink = Ghosts(1, (width - 1, height - 1), "pink")
+        ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
+            red,
+            green,
+            blue,
+            pink
+         )
         maze = Maze(width, height, seed)
-        run_level_1(maze, player)
+        run_level_1(maze, player, ghosts_tuple)
     except ValueError as e:
         print(e)
 
