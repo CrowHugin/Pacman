@@ -12,6 +12,7 @@ if TYPE_CHECKING:
 def game_over(window: pygame.Surface,
               BLACK: tuple[int, int, int],
               font: pygame.font.Font) -> None:
+    pygame.display.set_caption("GAME OVER")
     text_surface = font.render("GAME OVER", True, (255, 0, 0))
     text_rect = text_surface.get_rect(
        center=(window.get_width() // 2, window.get_height() // 2)
@@ -155,6 +156,7 @@ def run_level_1(maze: "Maze",
         if player and ghost_tuple and maze:
             if player.nb_lives <= 0:
                 game_over(window, BLACK, font)
+                pygame.QUIT
             else:
                 player_coords = player.coords if player else None
                 draw_maze(window, maze, CELL_SIZE, player_coords, ghost_tuple)
