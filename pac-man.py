@@ -4,7 +4,10 @@ from UI.level_1.level_1 import run_level_1
 from typing import Any
 from Characters.player_and_monsters import Player, Ghosts
 
+from typing import Any
 # Function to raise an error, will be changed when json parsing is done
+
+
 def check_value(width: int, height: int, seed: int | None) -> None:
     if width <= 0:
         raise ValueError("ERROR:\nWidth cannot be negative or equal to 0")
