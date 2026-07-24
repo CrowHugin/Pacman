@@ -72,7 +72,7 @@ def draw_maze(window: pygame.Surface,
                                  top_left,
                                  bottom_left,
                                  WALL_THICKNESS)
-            
+
         if player_coords:
             player_x = player_coords[0] * CELL_SIZE + CELL_SIZE // 2
             player_y = player_coords[1] * CELL_SIZE + CELL_SIZE // 2
@@ -84,6 +84,7 @@ def draw_maze(window: pygame.Surface,
                                (player_x, player_y),
                                radius)
 
+
 def run_level_1(maze: "Maze", player: "Player") -> None:
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
@@ -91,7 +92,8 @@ def run_level_1(maze: "Maze", player: "Player") -> None:
     BLACK = (0, 0, 0)
 
     pygame.init()
-    window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT + 3 * CELL_SIZE))
+    window = pygame.display.set_mode((SCREEN_WIDTH,
+                                      SCREEN_HEIGHT + (3 * CELL_SIZE)))
     pygame.display.set_caption("PAC-MAN - LEVEL 1")
 
     clock = pygame.time.Clock()
@@ -101,6 +103,18 @@ def run_level_1(maze: "Maze", player: "Player") -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    running = False
+                if event.key == pygame.K_UP:
+                    player.move_up()
+                elif event.key == pygame.K_DOWN:
+                    player.move_down()
+                elif event.key == pygame.K_RIGHT:
+                    player.move_right()
+                elif event.key == pygame.K_LEFT:
+                    player.move_left()
+
         window.fill(BLACK)
         draw_maze(window, maze, CELL_SIZE, player.coords)
         pygame.display.flip()
