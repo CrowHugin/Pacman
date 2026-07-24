@@ -48,7 +48,7 @@ def json_with_comment(file: str) -> Dict[str, Any]:
         except ValueError as e:
             logging.warning(f"Invalid JSON format in {file}: {e}")
             return {}
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         logging.warning(f"Configuration file not found: {file}")
         return {}
 
@@ -163,7 +163,7 @@ def validate_json(file: str) -> dict[str, Any]:
                 logging.warning("level size is not a list,"
                                 "default value use")
                 config["level_size"] = [
-                        {"width": 15, "height": 15} for _ in 
+                        {"width": 15, "height": 15} for _ in
                         range(number_level)
                     ]
         else:
