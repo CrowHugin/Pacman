@@ -1,4 +1,5 @@
 import sys
+import time
 import pygame
 from typing import TYPE_CHECKING
 
@@ -11,11 +12,13 @@ if TYPE_CHECKING:
 def draw_maze(window: pygame.Surface,
               maze: "Maze",
               CELL_SIZE: int,
-              player_coords: tuple[int, int]
+              player_coords: tuple[int, int],
+              ghosts_tuple: tuple["Ghosts", "Ghosts", "Ghosts", "Ghosts"]
               ) -> None:
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
     PLAYER_COLOR = (255, 255, 0)
+    RED = (255, 0, 0)
     WALL_THICKNESS = 2
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -84,8 +87,21 @@ def draw_maze(window: pygame.Surface,
                                (player_x, player_y),
                                radius)
 
+        for ghost in ghosts_tuple:
+            x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2
+            y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2
+            radius = (CELL_SIZE // 2 - 2) - 5
 
-def run_level_1(maze: "Maze", player: "Player") -> None:
+            pygame.draw.circle(window,
+                               RED,
+                               (x, y),
+                               radius)
+
+
+def run_level_1(maze: "Maze",
+                player: "Player",
+                ghost_tuple: tuple["Ghosts", "Ghosts", "Ghosts", "Ghosts"]
+                ) -> None:
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -114,9 +130,10 @@ def run_level_1(maze: "Maze", player: "Player") -> None:
                     player.move_right()
                 elif event.key == pygame.K_LEFT:
                     player.move_left()
+                time.sleep(0.1)
 
         window.fill(BLACK)
-        draw_maze(window, maze, CELL_SIZE, player.coords)
+        draw_maze(window, maze, CELL_SIZE, player.coords, ghost_tuple)
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
