@@ -36,5 +36,5 @@ The level_1 is created with a seed (which one ?), the others are random
 %% schema ? %%
 
 ### *Project management*
-
+![project_image](./README_images/Board.png)
 - [github](https://github.com/users/CrowHugin/projects/4)
