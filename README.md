@@ -43,12 +43,11 @@ flowchart TB
     subgraph UI [Interface & Entrées]
         Display[Moteur de Rendu Visuel]
         Inputs[Contrôles Joueur]
-        Audio[Système Audio]
     end
 
     %% Définition du Moteur de Jeu (Core Logic)
     subgraph Engine [Moteur de Jeu]
-        GameLoop{Boucle de Jeu Principale}
+        GameLoop{Boucle de Jeu Principale- Pygame}
         
         subgraph Logic [Systèmes Logiques]
             direction TB
@@ -67,7 +66,7 @@ flowchart TB
 
     %% Définition du Stockage / Assets
     subgraph Data [Ressources & Sauvegardes]
-        Assets[("Sprites & Fichiers Audio")]
+        Assets[Sprites]
         SaveData[("Sauvegarde des Meilleurs Scores")]
     end
 
@@ -76,7 +75,6 @@ flowchart TB
 
     GameLoop -->|"Mise à jour (ex: 60 FPS)"| Logic
     GameLoop -->|Rafraîchit l'écran| Display
-    GameLoop -->|Déclenche les effets| Audio
 
     State -->|Active/Désactive| Entities
     Pacman -->|Se déplace dans| Map
