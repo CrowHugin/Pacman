@@ -109,10 +109,10 @@ def draw_maze(window: pygame.Surface,
                                radius)
 
 
-def run_level_1(maze: "Maze",
-                player: Optional["Player"],
-                ghost_tuple: Optional[tuple["Ghosts", ...]]
-                ) -> None:
+def level_generator(maze: "Maze",
+                    player: Optional["Player"],
+                    ghost_tuple: Optional[tuple["Ghosts", ...]]
+                    ) -> None:
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE

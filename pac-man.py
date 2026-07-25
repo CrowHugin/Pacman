@@ -1,7 +1,7 @@
 from parsing import load_game_config
 from UI.Maze.Maze import Maze
-from UI.level_1.level_1 import run_level_1
 from typing import Any
+from UI.level_generator.level_generator import level_generator
 from Characters.player_and_monsters import Player, Ghosts
 # Function to raise an error, will be changed when json parsing is done
 
@@ -32,7 +32,7 @@ def run(config: dict[str, Any]) -> None:
             pink
         )
         maze = Maze(width, height, seed)
-        run_level_1(maze, player, ghosts_tuple)
+        level_generator(maze, player, ghosts_tuple)
     except ValueError as e:
         print(e)
 
