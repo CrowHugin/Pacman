@@ -38,63 +38,69 @@ The level_1 is created with a seed (which one ?), the others are random
 ### *General Software Architecture*
 
 ```mermaid
+
 flowchart TB
-    %% Définition de l'Interface et Périphériques
-    subgraph UI [Interface & Entrées]
-        Display[Moteur de Rendu Visuel]
-        Inputs[Contrôles Joueur]
-    end
 
-    %% Définition du Moteur de Jeu (Core Logic)
-    subgraph Engine [Moteur de Jeu]
-        GameLoop{Boucle de Jeu Principale- Pygame}
-        
-        subgraph Logic [Systèmes Logiques]
-            direction TB
-            State["Gestionnaire d'États (Menu/Jeu/Game Over)"]
-            Collision[Détection des Collisions]
-            Score["Gestionnaire des Scores & Vies"]
-        end
-    end
+%% --- 1. DÉCLARATION DES BLOCS ---
 
-    %% Définition des Entités Actives
-    subgraph Entities [Entités du Jeu]
-        Pacman["Pac-Man (Modèle Joueur)"]
-        Ghosts["Fantômes (IA: Poursuite/Fuite)"]
-        Map["Labyrinthe & Pac-Gommes"]
-    end
+subgraph Init["Initialization"]
+    direction TB
+    Start --> JSONParsing
+    JSONParsing --> MenuManager
+end
 
-    %% Définition du Stockage / Assets
-    subgraph Data [Ressources & Sauvegardes]
-        Assets[Sprites]
-        SaveData[("Sauvegarde des Meilleurs Scores")]
-    end
-
-    %% Connexions et Flux de données
-    Inputs -->|Commandes de direction| Pacman
-
-    GameLoop -->|"Mise à jour (ex: 60 FPS)"| Logic
-    GameLoop -->|Rafraîchit l'écran| Display
-
-    State -->|Active/Désactive| Entities
-    Pacman -->|Se déplace dans| Map
-    Ghosts -->|"Pathfinding (IA)"| Map
+subgraph Levels["Level Creation"]
+    direction TB
+    Map["Labyrinth"] --> Pacgum["Pac-Dots"]
+    Map --> Ghosts["Mobs (Ghosts)"]
+    Map --> Pacman["Player (Pac-Man)"]
     
-    Pacman -->|Position exacte| Collision
-    Ghosts -->|Position exacte| Collision
-    Map -->|État des pac-gommes| Collision
+    Pacgum --> Sprites["Sprites Loading"]
+    Ghosts --> Sprites
+    Pacman --> Sprites
+end
 
-    Collision -->|Touche un fantôme / Mange un fruit| Score
-    Collision -->|"Mort (plus de vies)"| State
-    
-    Display -->|Charge les textures| Assets
-    Score <-->|Lit / Enregistre| SaveData
+subgraph GameSystems["Loop and Game Systems"]
+    direction TB
+    PlayerControls --> Collisions
+    Collisions --> ScoreLives
+    ScoreLives --> EndGame
+    EndGame <--> SaveHighscores
+end
+
+%% --- 2. LE VERROUILLAGE (L'arme absolue contre GitHub) ---
+%% Ces liens invisibles forcent GitHub à empiler les blocs 
+%% dans cet ordre précis, quoi qu'il arrive avec les autres flèches.
+Init ~~~ Levels
+Levels ~~~ GameSystems
+
+%% --- 3. LE FLUX DESCENDANT ---
+%% On utilise des flèches rallongées (--->) pour donner encore plus 
+%% de poids à la direction "vers le bas".
+MenuManager --->|Level creation| Map
+Sprites --->|Start loop| PlayerControls
+
+%% --- 4. LE FLUX REMONTANT (Syntaxe standard) ---
+%% Syntaxe classique pointillée que GitHub comprend parfaitement.
+%% Grâce au verrouillage (~~~), ça n'inversera pas les blocs.
+EndGame -.->|Defeat / 10 victories: Menu| MenuManager
+ScoreLives -.->|Victories: New levels| MenuManager
+
+%% --- 5. STYLING ---
+style Init fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+style Levels fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+style GameSystems fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
 ```
 
 ### *Project management*
+
+Board management exemple:
 ![project_image](./README_images/Board.png)
+
+Roadmap management exemple:
 ![project_timeline](./README_images/timeline.png)
 
 
 
 - [github](https://github.com/users/CrowHugin/projects/4)
+%%
