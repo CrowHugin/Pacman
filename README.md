@@ -39,42 +39,58 @@ The level_1 is created with a seed (which one ?), the others are random
 
 ```mermaid
 flowchart TB
-    %% Définition du Frontend
-    subgraph Client [Frontend - Interface Client]
-        Web[Application Web]
-        Mobile[Application Mobile]
+    %% Définition de l'Interface et Périphériques
+    subgraph UI [Interface & Entrées]
+        Display[Moteur de Rendu Visuel]
+        Inputs[Contrôles Joueur]
+        Audio[Système Audio]
     end
 
-    %% Définition du Backend
-    subgraph Backend [Backend - Serveur API]
-        Gateway{API Gateway}
+    %% Définition du Moteur de Jeu (Core Logic)
+    subgraph Engine [Moteur de Jeu]
+        GameLoop{Boucle de Jeu Principale}
         
-        subgraph Modules [Modules Métier]
+        subgraph Logic [Systèmes Logiques]
             direction TB
-            Auth[Module Authentification]
-            Users[Module Utilisateurs]
-            Core[Module Traitement Core]
+            State["Gestionnaire d'États (Menu/Jeu/Game Over)"]
+            Collision[Détection des Collisions]
+            Score["Gestionnaire des Scores & Vies"]
         end
     end
 
-    %% Définition des Bases de données
-    subgraph Data [Couche de Données]
-        DB[(Base de Données SQL)]
-        Cache[(Cache Redis)]
+    %% Définition des Entités Actives
+    subgraph Entities [Entités du Jeu]
+        Pacman["Pac-Man (Modèle Joueur)"]
+        Ghosts["Fantômes (IA: Poursuite/Fuite)"]
+        Map["Labyrinthe & Pac-Gommes"]
+    end
+
+    %% Définition du Stockage / Assets
+    subgraph Data [Ressources & Sauvegardes]
+        Assets[("Sprites & Fichiers Audio")]
+        SaveData[("Sauvegarde des Meilleurs Scores")]
     end
 
     %% Connexions et Flux de données
-    Web -->|Requêtes HTTP/REST| Gateway
-    Mobile -->|Requêtes HTTP/REST| Gateway
+    Inputs -->|Commandes de direction| Pacman
 
-    Gateway -->|Valide le token| Auth
-    Gateway -->|Routes /users| Users
-    Gateway -->|Routes métier| Core
+    GameLoop -->|"Mise à jour (ex: 60 FPS)"| Logic
+    GameLoop -->|Rafraîchit l'écran| Display
+    GameLoop -->|Déclenche les effets| Audio
 
-    Auth -->|Vérifie les identifiants| DB
-    Users -->|CRUD Utilisateurs| DB
-    Core -->|Lecture / Écriture| DB
-    Core -->|Stockage rapide| Cache
+    State -->|Active/Désactive| Entities
+    Pacman -->|Se déplace dans| Map
+    Ghosts -->|"Pathfinding (IA)"| Map
+    
+    Pacman -->|Position exacte| Collision
+    Ghosts -->|Position exacte| Collision
+    Map -->|État des pac-gommes| Collision
+
+    Collision -->|Touche un fantôme / Mange un fruit| Score
+    Collision -->|"Mort (plus de vies)"| State
+    
+    Display -->|Charge les textures| Assets
+    Score <-->|Lit / Enregistre| SaveData
 ```
 
 ### *Project management*
