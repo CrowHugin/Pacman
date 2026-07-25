@@ -37,4 +37,6 @@ The level_1 is created with a seed (which one ?), the others are random
 
 ### *Project management*
 ![project_image](./README_images/Board.png)
+![project_timeline](./README_images/timeline.png)
+
 - [github](https://github.com/users/CrowHugin/projects/4)
