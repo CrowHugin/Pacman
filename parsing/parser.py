@@ -79,13 +79,12 @@ def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
 
 
 def validate_int_field(field: str, json_data: Dict[str, Any],
-                       def_val: int, min_val: int | None
-                       ) -> int:
+                       def_val: int, min_val: int) -> int:
     """For every int field, check if we have valide value"""
     if field in json_data:
-        val = json_data[field]
+        val = json_data.get(field)
         if isinstance(val, int) and not isinstance(val, bool):
-            if min_val is None or val > min_val:
+            if val > min_val:
                 return val
         logging.warning(f"Invalid value for {field}, default value used")
     else:
@@ -96,82 +95,69 @@ def validate_int_field(field: str, json_data: Dict[str, Any],
 def validate_json(file: str) -> dict[str, Any]:
     """Validate config fields"""
     config = copy.deepcopy(DEFAULT_MAZE_CONFIG)
-    try:
-        json_data = json_with_comment(file)
-        config["lives"] = validate_int_field(
-            "lives", json_data, config["lives"], 2)
+    json_data = json_with_comment(file)
+    config["lives"] = validate_int_field(
+        "lives", json_data, config["lives"], 2)
 
-        config["pacgum"] = validate_int_field(
-            "pacgum", json_data, config["pacgum"], 0)
-        config["points_per_pacgum"] = validate_int_field(
-            "points_per_pacgum",
-            json_data, config["points_per_pacgum"], 0)
-        config["points_per_super_pacgum"] = validate_int_field(
-            "points_per_super_pacgum",
-            json_data, config["points_per_super_pacgum"], 0)
+    config["pacgum"] = validate_int_field(
+        "pacgum", json_data, config["pacgum"], 0)
+    config["points_per_pacgum"] = validate_int_field(
+        "points_per_pacgum",
+        json_data, config["points_per_pacgum"], 0)
+    config["points_per_super_pacgum"] = validate_int_field(
+        "points_per_super_pacgum",
+        json_data, config["points_per_super_pacgum"], 0)
 
-        config["points_per_ghost"] = validate_int_field(
-            "points_per_ghost", json_data, config["points_per_ghost"], 0)
+    config["points_per_ghost"] = validate_int_field(
+        "points_per_ghost", json_data, config["points_per_ghost"], 0)
 
-        config["seed"] = validate_int_field(
-            "seed", json_data, config["seed"], None)
+    config["seed"] = validate_int_field(
+        "seed", json_data, config["seed"], -1)
 
-        config["level_max_time"] = validate_int_field(
-            "level_max_time", json_data, config["level_max_time"], 59)
+    config["level_max_time"] = validate_int_field(
+        "level_max_time", json_data, config["level_max_time"], 59)
 
-        config["number_level"] = validate_int_field(
-            "number_level", json_data, config["number_level"], 9)
+    config["number_level"] = validate_int_field(
+        "number_level", json_data, config["number_level"], 9)
 
-        if "highscore_filename" in json_data:
-            score_filename = json_data["highscore_filename"]
-            if (isinstance(score_filename, str)
-                    and score_filename.endswith(".json")):
-                config["highscore_filename"] = score_filename
-            else:
-                logging.warning(f"{score_filename} "
-                                f"is not a valid value"
-                                f", default value used")
+    if "highscore_filename" in json_data:
+        score_filename = json_data["highscore_filename"]
+        if (isinstance(score_filename, str)
+                and score_filename.endswith(".json")):
+            config["highscore_filename"] = score_filename
         else:
-            logging.warning(
-                "highscore filename not present, default value used")
+            logging.warning(f"{score_filename} "
+                            f"is not a valid value"
+                            f", default value used")
+    else:
+        logging.warning(
+            "highscore filename not present, default value used")
 
-        number_level = config["number_level"]
-        if "level_size" in json_data:
-            json_level = json_data["level_size"]
-            if isinstance(json_level, list):
-                list_level = list(json_level)
-                len_level_list = len(list_level)
-                if number_level < len_level_list:
-                    logging.warning("Too much level size")
-                    list_level = list_level[:number_level]
-                elif number_level > len_level_list:
-                    logging.warning("Not enough of level size")
-                    missing_level = number_level - len_level_list
-                    list_level.extend(
-                        [{"width": 15, "height": 15}]
-                        * missing_level)
-                validate_level = []
-                for level in list_level:
-                    width, height, flag = validate_level_size(
-                        level)
-                    validate_level.append({"width": width, "height": height})
-                    if flag:
-                        logging.warning("Invalid level size value, "
-                                        "default value used")
-                config["level_size"] = validate_level
-            else:
-                logging.warning("level size is not a list,"
-                                "default value use")
-                config["level_size"] = [
-                        {"width": 15, "height": 15} for _ in
-                        range(number_level)
-                    ]
-        else:
-            logging.warning(
-                "level_size missing or invalid, default values used")
-            config["level_size"] = [
-                {"width": 15, "height": 15} for _ in range(number_level)
-            ]
-    except (ValueError, FileNotFoundError) as e:
-        logging.warning(f"{e}, default value used")
+    number_level = config["number_level"]
+    json_level = json_data.get("level_size")
+
+    if isinstance(json_level, list):
+        list_level = list(json_level)
+        len_level_list = len(list_level)
+
+        if number_level < len_level_list:
+            logging.warning("Too many level sizes provided")
+            list_level = list_level[:number_level]
+        elif number_level > len_level_list:
+            logging.warning("Not enough level sizes provided")
+            missing_level = number_level - len_level_list
+            list_level.extend([{"width": 15, "height": 15}] * missing_level)
+
+        validate_level = []
+        for level in list_level:
+            width, height, flag = validate_level_size(level)
+            validate_level.append({"width": width, "height": height})
+            if flag:
+                logging.warning("Invalid level size, default value used")
+        config["level_size"] = validate_level
+    else:
+        logging.warning("level_size missing or invalid, default value used")
+        config["level_size"] = [
+            {"width": 15, "height": 15} for _ in range(number_level)
+        ]
     return config
