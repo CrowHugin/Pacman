@@ -42,8 +42,35 @@ class TestPlayerMovement(unittest.TestCase):
         self.player.move_right(self.mock_maze)
         self.assertEqual(self.player.coords, (2, 1))
 
+    def test_move_right_blocked_by_wall(self) -> None:
+        self.mock_maze.cases[(1, 1)].content = 15
+        self.player.move_right(self.mock_maze)
+        self.assertEqual(self.player.coords, (1, 1))
+
+    def test_move_left_success(self) -> None:
+        self.player.move_left(self.mock_maze)
+        self.assertEqual(self.player.coords, (0, 1))
+
+    def test_move_left_blocked_by_wall(self) -> None:
+        self.mock_maze.cases[(1, 1)].content = 15
+        self.player.move_left(self.mock_maze)
+        self.assertEqual(self.player.coords, (1, 1))
+
+    def test_move_down_success(self) -> None:
+        self.player.move_down(self.mock_maze)
+        self.assertEqual(self.player.coords, (1, 2))
+
+    def test_move_down_blocked_by_wall(self) -> None:
+        self.mock_maze.cases[(1, 1)].content = 15
+        self.player.move_down(self.mock_maze)
+        self.assertEqual(self.player.coords, (1, 1))
+
+    def test_move_up_success(self) -> None:
+        self.player.move_up(self.mock_maze)
+        self.assertEqual(self.player.coords, (1, 0))
+
     def test_move_up_blocked_by_wall(self) -> None:
-        self.mock_maze.cases[(1, 1)].content = 1
+        self.mock_maze.cases[(1, 1)].content = 15
         self.player.move_up(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 1))
 
