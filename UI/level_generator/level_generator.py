@@ -29,6 +29,7 @@ def draw_maze(window: pygame.Surface,
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
     PLAYER_COLOR = (255, 255, 0)
+    DOT_COLOR = (240, 240, 240)
     WALL_THICKNESS = 2
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -38,6 +39,12 @@ def draw_maze(window: pygame.Surface,
             x = col_idx * CELL_SIZE
             y = row_idx * CELL_SIZE
             cell_value = maze.maze[row_idx][col_idx]
+            occupied = set()
+            if player_coords:
+                occupied.add(player_coords)
+            if ghosts_tuple:
+                for ghost in ghosts_tuple:
+                    occupied.add(ghost.coords)
 
             left = x
             right = min(x + CELL_SIZE - 1, SCREEN_WIDTH - 1)
@@ -85,6 +92,15 @@ def draw_maze(window: pygame.Surface,
                                  top_left,
                                  bottom_left,
                                  WALL_THICKNESS)
+
+            if (col_idx, row_idx) not in occupied and cell_value != 15:
+                center_x = x + CELL_SIZE // 2
+                center_y = y + CELL_SIZE // 2
+                dot_radius = max(2, (CELL_SIZE // 2 - 2) - 10)
+                pygame.draw.circle(window,
+                                   DOT_COLOR,
+                                   (center_x, center_y),
+                                   dot_radius)
 
     if player_coords:
         player_x = player_coords[0] * CELL_SIZE + CELL_SIZE // 2
