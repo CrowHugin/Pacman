@@ -10,10 +10,22 @@ if TYPE_CHECKING:
 
 
 def game_over(window: pygame.Surface,
-              BLACK: tuple[int, int, int],
+              COLOR: tuple[int, int, int],
               font: pygame.font.Font) -> None:
     pygame.display.set_caption("GAME OVER")
-    text_surface = font.render("GAME OVER", True, (255, 0, 0))
+    text_surface = font.render("GAME OVER", True, COLOR)
+    text_rect = text_surface.get_rect(
+       center=(window.get_width() // 2, window.get_height() // 2)
+    )
+    window.blit(text_surface, text_rect)
+
+
+def win_screen(window: pygame.Surface,
+               COLOR: tuple[int, int, int],
+               font: pygame.font.Font,
+               level: int) -> None:
+    pygame.display.set_caption(f"Level - {level}")
+    text_surface = font.render("CONGRATULATION", True, COLOR)
     text_rect = text_surface.get_rect(
        center=(window.get_width() // 2, window.get_height() // 2)
     )
@@ -24,7 +36,7 @@ def draw_maze(window: pygame.Surface,
               maze: "Maze",
               CELL_SIZE: int,
               player_coords: Optional[tuple[int, int]],
-              ghosts_tuple: Optional[tuple["Ghosts", ...]]
+              ghosts_tuple: Optional[tuple["Ghosts", ...]] = None
               ) -> None:
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
@@ -39,12 +51,6 @@ def draw_maze(window: pygame.Surface,
             x = col_idx * CELL_SIZE
             y = row_idx * CELL_SIZE
             cell_value = maze.maze[row_idx][col_idx]
-            occupied = set()
-            if player_coords:
-                occupied.add(player_coords)
-            if ghosts_tuple:
-                for ghost in ghosts_tuple:
-                    occupied.add(ghost.coords)
 
             left = x
             right = min(x + CELL_SIZE - 1, SCREEN_WIDTH - 1)
@@ -93,7 +99,7 @@ def draw_maze(window: pygame.Surface,
                                  bottom_left,
                                  WALL_THICKNESS)
 
-            if (col_idx, row_idx) not in occupied and cell_value != 15:
+            if maze.cases[(col_idx, row_idx)].has_pacgum and cell_value != 15:
                 center_x = x + CELL_SIZE // 2
                 center_y = y + CELL_SIZE // 2
                 dot_radius = max(2, (CELL_SIZE // 2 - 2) - 10)
@@ -106,7 +112,7 @@ def draw_maze(window: pygame.Surface,
         player_x = player_coords[0] * CELL_SIZE + CELL_SIZE // 2
         player_y = player_coords[1] * CELL_SIZE + CELL_SIZE // 2
         # -5 to avoid drawing on walls
-        radius = (CELL_SIZE // 2 - 2) - 5
+        radius = ((CELL_SIZE // 2) - 2) - 5
 
         pygame.draw.circle(window,
                            PLAYER_COLOR,
@@ -124,11 +130,17 @@ def draw_maze(window: pygame.Surface,
                                (x, y),
                                radius)
 
+def check_pacgum(maze: "Maze") -> bool:
+    for case in maze.cases.values():
+        if case.has_pacgum:
+            return False
+    return True
 
 def level_generator(maze: "Maze",
                     player: Optional["Player"],
-                    ghost_tuple: Optional[tuple["Ghosts", ...]]
+                    ghost_tuple: Optional[tuple["Ghosts", ...]] = None
                     ) -> None:
+    WHITE = (255, 255, 255)
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -151,7 +163,7 @@ def level_generator(maze: "Maze",
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if player and ghost_tuple:
+                if player:
                     if event.key == pygame.K_UP:
                         player.move_up(maze)
                     elif event.key == pygame.K_DOWN:
@@ -161,18 +173,24 @@ def level_generator(maze: "Maze",
                     elif event.key == pygame.K_LEFT:
                         player.move_left(maze)
 
-        if ghost_tuple and player:
-            for ghost in ghost_tuple:
-                ghost.movements(maze)
-                if ghost.coords == player.coords:
-                    ghost.eat(player)
+        if player:
+            if maze.cases[(player.coords)].has_pacgum:
+                player.eat()
+                maze.cases[(player.coords)].has_pacgum = False
+            elif ghost_tuple:
+                for ghost in ghost_tuple:
+                    ghost.movements(maze)
+                    if ghost.coords == player.coords:
+                        ghost.eat(player)
         time.sleep(0.1)
 
         window.fill(BLACK)
-        if player and ghost_tuple and maze:
-            if player.nb_lives <= 0:
-                game_over(window, BLACK, font)
-                pygame.QUIT
+        if maze:
+            if check_pacgum(maze):
+                win_screen(window, WHITE, font, 1)
+            elif player and player.nb_lives <= 0:
+                game_over(window, WHITE, font)
+                running = False
             else:
                 player_coords = player.coords if player else None
                 draw_maze(window, maze, CELL_SIZE, player_coords, ghost_tuple)

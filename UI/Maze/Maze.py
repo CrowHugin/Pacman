@@ -6,6 +6,8 @@ class Cell:
         self.x = x
         self.y = y
         self.content = content
+        self.has_pacgum = True
+        self.has_super_pacgum = False
 
 
 class Maze:
