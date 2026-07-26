@@ -143,11 +143,13 @@ def draw_maze(window: pygame.Surface,
                                (x, y),
                                radius)
 
+
 def check_pacgum(maze: "Maze") -> bool:
     for case in maze.cases.values():
         if case.has_pacgum:
             return False
     return True
+
 
 def level_generator(width: int,
                     height: int,
@@ -182,6 +184,7 @@ def level_generator(width: int,
 
     running: bool = True
     while running:
+        current_time = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -209,10 +212,10 @@ def level_generator(width: int,
                 player.super = True
 
             elif ghosts_tuple:
-                current_time = pygame.time.get_ticks()
+                respawn_time = pygame.time.get_ticks()
                 for ghost in ghosts_tuple:
                     if ghost.is_dead:
-                        if current_time - ghost.death_time >= 2000:
+                        if respawn_time - ghost.death_time >= 2000:
                             ghost.is_dead = False
                             ghost.coords = ghost.coords_spawn
                         else:
@@ -227,16 +230,16 @@ def level_generator(width: int,
                             ghost.is_dead = True
                             ghost.death_time = pygame.time.get_ticks()
                             ghost.coords = (-1, -1)
-
+            
         time.sleep(0.1)
 
+        time_limit = 250000 # env variables ?
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
                 win_screen(window, WHITE, font, 1)
-            elif player and player.nb_lives <= 0:
+            elif (player and player.nb_lives <= 0) or (current_time >= time_limit):
                 game_over(window, WHITE, font)
-                running = False
             else:
                 player_coords = player.coords if player else None
                 draw_maze(window, maze, CELL_SIZE, player_coords, ghosts_tuple)
