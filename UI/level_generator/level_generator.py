@@ -1,14 +1,8 @@
 import sys
-import time
 import pygame
+from typing import Optional
 from UI.Maze.Maze import Maze
-from typing import TYPE_CHECKING, Optional
 from Characters.player_and_monsters import Player, Ghosts
-
-
-if TYPE_CHECKING:
-    from UI.Maze.Maze import Maze
-    from Characters.player_and_monsters import Player, Ghosts
 
 
 def game_over(window: pygame.Surface,
@@ -111,7 +105,7 @@ def draw_maze(window: pygame.Surface,
                                    (center_x, center_y),
                                    dot_radius)
 
-            if (maze.cases[(col_idx, row_idx)].has_super_pacgum 
+            if (maze.cases[(col_idx, row_idx)].has_super_pacgum
                     and cell_value != 15):
                 center_x = x + CELL_SIZE // 2
                 center_y = y + CELL_SIZE // 2
@@ -202,6 +196,9 @@ def level_generator(width: int,
                         player.move_left(maze)
 
         if player:
+            if player.super:
+                if current_time - player.super_time >= 3000:
+                    player.super = False
             if maze.cases[(player.coords)].has_pacgum:
                 player.eat(12)
                 maze.cases[(player.coords)].has_pacgum = False
@@ -210,18 +207,21 @@ def level_generator(width: int,
                 player.eat(42)
                 maze.cases[(player.coords)].has_super_pacgum = False
                 player.super = True
+                player.super_time = current_time
 
-            elif ghosts_tuple:
-                respawn_time = pygame.time.get_ticks()
+            if ghosts_tuple:
                 for ghost in ghosts_tuple:
                     if ghost.is_dead:
-                        if respawn_time - ghost.death_time >= 2000:
+                        if current_time - ghost.death_time >= 2000:
                             ghost.is_dead = False
                             ghost.coords = ghost.coords_spawn
                         else:
                             continue
 
-                    ghost.movements(maze)
+                    if (current_time - ghost.last_moves_time
+                            >= ghost.move_delay):
+                        ghost.movements(maze)
+                        ghost.last_moves_time = current_time
                     if ghost.coords == player.coords:
                         if not player.super:
                             ghost.eat(player)
@@ -230,15 +230,14 @@ def level_generator(width: int,
                             ghost.is_dead = True
                             ghost.death_time = pygame.time.get_ticks()
                             ghost.coords = (-1, -1)
-            
-        time.sleep(0.1)
 
-        time_limit = 250000 # env variables ?
+        time_limit = 2000  # env variables ?
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
                 win_screen(window, WHITE, font, 1)
-            elif (player and player.nb_lives <= 0) or (current_time >= time_limit):
+            elif (player and player.nb_lives <= 0) or (current_time >=
+                                                       time_limit):
                 game_over(window, WHITE, font)
             else:
                 player_coords = player.coords if player else None
@@ -246,5 +245,4 @@ def level_generator(width: int,
         pygame.display.flip()
         clock.tick(60)
 
-    pygame.quit()
     sys.exit()
