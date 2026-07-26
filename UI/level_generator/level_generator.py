@@ -1,7 +1,9 @@
 import sys
 import time
 import pygame
+from UI.Maze.Maze import Maze
 from typing import TYPE_CHECKING, Optional
+from Characters.player_and_monsters import Player, Ghosts
 
 
 if TYPE_CHECKING:
@@ -136,10 +138,22 @@ def check_pacgum(maze: "Maze") -> bool:
             return False
     return True
 
-def level_generator(maze: "Maze",
-                    player: Optional["Player"],
-                    ghost_tuple: Optional[tuple["Ghosts", ...]] = None
-                    ) -> None:
+def level_generator(width: int,
+                    height: int,
+                    level_number: int,
+                    seed: int | None = None) -> None:
+    player = Player(((width // 2) - 1, height // 2), 3)
+    red = Ghosts(1, (0, 0), (255, 0, 0))
+    green = Ghosts(1, (0, height - 1), (0, 128, 0))
+    blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
+    pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203))
+    ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
+        red,
+        green,
+        blue,
+        pink
+     )
+    maze = Maze(width, height, seed)
     WHITE = (255, 255, 255)
     CELL_SIZE = 30
     SCREEN_WIDTH = maze.width * CELL_SIZE
@@ -149,7 +163,7 @@ def level_generator(maze: "Maze",
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH,
                                       SCREEN_HEIGHT + (3 * CELL_SIZE)))
-    pygame.display.set_caption("PAC-MAN - LEVEL 1")
+    pygame.display.set_caption(f"PAC-MAN - LEVEL {level_number}")
     pygame.font.init()
     font = pygame.font.SysFont("arial", 48)
 
@@ -177,8 +191,8 @@ def level_generator(maze: "Maze",
             if maze.cases[(player.coords)].has_pacgum:
                 player.eat()
                 maze.cases[(player.coords)].has_pacgum = False
-            elif ghost_tuple:
-                for ghost in ghost_tuple:
+            elif ghosts_tuple:
+                for ghost in ghosts_tuple:
                     ghost.movements(maze)
                     if ghost.coords == player.coords:
                         ghost.eat(player)
@@ -193,7 +207,7 @@ def level_generator(maze: "Maze",
                 running = False
             else:
                 player_coords = player.coords if player else None
-                draw_maze(window, maze, CELL_SIZE, player_coords, ghost_tuple)
+                draw_maze(window, maze, CELL_SIZE, player_coords, ghosts_tuple)
         pygame.display.flip()
         clock.tick(60)
 

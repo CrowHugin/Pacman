@@ -3,7 +3,8 @@ from UI.Maze.Maze import Maze
 from typing import Any
 from UI.level_generator.level_generator import level_generator
 from Characters.player_and_monsters import Player, Ghosts
-# Function to raise an error, will be changed when json parsing is done
+
+
 
 
 def check_value(width: int, height: int, seed: int | None) -> None:

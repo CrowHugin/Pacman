@@ -11,13 +11,13 @@ class Cell:
 
 
 class Maze:
-    def __init__(self, width: int, height: int, seed: int):
+    def __init__(self, width: int, height: int, seed: int | None = None):
         self.width = width
         self.height = height
         if seed:
             generator = MazeGenerator(size=(width, height), seed=seed)
         else:
-            generator = MazeGenerator(size=(width, height), seed=seed)
+            generator = MazeGenerator(size=(width, height))
         self.maze = generator.maze
         self.cases: dict[tuple[int, int], Cell] = {}
 
