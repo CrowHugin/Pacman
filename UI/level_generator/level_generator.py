@@ -200,18 +200,34 @@ def level_generator(width: int,
 
         if player:
             if maze.cases[(player.coords)].has_pacgum:
-                score = 12 # Maybe changed it later with env variable
-                player.eat(score)
+                player.eat(12)
                 maze.cases[(player.coords)].has_pacgum = False
+
             elif maze.cases[(player.coords)].has_super_pacgum:
-                score = 42 # Maybe changed it later with env variable
-                player.eat(score)
+                player.eat(42)
                 maze.cases[(player.coords)].has_super_pacgum = False
+                player.super = True
+
             elif ghosts_tuple:
+                current_time = pygame.time.get_ticks()
                 for ghost in ghosts_tuple:
+                    if ghost.is_dead:
+                        if current_time - ghost.death_time >= 2000:
+                            ghost.is_dead = False
+                            ghost.coords = ghost.coords_spawn
+                        else:
+                            continue
+
                     ghost.movements(maze)
                     if ghost.coords == player.coords:
-                        ghost.eat(player)
+                        if not player.super:
+                            ghost.eat(player)
+                        else:
+                            player.eat(200)
+                            ghost.is_dead = True
+                            ghost.death_time = pygame.time.get_ticks()
+                            ghost.coords = (-1, -1)
+
         time.sleep(0.1)
 
         window.fill(BLACK)

@@ -43,6 +43,7 @@ class Player(Mobs):
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
         self.score = 0
+        self.super = False
 
     def eat(self, score: int) -> None:
         self.score += score
@@ -56,6 +57,8 @@ class Ghosts(Mobs):
         super().__init__(coords_spawn)
         self.speed = speed
         self.color = color
+        self.is_dead: bool = False
+        self.death_time: int = 0
 
     def movements(self, maze: "Maze") -> None:
         directions = [self.move_up,
