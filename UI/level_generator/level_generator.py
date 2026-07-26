@@ -44,6 +44,7 @@ def draw_maze(window: pygame.Surface,
     WALL_COLOR = (33, 33, 255)
     PLAYER_COLOR = (255, 255, 0)
     DOT_COLOR = (240, 240, 240)
+    SUPER_DOT_COLOR = (255, 165, 0)
     WALL_THICKNESS = 2
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
@@ -107,6 +108,16 @@ def draw_maze(window: pygame.Surface,
                 dot_radius = CELL_SIZE // 2 - 10
                 pygame.draw.circle(window,
                                    DOT_COLOR,
+                                   (center_x, center_y),
+                                   dot_radius)
+
+            if (maze.cases[(col_idx, row_idx)].has_super_pacgum 
+                    and cell_value != 15):
+                center_x = x + CELL_SIZE // 2
+                center_y = y + CELL_SIZE // 2
+                dot_radius = CELL_SIZE // 2 - 10
+                pygame.draw.circle(window,
+                                   SUPER_DOT_COLOR,
                                    (center_x, center_y),
                                    dot_radius)
 
@@ -189,8 +200,13 @@ def level_generator(width: int,
 
         if player:
             if maze.cases[(player.coords)].has_pacgum:
-                player.eat()
+                score = 12 # Maybe changed it later with env variable
+                player.eat(score)
                 maze.cases[(player.coords)].has_pacgum = False
+            elif maze.cases[(player.coords)].has_super_pacgum:
+                score = 42 # Maybe changed it later with env variable
+                player.eat(score)
+                maze.cases[(player.coords)].has_super_pacgum = False
             elif ghosts_tuple:
                 for ghost in ghosts_tuple:
                     ghost.movements(maze)

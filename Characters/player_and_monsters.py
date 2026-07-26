@@ -44,12 +44,8 @@ class Player(Mobs):
         self.nb_lives = nb_lives
         self.score = 0
 
-    def eat(self) -> None:
-        self.score += 42
-
-        # if self.coords == target.coords:
-        #     disable target visibility
-        # target is pacgum or super pacgum
+    def eat(self, score: int) -> None:
+        self.score += score
 
 
 class Ghosts(Mobs):

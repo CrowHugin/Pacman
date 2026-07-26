@@ -1,3 +1,4 @@
+import random
 from mazegenerator import MazeGenerator
 
 
@@ -26,3 +27,10 @@ class Maze:
                 self.cases[(idx_col, idx_row)] = Cell(idx_col,
                                                       idx_row,
                                                       item)
+        x = 4
+        super_pacgum_list: list[tuple[int, int]] = random.sample(
+            list(self.cases.keys()), x
+        )
+        for items in super_pacgum_list:
+            self.cases[(items)].has_pacgum = False
+            self.cases[(items)].has_super_pacgum = True
