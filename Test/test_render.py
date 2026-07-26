@@ -1,7 +1,7 @@
 import pygame
 import unittest
 from unittest.mock import MagicMock
-from UI.level_1.level_1 import draw_maze
+from UI.level_generator.level_generator import draw_maze
 
 
 class TestMazeRender(unittest.TestCase):

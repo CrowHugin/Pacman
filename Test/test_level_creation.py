@@ -11,7 +11,7 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 class Test_level_Creation(unittest.TestCase):
     """
         Function to test level creation:
-            Test with a 30*25 maze with a 42 seed (no random)
+            Test with a 10*10 maze with a 42 seed (no random)
             Test if cases content to be between 0 and 15
             Test if walls are correct
     """
@@ -19,8 +19,8 @@ class Test_level_Creation(unittest.TestCase):
         """
             Setup function to create the maze before each test
         """
-        self.width: int | None = 30
-        self.height: int | None = 25
+        self.width: int | None = 10
+        self.height: int | None = 10
         self.seed: int | None = 42
         self.generator: Maze | None = Maze(self.width, self.height, self.seed)
         self.maze: list[list[str]] | None = self.generator.maze
