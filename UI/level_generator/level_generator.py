@@ -102,7 +102,7 @@ def draw_maze(window: pygame.Surface,
             if maze.cases[(col_idx, row_idx)].has_pacgum and cell_value != 15:
                 center_x = x + CELL_SIZE // 2
                 center_y = y + CELL_SIZE // 2
-                dot_radius = max(2, (CELL_SIZE // 2 - 2) - 10)
+                dot_radius = CELL_SIZE // 2 - 10
                 pygame.draw.circle(window,
                                    DOT_COLOR,
                                    (center_x, center_y),
