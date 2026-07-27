@@ -1,0 +1,72 @@
+import time
+import random
+from typing import Any
+from UI.Maze.Maze import Maze
+from abc import ABC, abstractmethod
+
+
+class Mobs(ABC):
+    def __init__(self,
+                 coords_spawn: tuple[int, int]) -> None:
+        self.coords_spawn = coords_spawn
+        self.coords = self.coords_spawn
+
+    def move_up(self, maze: "Maze") -> None:
+        x, y = self.coords
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 1:
+            self.coords = (x, y - 1)
+
+    def move_right(self, maze: "Maze") -> None:
+        x, y = self.coords
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 2:
+            self.coords = (x + 1, y)
+
+    def move_down(self, maze: "Maze") -> None:
+        x, y = self.coords
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 4:
+            self.coords = (x, y + 1)
+
+    def move_left(self, maze: "Maze") -> None:
+        x, y = self.coords
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 8:
+            self.coords = (x - 1, y)
+
+    @abstractmethod
+    def eat(self, target: Any) -> None:
+        pass
+
+
+class Player(Mobs):
+    def __init__(self,
+                 coords_spawn: tuple[int, int],
+                 nb_lives: int = 3) -> None:
+        super().__init__(coords_spawn)
+        self.nb_lives = nb_lives
+
+    def eat(self, target: Any) -> None:
+        # if self.coords == target.coords:
+        #     disable target visibility
+        # target is pacgum or super pacgum
+        pass
+
+
+class Ghosts(Mobs):
+    def __init__(self,
+                 speed: float,
+                 coords_spawn: tuple[int, int],
+                 color: tuple[int, int, int]) -> None:
+        super().__init__(coords_spawn)
+        self.speed = speed
+        self.color = color
+
+    def movements(self, maze: "Maze") -> None:
+        directions = [self.move_up,
+                      self.move_down,
+                      self.move_left,
+                      self.move_right]
+        random.choice(directions)(maze)
+
+    def eat(self, target: Player) -> None:
+        time.sleep(0.2)
+        target.nb_lives -= 1
+        target.coords = target.coords_spawn
