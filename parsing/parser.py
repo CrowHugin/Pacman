@@ -29,7 +29,7 @@ DEFAULT_MAZE_CONFIG: Dict[str, Any] = {
 }
 
 
-def json_with_comment(file: str) -> Dict[str, Any]:
+def load_json_remove_comments(file: str) -> Dict[str, Any]:
     """Parse the Json file"""
     json_stripped = []
     try:
@@ -41,6 +41,7 @@ def json_with_comment(file: str) -> Dict[str, Any]:
         content = "".join(json_stripped)
         if not content:
             return {}
+        # Removes commas before brackets or braces
         content = re.sub(r",\s*([\]}])", r"\1", content)
         try:
             res: Dict[str, Any] = json.loads(content)
@@ -79,12 +80,13 @@ def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
 
 
 def validate_int_field(field: str, json_data: Dict[str, Any],
-                       def_val: int, min_val: int) -> int:
+                       def_val: int,
+                       min_val: int | None = None) -> int:
     """For every int field, check if we have valide value"""
     if field in json_data:
         val = json_data.get(field)
         if isinstance(val, int) and not isinstance(val, bool):
-            if val > min_val:
+            if min_val is None or val >= min_val:
                 return val
         logging.warning(f"Invalid value for {field}, default value used")
     else:
@@ -92,33 +94,36 @@ def validate_int_field(field: str, json_data: Dict[str, Any],
     return def_val
 
 
-def validate_json(file: str) -> dict[str, Any]:
-    """Validate config fields"""
+def load_game_config(file: str) -> dict[str, Any]:
+    """Load and validate the game configuration file
+    
+    Applies default values for missing or invalid fields
+    """
     config = copy.deepcopy(DEFAULT_MAZE_CONFIG)
-    json_data = json_with_comment(file)
+    json_data = load_json_remove_comments(file)
     config["lives"] = validate_int_field(
-        "lives", json_data, config["lives"], 2)
+        "lives", json_data, config["lives"], 1)
 
     config["pacgum"] = validate_int_field(
-        "pacgum", json_data, config["pacgum"], 0)
+        "pacgum", json_data, config["pacgum"], 1)
     config["points_per_pacgum"] = validate_int_field(
         "points_per_pacgum",
-        json_data, config["points_per_pacgum"], 0)
+        json_data, config["points_per_pacgum"], 1)
     config["points_per_super_pacgum"] = validate_int_field(
         "points_per_super_pacgum",
-        json_data, config["points_per_super_pacgum"], 0)
+        json_data, config["points_per_super_pacgum"], 1)
 
     config["points_per_ghost"] = validate_int_field(
-        "points_per_ghost", json_data, config["points_per_ghost"], 0)
+        "points_per_ghost", json_data, config["points_per_ghost"], 1)
 
     config["seed"] = validate_int_field(
-        "seed", json_data, config["seed"], -1)
+        "seed", json_data, config["seed"], None)
 
     config["level_max_time"] = validate_int_field(
-        "level_max_time", json_data, config["level_max_time"], 59)
+        "level_max_time", json_data, config["level_max_time"], 60)
 
     config["number_level"] = validate_int_field(
-        "number_level", json_data, config["number_level"], 9)
+        "number_level", json_data, config["number_level"], 10)
 
     if "highscore_filename" in json_data:
         score_filename = json_data["highscore_filename"]

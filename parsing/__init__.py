@@ -1,3 +1,3 @@
-from .parser import validate_json
+from .parser import load_game_config
 
-__all__ = ["validate_json"]
+__all__ = ["load_game_config"]

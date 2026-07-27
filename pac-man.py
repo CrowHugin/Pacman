@@ -1,4 +1,4 @@
-from parsing import validate_json
+from parsing import load_game_config
 from UI.Maze.Maze import Maze
 from UI.level_1.level_1 import run_level_1
 from typing import Any
@@ -40,5 +40,5 @@ def run(config: dict[str, Any]) -> None:
 
 
 if __name__ == '__main__':
-    config = validate_json("config.json")
-    run(config=config)
+    load_game_config("config.json")
+    # run(config=load_game_config("config.json"))
