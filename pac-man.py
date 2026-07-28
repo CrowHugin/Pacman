@@ -3,8 +3,6 @@ from UI.Maze.Maze import Maze
 from UI.level_1.level_1 import run_level_1
 from typing import Any
 from Characters.player_and_monsters import Player, Ghosts
-
-from typing import Any
 # Function to raise an error, will be changed when json parsing is done
 
 
@@ -32,7 +30,7 @@ def run(config: dict[str, Any]) -> None:
             green,
             blue,
             pink
-         )
+        )
         maze = Maze(width, height, seed)
         run_level_1(maze, player, ghosts_tuple)
     except ValueError as e:

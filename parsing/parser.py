@@ -96,7 +96,6 @@ def validate_int_field(field: str, json_data: Dict[str, Any],
 
 def load_game_config(file: str) -> dict[str, Any]:
     """Load and validate the game configuration file
-    
     Applies default values for missing or invalid fields
     """
     config = copy.deepcopy(DEFAULT_MAZE_CONFIG)
