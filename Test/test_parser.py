@@ -1,5 +1,4 @@
 import unittest
-# import unittest.mock
 from unittest.mock import mock_open, patch
 from parsing.parser import (
     load_json_remove_comments,
@@ -10,13 +9,15 @@ from parsing.parser import (
 
 
 class TestConfigParser(unittest.TestCase):
-    mock_json_content = """
-        {
-            # Commentaire sur les pacgums
-            "pacgum": 42,
-            "lives": 3
-        }
-    """
+    def setUp(self) -> None:
+        self.mock_filename = "fake_config.json"
+        self.mock_json_content = """
+            {
+                # Commentaire sur les pacgums
+                "pacgum": 42,
+                "lives": 3
+            }
+        """
 
     def test_load_json_remove_comments_valid(self) -> None:
         """Test parsing with a mock JSON file"""
@@ -25,9 +26,9 @@ class TestConfigParser(unittest.TestCase):
             new=mock_open(read_data=self.mock_json_content),
             create=True
         ) as file_mock:
-            self.assertEqual(
-                load_json_remove_comments(file_mock),
-                {"pacgum": 42, "lives": 3})
+            mock_result = load_json_remove_comments(file_mock)
+            self.assertEqual(mock_result, {
+                             "pacgum": 42, "lives": 3})
 
     def test_file_not_found(self) -> None:
         """Test if file not found, an empty dict is returned"""
@@ -36,17 +37,17 @@ class TestConfigParser(unittest.TestCase):
 
     def test_level_size_valid(self) -> None:
         """Test validation a correct level size"""
-        w, h, f = validate_level_size({"width": 10, "height": 10})
-        self.assertEqual(w, 10)
-        self.assertEqual(h, 10)
-        self.assertFalse(f)
+        width, height, flag = validate_level_size({"width": 10, "height": 10})
+        self.assertEqual(width, 10)
+        self.assertEqual(height, 10)
+        self.assertFalse(flag)
 
     def test_level_size_invalid(self) -> None:
         """Test for invalid value, the default value is returned"""
-        w, h, f = validate_level_size({"width": 9, "height": 10})
-        self.assertEqual(w, 15)
-        self.assertEqual(h, 10)
-        self.assertTrue(f)
+        width, height, flag = validate_level_size({"width": 9, "height": 10})
+        self.assertEqual(width, 15)
+        self.assertEqual(height, 10)
+        self.assertTrue(flag)
 
     def test_int_field_valid(self) -> None:
         """Test a valid integer field"""
