@@ -31,8 +31,10 @@ def win_screen(window: pygame.Surface,
 def draw_maze(window: pygame.Surface,
               maze: "Maze",
               CELL_SIZE: int,
-              player_coords: Optional[tuple[int, int]],
-              ghosts_tuple: Optional[tuple["Ghosts", ...]] = None
+              player: Player,
+              level: int,
+              time: int,
+              ghosts_tuple: Optional[tuple["Ghosts", ...]] = None,
               ) -> None:
     WHITE = (255, 255, 255)
     WALL_COLOR = (33, 33, 255)
@@ -115,9 +117,35 @@ def draw_maze(window: pygame.Surface,
                                    (center_x, center_y),
                                    dot_radius)
 
-    if player_coords:
-        player_x = player_coords[0] * CELL_SIZE + CELL_SIZE // 2
-        player_y = player_coords[1] * CELL_SIZE + CELL_SIZE // 2
+    font_info = pygame.font.SysFont("arial", 30)
+
+    text_surface = font_info.render(f"Lives: {player.nb_lives}", True, WHITE)
+    text_rect = text_surface.get_rect(
+       bottomleft=(15, SCREEN_HEIGHT + (1 * CELL_SIZE) + 10)
+    )
+    window.blit(text_surface, text_rect)
+
+    text_surface = font_info.render(f"Score: {player.score}", True, WHITE)
+    text_rect = text_surface.get_rect(
+       bottomleft=(15, SCREEN_HEIGHT + (3 * CELL_SIZE))
+    )
+    window.blit(text_surface, text_rect)
+
+    text_surface = font_info.render(f"Current level: {level}", True, WHITE)
+    text_rect = text_surface.get_rect(
+       bottomright=(SCREEN_WIDTH - 30, SCREEN_HEIGHT + (3 * CELL_SIZE))
+    )
+    window.blit(text_surface, text_rect)
+
+    text_surface = font_info.render(f"Time left: {time // 1000} s", True, WHITE)
+    text_rect = text_surface.get_rect(
+       bottomright=(SCREEN_WIDTH - 30, SCREEN_HEIGHT + CELL_SIZE + 10)
+    )
+    window.blit(text_surface, text_rect)
+
+    if player.coords:
+        player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2
+        player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2
         # -5 to avoid drawing on walls
         radius = ((CELL_SIZE // 2) - 2) - 5
 
@@ -238,12 +266,18 @@ def level_generator(width: int,
         if maze:
             if check_pacgum(maze):
                 win_screen(window, WHITE, font, 1)
-            elif (player and player.nb_lives <= 0) or (current_time >=
-                                                       time_limit):
+            elif (player and player.nb_lives <= 0) or (time_limit -
+                                                       current_time <= 0):
                 game_over(window, WHITE, font)
             else:
-                player_coords = player.coords if player else None
-                draw_maze(window, maze, CELL_SIZE, player_coords, ghosts_tuple)
+                player_ = player if player else None
+                draw_maze(window,
+                          maze,
+                          CELL_SIZE,
+                          player_,
+                          level_number,
+                          time_limit - current_time,
+                          ghosts_tuple)
         pygame.display.flip()
         clock.tick(60)
 

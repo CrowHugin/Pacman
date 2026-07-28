@@ -42,7 +42,7 @@ class Player(Mobs):
                  nb_lives: int = 3) -> None:
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
-        self.score = 0
+        self.score = -20
         self.super: bool = False
         self.super_time: int = 0
 
