@@ -28,10 +28,38 @@ def win_screen(window: pygame.Surface,
     window.blit(text_surface, text_rect)
 
 
+def infos_screen_left(window: pygame.Surface,
+                      font_info: pygame.font.Font,
+                      player: Player,
+                      color: tuple[int, int, int],
+                      size: tuple[int, int],
+                      msg: str,
+                      ) -> None:
+    text_surface = font_info.render(msg, True, color)
+    text_rect = text_surface.get_rect(
+       bottomleft=size
+    )
+    window.blit(text_surface, text_rect)
+
+
+def infos_screen_rigth(window: pygame.Surface,
+                       font_info: pygame.font.Font,
+                       player: Player,
+                       color: tuple[int, int, int],
+                       size: tuple[int, int],
+                       msg: str,
+                       ) -> None:
+    text_surface = font_info.render(msg, True, color)
+    text_rect = text_surface.get_rect(
+       bottomright=size
+    )
+    window.blit(text_surface, text_rect)
+
+
 def draw_maze(window: pygame.Surface,
               maze: "Maze",
               CELL_SIZE: int,
-              player: Player,
+              player: Optional["Player"],
               level: int,
               time: int,
               ghosts_tuple: Optional[tuple["Ghosts", ...]] = None,
@@ -117,42 +145,49 @@ def draw_maze(window: pygame.Surface,
                                    (center_x, center_y),
                                    dot_radius)
 
-    font_info = pygame.font.SysFont("arial", 30)
+    if player:
+        font_info = pygame.font.SysFont("arial", 30)
+        infos_screen_left(window,
+                          font_info,
+                          player,
+                          WHITE,
+                          (15, SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
+                          f"Lives: {player.nb_lives}")
 
-    text_surface = font_info.render(f"Lives: {player.nb_lives}", True, WHITE)
-    text_rect = text_surface.get_rect(
-       bottomleft=(15, SCREEN_HEIGHT + (1 * CELL_SIZE) + 10)
-    )
-    window.blit(text_surface, text_rect)
+        infos_screen_left(window,
+                          font_info,
+                          player,
+                          WHITE,
+                          (15, SCREEN_HEIGHT + (3 * CELL_SIZE)),
+                          f"Score: {player.score}")
 
-    text_surface = font_info.render(f"Score: {player.score}", True, WHITE)
-    text_rect = text_surface.get_rect(
-       bottomleft=(15, SCREEN_HEIGHT + (3 * CELL_SIZE))
-    )
-    window.blit(text_surface, text_rect)
+        infos_screen_rigth(window,
+                           font_info,
+                           player,
+                           WHITE,
+                           (SCREEN_WIDTH - 30,
+                            SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
+                           f"Current level: {level}",
+                           )
 
-    text_surface = font_info.render(f"Current level: {level}", True, WHITE)
-    text_rect = text_surface.get_rect(
-       bottomright=(SCREEN_WIDTH - 30, SCREEN_HEIGHT + (3 * CELL_SIZE))
-    )
-    window.blit(text_surface, text_rect)
+        infos_screen_rigth(window,
+                           font_info,
+                           player,
+                           WHITE,
+                           (SCREEN_WIDTH - 30, SCREEN_HEIGHT + (3 * CELL_SIZE)),
+                           f"Time left: {time // 1000} s",
+                           )
 
-    text_surface = font_info.render(f"Time left: {time // 1000} s", True, WHITE)
-    text_rect = text_surface.get_rect(
-       bottomright=(SCREEN_WIDTH - 30, SCREEN_HEIGHT + CELL_SIZE + 10)
-    )
-    window.blit(text_surface, text_rect)
+        if player.coords:
+            player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2
+            player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2
+            # -5 to avoid drawing on walls
+            radius = ((CELL_SIZE // 2) - 2) - 5
 
-    if player.coords:
-        player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2
-        player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2
-        # -5 to avoid drawing on walls
-        radius = ((CELL_SIZE // 2) - 2) - 5
-
-        pygame.draw.circle(window,
-                           PLAYER_COLOR,
-                           (player_x, player_y),
-                           radius)
+            pygame.draw.circle(window,
+                               PLAYER_COLOR,
+                               (player_x, player_y),
+                               radius)
 
     if ghosts_tuple:
         for ghost in ghosts_tuple:
@@ -270,11 +305,10 @@ def level_generator(width: int,
                                                        current_time <= 0):
                 game_over(window, WHITE, font)
             else:
-                player_ = player if player else None
                 draw_maze(window,
                           maze,
                           CELL_SIZE,
-                          player_,
+                          player,
                           level_number,
                           time_limit - current_time,
                           ghosts_tuple)
