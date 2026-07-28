@@ -25,8 +25,8 @@ class TestConfigParser(unittest.TestCase):
             'builtins.open',
             new=mock_open(read_data=self.mock_json_content),
             create=True
-        ) as file_mock:
-            mock_result = load_json_remove_comments(file_mock)
+        ):
+            mock_result = load_json_remove_comments(self.mock_filename)
             self.assertEqual(mock_result, {
                              "pacgum": 42, "lives": 3})
 
