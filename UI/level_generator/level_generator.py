@@ -148,8 +148,10 @@ def check_pacgum(maze: "Maze") -> bool:
 def level_generator(width: int,
                     height: int,
                     level_number: int,
-                    seed: int | None = None) -> None:
-    player = Player(((width // 2) - 1, height // 2), 3)
+                    infos: tuple[int, int,  int, int, int],
+                    seed: int | None = None,
+                    ) -> None:
+    player = Player(((width // 2) - 1, height // 2), infos[0])
     red = Ghosts(1, (0, 0), (255, 0, 0))
     green = Ghosts(1, (0, height - 1), (0, 128, 0))
     blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
@@ -200,11 +202,11 @@ def level_generator(width: int,
                 if current_time - player.super_time >= 3000:
                     player.super = False
             if maze.cases[(player.coords)].has_pacgum:
-                player.eat(12)
+                player.eat(infos[1])
                 maze.cases[(player.coords)].has_pacgum = False
 
             elif maze.cases[(player.coords)].has_super_pacgum:
-                player.eat(42)
+                player.eat(infos[2])
                 maze.cases[(player.coords)].has_super_pacgum = False
                 player.super = True
                 player.super_time = current_time
@@ -226,12 +228,12 @@ def level_generator(width: int,
                         if not player.super:
                             ghost.eat(player)
                         else:
-                            player.eat(200)
+                            player.eat(3)
                             ghost.is_dead = True
                             ghost.death_time = pygame.time.get_ticks()
                             ghost.coords = (-1, -1)
 
-        time_limit = 2000  # env variables ?
+        time_limit = infos[4] * 1000
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):

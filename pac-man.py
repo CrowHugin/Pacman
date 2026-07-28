@@ -11,13 +11,19 @@ def check_value(width: int, height: int, seed: int | None) -> None:
 
 
 def run(config: dict[str, Any]) -> None:
-    level = config["level_size"][0]
+    level_nb: int = 0
+    level = config["level_size"][level_nb]
     width = level['width']
     height = level['height']
     seed: int = config["seed"]
+    infos: tuple[int, int, int, int, int] = (config["lives"],
+                                             config["points_per_pacgum"],
+                                             config["points_per_super_pacgum"],
+                                             config["points_per_ghost"],
+                                             config["level_max_time"])
     try:
         check_value(width, height, seed)
-        level_generator(width, height, 0, seed)
+        level_generator(width, height, 0, infos, seed)
     except ValueError as e:
         print(e)
 
