@@ -1,10 +1,6 @@
 from parsing import load_game_config
-from UI.Maze.Maze import Maze
 from typing import Any
 from UI.level_generator.level_generator import level_generator
-from Characters.player_and_monsters import Player, Ghosts
-
-
 
 
 def check_value(width: int, height: int, seed: int | None) -> None:
@@ -21,19 +17,7 @@ def run(config: dict[str, Any]) -> None:
     seed: int = config["seed"]
     try:
         check_value(width, height, seed)
-        player = Player(((width // 2) - 1, height // 2), 3)
-        red = Ghosts(1, (0, 0), (255, 0, 0))
-        green = Ghosts(1, (0, height - 1), (0, 128, 0))
-        blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
-        pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203))
-        ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
-            red,
-            green,
-            blue,
-            pink
-        )
-        maze = Maze(width, height, seed)
-        level_generator(maze, player, ghosts_tuple)
+        level_generator(width, height, 0, seed)
     except ValueError as e:
         print(e)
 
