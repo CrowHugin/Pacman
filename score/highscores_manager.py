@@ -42,7 +42,7 @@ def set_highscore(filename: str, new_highscore: tuple[str, int]) -> None:
         new_highscore_list[name] = score
 
     with open(filename, "w", encoding="utf-8") as file:
-        file.write(json.dumps(new_highscore_list,indent=4))
+        file.write(json.dumps(new_highscore_list, indent=4))
 
 
 set_highscore("score.json", ("axel", 7))
