@@ -39,4 +39,4 @@ def run(config: dict[str, Any]) -> None:
 
 if __name__ == '__main__':
     load_game_config("config.json")
-    # run(config=load_game_config("config.json"))
+    run(config=load_game_config("config.json"))
