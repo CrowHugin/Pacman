@@ -27,7 +27,23 @@ class TestMazeRender(unittest.TestCase):
 
         self.surface.fill((0, 0, 0))
 
-        draw_maze(self.surface, mock_maze, self.cell_size, None, None)
+        draw_maze(self.surface, mock_maze, self.cell_size, None, 0, 1, None)
+
+        pixel_color = self.surface.get_at((10, 0))[:3]
+        self.assertEqual(pixel_color, (33, 33, 255))
+
+    def test_pacgum(self) -> None:
+        """
+            Function to test if the draw maze function does work
+        """
+        mock_maze = MagicMock()
+        mock_maze.width = 4
+        mock_maze.height = 4
+        mock_maze.maze = [[1]]
+
+        self.surface.fill((0, 0, 0))
+
+        draw_maze(self.surface, mock_maze, self.cell_size, None, 0, 1, None)
 
         pixel_color = self.surface.get_at((10, 0))[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
