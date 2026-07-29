@@ -1,4 +1,3 @@
-import time
 import random
 from typing import Any
 from UI.Maze.Maze import Maze
@@ -71,6 +70,5 @@ class Ghosts(Mobs):
         random.choice(directions)(maze)
 
     def eat(self, target: Player) -> None:
-        time.sleep(0.2)
         target.nb_lives -= 1
         target.coords = target.coords_spawn
