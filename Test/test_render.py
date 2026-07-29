@@ -27,23 +27,75 @@ class TestMazeRender(unittest.TestCase):
 
         self.surface.fill((0, 0, 0))
 
-        draw_maze(self.surface, mock_maze, self.cell_size, None, 0, 1, None)
+        mock_font = MagicMock()
+        draw_maze(self.surface,
+                  mock_maze,
+                  self.cell_size,
+                  None,
+                  1,
+                  mock_font,
+                  1000,
+                  None)
 
         pixel_color = self.surface.get_at((10, 0))[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
 
     def test_pacgum(self) -> None:
         """
-            Function to test if the draw maze function does work
+            Function to test if pacgums are drawn correctly
         """
         mock_maze = MagicMock()
-        mock_maze.width = 4
-        mock_maze.height = 4
-        mock_maze.maze = [[1]]
+        mock_maze.width = 1
+        mock_maze.height = 1
+        mock_maze.maze = [[0]]
+
+        mock_case = MagicMock()
+        mock_case.has_pacgum = True
+        mock_case.has_super_pacgum = False
+        mock_maze.cases = {(0, 0): mock_case}
+
+        mock_font = MagicMock()
 
         self.surface.fill((0, 0, 0))
 
-        draw_maze(self.surface, mock_maze, self.cell_size, None, 0, 1, None)
+        draw_maze(self.surface,
+                  mock_maze,
+                  self.cell_size,
+                  None,
+                  1,
+                  mock_font,
+                  1000,
+                  None)
 
-        pixel_color = self.surface.get_at((10, 0))[:3]
-        self.assertEqual(pixel_color, (33, 33, 255))
+        pixel_color = self.surface.get_at((10, 10))[:3]
+        self.assertEqual(pixel_color, (240, 240, 240))
+
+    def test_super_pacgum(self) -> None:
+        """
+            Function to test if super pacgums are drawn correctly
+        """
+        mock_maze = MagicMock()
+        mock_maze.width = 1
+        mock_maze.height = 1
+        mock_maze.maze = [[0]]
+
+        mock_case = MagicMock()
+        mock_case.has_pacgum = False
+        mock_case.has_super_pacgum = True
+        mock_maze.cases = {(0, 0): mock_case}
+
+        mock_font = MagicMock()
+
+        self.surface.fill((0, 0, 0))
+
+        draw_maze(self.surface,
+                  mock_maze,
+                  self.cell_size,
+                  None,
+                  1,
+                  mock_font,
+                  1000,
+                  None)
+
+        pixel_color = self.surface.get_at((10, 10))[:3]
+        self.assertEqual(pixel_color, (255, 165, 0))
