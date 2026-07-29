@@ -42,7 +42,7 @@ def infos_screen_left(window: pygame.Surface,
     window.blit(text_surface, text_rect)
 
 
-def infos_screen_rigth(window: pygame.Surface,
+def infos_screen_right(window: pygame.Surface,
                        font_info: pygame.font.Font,
                        player: Player,
                        color: tuple[int, int, int],
@@ -61,6 +61,7 @@ def draw_maze(window: pygame.Surface,
               CELL_SIZE: int,
               player: Optional["Player"],
               level: int,
+              font_info: pygame.font.Font,
               time: int,
               ghosts_tuple: Optional[tuple["Ghosts", ...]] = None,
               ) -> None:
@@ -129,7 +130,7 @@ def draw_maze(window: pygame.Surface,
             if maze.cases[(col_idx, row_idx)].has_pacgum and cell_value != 15:
                 center_x = x + CELL_SIZE // 2
                 center_y = y + CELL_SIZE // 2
-                dot_radius = CELL_SIZE // 2 - 10
+                dot_radius = CELL_SIZE // 6
                 pygame.draw.circle(window,
                                    DOT_COLOR,
                                    (center_x, center_y),
@@ -139,14 +140,13 @@ def draw_maze(window: pygame.Surface,
                     and cell_value != 15):
                 center_x = x + CELL_SIZE // 2
                 center_y = y + CELL_SIZE // 2
-                dot_radius = CELL_SIZE // 2 - 10
+                dot_radius = CELL_SIZE // 6
                 pygame.draw.circle(window,
                                    SUPER_DOT_COLOR,
                                    (center_x, center_y),
                                    dot_radius)
 
     if player:
-        font_info = pygame.font.SysFont("arial", 30)
         infos_screen_left(window,
                           font_info,
                           player,
@@ -161,7 +161,7 @@ def draw_maze(window: pygame.Surface,
                           (15, SCREEN_HEIGHT + (3 * CELL_SIZE)),
                           f"Score: {player.score}")
 
-        infos_screen_rigth(window,
+        infos_screen_right(window,
                            font_info,
                            player,
                            WHITE,
@@ -170,11 +170,12 @@ def draw_maze(window: pygame.Surface,
                            f"Current level: {level}",
                            )
 
-        infos_screen_rigth(window,
+        infos_screen_right(window,
                            font_info,
                            player,
                            WHITE,
-                           (SCREEN_WIDTH - 30, SCREEN_HEIGHT + (3 * CELL_SIZE)),
+                           (SCREEN_WIDTH - 30,
+                            SCREEN_HEIGHT + (3 * CELL_SIZE)),
                            f"Time left: {time // 1000} s",
                            )
 
@@ -238,6 +239,7 @@ def level_generator(width: int,
     pygame.display.set_caption(f"PAC-MAN - LEVEL {level_number}")
     pygame.font.init()
     font = pygame.font.SysFont("arial", 48)
+    font_info = pygame.font.SysFont("arial", 30)
 
     clock = pygame.time.Clock()
 
@@ -310,6 +312,7 @@ def level_generator(width: int,
                           CELL_SIZE,
                           player,
                           level_number,
+                          font_info,
                           time_limit - current_time,
                           ghosts_tuple)
         pygame.display.flip()
