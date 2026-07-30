@@ -42,6 +42,12 @@ def game_over(window: pygame.Surface,
                             color = default_color
                     else:
                         color = color_limit_reached
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if text_rect_main_menu.collidepoint(event.pos):
+                        print('Button pressed.')
+                    elif text_rect_new_game.collidepoint(event.pos):
+                        print('new game.')
 
         window.fill(BLACK)
 
@@ -59,7 +65,7 @@ def game_over(window: pygame.Surface,
 
         text_nickname = font.render("Enter Nickname", True, (255, 255, 255))
         text_rect_nickname = text_nickname.get_rect(
-            center=(center_x, window.get_height() // 2))
+            center=(center_x, window.get_height() // 2.5))
         window.blit(text_nickname, text_rect_nickname)
 
         # Draw input box
@@ -70,6 +76,22 @@ def game_over(window: pygame.Surface,
         # Draw the input letters
         txt_surface = font.render(text, True, (255, 255, 255))
         window.blit(txt_surface, (input_box.x + 10, input_box.y + 5))
+
+        text_instruction = font.render(
+            "Press enter to save", True, (255, 255, 255))
+        text_rect_instruction = text_instruction.get_rect(
+            center=(center_x, window.get_height() // 1.8))
+        window.blit(text_instruction, text_rect_instruction)
+
+        text_main_menu = font.render("Main menu", True, (255, 255, 255))
+        text_rect_main_menu = text_main_menu.get_rect(
+            center=(center_x - 200, window.get_height() // 1.5))
+        window.blit(text_main_menu, text_rect_main_menu)
+
+        text_new_game = font.render("New game", True, (255, 255, 255))
+        text_rect_new_game = text_new_game.get_rect(
+            center=(center_x + 200, window.get_height() // 1.5))
+        window.blit(text_new_game, text_rect_new_game)
 
         pygame.display.flip()
         clock.tick(30)
