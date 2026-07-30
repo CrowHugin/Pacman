@@ -1,7 +1,7 @@
 import os
 import pygame
 import unittest
-from UI.level_generator.level_generator import game_over
+from UI.game_over_visual import game_over
 from unittest.mock import MagicMock
 
 

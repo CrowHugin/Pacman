@@ -4,7 +4,9 @@ import pygame
 
 def game_over(window: pygame.Surface,
               BLACK: tuple[int, int, int],
-              font: pygame.font.Font) -> None:
+              font: pygame.font.Font,
+              highscore_file: str,
+              score: int) -> None:
     pygame.display.set_caption("GAME OVER")
 
     center_x = window.get_width() // 2
@@ -20,6 +22,14 @@ def game_over(window: pygame.Surface,
     text = 'Joe'
     done = False
 
+    text_main_menu = font.render("Main menu", True, (255, 255, 255))
+    text_rect_main_menu = text_main_menu.get_rect(
+        center=(center_x - 200, window.get_height() // 1.5))
+
+    text_new_game = font.render("New game", True, (255, 255, 255))
+    text_rect_new_game = text_new_game.get_rect(
+        center=(center_x + 200, window.get_height() // 1.5))
+
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -30,7 +40,7 @@ def game_over(window: pygame.Surface,
                 elif event.key == pygame.K_RETURN:
                     # Recuperer le filename et le score
                     # Ne pas quitter mais revenir au menu principal
-                    set_highscore("score.json", [text, 20])
+                    set_highscore(highscore_file, (text, score))
                     done = True
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
@@ -56,7 +66,6 @@ def game_over(window: pygame.Surface,
             center=(center_x, window.get_height() // 6))
         window.blit(text_surface, text_rect)
 
-        score = 10
         # Draw score
         text_score = font.render(f"Your score {score}", True, (255, 255, 255))
         text_rect_highscore = text_score.get_rect(
@@ -82,15 +91,7 @@ def game_over(window: pygame.Surface,
         text_rect_instruction = text_instruction.get_rect(
             center=(center_x, window.get_height() // 1.8))
         window.blit(text_instruction, text_rect_instruction)
-
-        text_main_menu = font.render("Main menu", True, (255, 255, 255))
-        text_rect_main_menu = text_main_menu.get_rect(
-            center=(center_x - 200, window.get_height() // 1.5))
         window.blit(text_main_menu, text_rect_main_menu)
-
-        text_new_game = font.render("New game", True, (255, 255, 255))
-        text_rect_new_game = text_new_game.get_rect(
-            center=(center_x + 200, window.get_height() // 1.5))
         window.blit(text_new_game, text_rect_new_game)
 
         pygame.display.flip()

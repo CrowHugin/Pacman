@@ -2,22 +2,11 @@ import pygame
 from score import get_highscores
 
 
-def render_highscores(filename: str, width, height) -> None:
-    pygame.init()
+def render_highscores(window: pygame.Surface, filename: str) -> None:
     pygame.display.set_caption("Highscores")
-    pygame.font.init()
-
-    CELL_SIZE = 30
-    SCREEN_WIDTH = width * CELL_SIZE
-    SCREEN_HEIGHT = height * CELL_SIZE
     BLACK = (0, 0, 0)
-
     font = pygame.font.SysFont("arial", 48)
-
     clock = pygame.time.Clock()
-
-    window = pygame.display.set_mode((SCREEN_WIDTH,
-                                      SCREEN_HEIGHT + (3 * CELL_SIZE)))
     center_x = window.get_width() // 2
     highscores = get_highscores(filename=filename)
     done = False
@@ -31,8 +20,7 @@ def render_highscores(filename: str, width, height) -> None:
                 if event.key == pygame.K_ESCAPE:
                     done = True
         window.fill(BLACK)
-
-        text_surface = font.render("HIGHSCORES", True, (255, 0, 0))
+        text_surface = font.render("HIGHSCORES", True, (255, 255, 255))
         text_rect_highscore = text_surface.get_rect(
             center=(center_x, window.get_height() // 6))
         window.blit(text_surface, text_rect_highscore)
