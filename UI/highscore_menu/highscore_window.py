@@ -11,10 +11,10 @@ def render_highscores(window: pygame.Surface, filename: str) -> None:
     highscores = get_highscores(filename=filename)
     done = False
 
-    #Todo trouver meilleur emplacement
+    # Todo trouver meilleur emplacement
     text_main_menu = font.render("Main Menu", True, (255, 255, 255))
     text_rect_main_menu = text_main_menu.get_rect(
-        center=(window.get_width() // 10,window.get_height() // 10))
+        center=(window.get_width() // 10, window.get_height() // 10))
 
     while not done:
         pos_score = 0
