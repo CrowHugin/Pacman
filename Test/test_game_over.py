@@ -1,7 +1,7 @@
 import os
 import pygame
 import unittest
-from UI.level_1.level_1 import game_over
+from UI.level_generator.level_generator import game_over
 from unittest.mock import MagicMock
 
 
@@ -20,7 +20,7 @@ class TestGameOverRender(unittest.TestCase):
         self.font.render.return_value = self.text_surface_mock
 
     def test_game_over_displays_text(self) -> None:
-        BLACK = (0, 0, 0)
-        game_over(self.window, BLACK, self.font)
-        self.font.render.assert_called_with("GAME OVER", True, (255, 0, 0))
+        WHITE = (255, 255, 255)
+        game_over(self.window, WHITE, self.font)
+        self.font.render.assert_called_with("GAME OVER", True, WHITE)
         self.window.blit.assert_called_once()

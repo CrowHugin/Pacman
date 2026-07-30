@@ -14,7 +14,6 @@ class TestConfigParser(unittest.TestCase):
         self.mock_json_content = """
             {
                 # Commentaire sur les pacgums
-                "pacgum": 42,
                 "lives": 3
             }
         """
@@ -28,7 +27,7 @@ class TestConfigParser(unittest.TestCase):
         ):
             mock_result = load_json_remove_comments(self.mock_filename)
             self.assertEqual(mock_result, {
-                             "pacgum": 42, "lives": 3})
+                             "lives": 3})
 
     def test_file_not_found(self) -> None:
         """Test if file not found, an empty dict is returned"""
@@ -72,7 +71,6 @@ class TestConfigParser(unittest.TestCase):
         config = load_game_config("non_existent_config.json")
         self.assertEqual(config["lives"], 3)
         self.assertEqual(config["highscore_filename"], "score.json")
-        self.assertEqual(config["pacgum"], 42)
         self.assertEqual(config["points_per_pacgum"], 20)
         self.assertEqual(config["points_per_super_pacgum"], 50)
         self.assertEqual(config["points_per_ghost"], 200)

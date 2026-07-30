@@ -1,4 +1,3 @@
-import time
 import random
 from typing import Any
 from UI.Maze.Maze import Maze
@@ -42,12 +41,12 @@ class Player(Mobs):
                  nb_lives: int = 3) -> None:
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
+        self.score = -20
+        self.super: bool = False
+        self.super_time: int = 0
 
-    def eat(self, target: Any) -> None:
-        # if self.coords == target.coords:
-        #     disable target visibility
-        # target is pacgum or super pacgum
-        pass
+    def eat(self, score: int) -> None:
+        self.score += score
 
 
 class Ghosts(Mobs):
@@ -58,6 +57,10 @@ class Ghosts(Mobs):
         super().__init__(coords_spawn)
         self.speed = speed
         self.color = color
+        self.is_dead: bool = False
+        self.death_time: int = 0
+        self.last_moves_time: int = 0
+        self.move_delay = 300
 
     def movements(self, maze: "Maze") -> None:
         directions = [self.move_up,
@@ -67,6 +70,5 @@ class Ghosts(Mobs):
         random.choice(directions)(maze)
 
     def eat(self, target: Player) -> None:
-        time.sleep(0.2)
         target.nb_lives -= 1
         target.coords = target.coords_spawn

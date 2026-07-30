@@ -20,7 +20,6 @@ DEFAULT_MAZE_CONFIG: Dict[str, Any] = {
         {"width": 10, "height": 10},
     ],
     "lives": 3,
-    "pacgum": 42,
     "points_per_pacgum": 20,
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
@@ -103,8 +102,6 @@ def load_game_config(file: str) -> dict[str, Any]:
     config["lives"] = validate_int_field(
         "lives", json_data, config["lives"], 1)
 
-    config["pacgum"] = validate_int_field(
-        "pacgum", json_data, config["pacgum"], 1)
     config["points_per_pacgum"] = validate_int_field(
         "points_per_pacgum",
         json_data, config["points_per_pacgum"], 1)

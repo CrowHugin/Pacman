@@ -1,9 +1,6 @@
 from parsing import load_game_config
-from UI.Maze.Maze import Maze
-from UI.level_1.level_1 import run_level_1
 from typing import Any
-from Characters.player_and_monsters import Player, Ghosts
-# Function to raise an error, will be changed when json parsing is done
+from UI.level_generator.level_generator import level_generator
 
 
 def check_value(width: int, height: int, seed: int | None) -> None:
@@ -14,25 +11,19 @@ def check_value(width: int, height: int, seed: int | None) -> None:
 
 
 def run(config: dict[str, Any]) -> None:
-    level = config["level_size"][0]
+    level_nb: int = 0
+    level = config["level_size"][level_nb]
     width = level['width']
     height = level['height']
     seed: int = config["seed"]
+    infos: tuple[int, int, int, int, int] = (config["lives"],
+                                             config["points_per_pacgum"],
+                                             config["points_per_super_pacgum"],
+                                             config["points_per_ghost"],
+                                             config["level_max_time"])
     try:
         check_value(width, height, seed)
-        player = Player(((width // 2) - 1, height // 2), 3)
-        red = Ghosts(1, (0, 0), (255, 0, 0))
-        green = Ghosts(1, (0, height - 1), (0, 128, 0))
-        blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
-        pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203))
-        ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
-            red,
-            green,
-            blue,
-            pink
-        )
-        maze = Maze(width, height, seed)
-        run_level_1(maze, player, ghosts_tuple)
+        level_generator(width, height, 0, infos, seed)
     except ValueError as e:
         print(e)
 
