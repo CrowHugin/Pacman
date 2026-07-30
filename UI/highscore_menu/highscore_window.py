@@ -1,7 +1,4 @@
-import sys
-import time
 import pygame
-from typing import TYPE_CHECKING, Optional
 from score import get_highscores
 
 
