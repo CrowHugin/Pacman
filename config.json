@@ -11,7 +11,7 @@
         {"width":50, "height":10},
         {"width":50, "height":10},
         {"width":50, "height":10},
-        {"width":50, "height":10}
+        {"width":48, "height":10}
     ],
     "lives":3,
     "points_per_pacgum":20,

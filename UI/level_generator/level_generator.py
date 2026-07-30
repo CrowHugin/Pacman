@@ -6,32 +6,7 @@ import pygame
 from Characters.player_and_monsters import Ghosts, Player
 from UI.Maze.Maze import Maze
 
-<<<<<<< HEAD
 from ..game_over_visual import game_over
-=======
-
-def game_over(window: pygame.Surface,
-              COLOR: tuple[int, int, int],
-              font: pygame.font.Font) -> None:
-    pygame.display.set_caption("GAME OVER")
-    text_surface = font.render("GAME OVER", True, COLOR)
-    text_rect = text_surface.get_rect(
-        center=(window.get_width() // 2, window.get_height() // 2)
-    )
-    window.blit(text_surface, text_rect)
-
-
-def win_screen(window: pygame.Surface,
-               COLOR: tuple[int, int, int],
-               font: pygame.font.Font,
-               level: int) -> None:
-    pygame.display.set_caption(f"Level - {level}")
-    text_surface = font.render("CONGRATULATION", True, COLOR)
-    text_rect = text_surface.get_rect(
-        center=(window.get_width() // 2, window.get_height() // 2)
-    )
-    window.blit(text_surface, text_rect)
->>>>>>> cf912e9 (feat: center the maze)
 
 
 def infos_screen_left(window: pygame.Surface,
