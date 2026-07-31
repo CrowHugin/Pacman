@@ -163,14 +163,3 @@ def load_game_config(file: str) -> dict[str, Any]:
             {"width": 15, "height": 15} for _ in range(number_level)
         ]
     return config
-
-
-def build_level_size_list(source: list | None, number_level: int) -> list[dict]
-    validate_level = []
-    for _ in range(number_level):
-            width, height, flag = validate_level_size(source)
-            validate_level.append({"width": width, "height": height})
-            if flag:
-                logging.warning("Invalid level size value, "
-                                "default value used")
-    return validate_level

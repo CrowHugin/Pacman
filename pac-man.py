@@ -1,5 +1,6 @@
-from parsing import load_game_config
 from typing import Any
+
+from parsing import load_game_config
 from UI.level_generator.level_generator import level_generator
 
 
@@ -13,14 +14,17 @@ def check_value(width: int, height: int, seed: int | None) -> None:
 def run(config: dict[str, Any]) -> None:
     level_nb: int = 0
     level = config["level_size"][level_nb]
-    width = level['width']
-    height = level['height']
+    width = level["width"]
+    height = level["height"]
     seed: int = config["seed"]
-    infos: tuple[int, int, int, int, int] = (config["lives"],
-                                             config["points_per_pacgum"],
-                                             config["points_per_super_pacgum"],
-                                             config["points_per_ghost"],
-                                             config["level_max_time"])
+    infos: tuple[int, int, int, int, int, str] = (
+        config["lives"],
+        config["points_per_pacgum"],
+        config["points_per_super_pacgum"],
+        config["points_per_ghost"],
+        config["level_max_time"],
+        config["highscore_filename"],
+    )
     try:
         check_value(width, height, seed)
         level_generator(width, height, 0, infos, seed)
@@ -34,8 +38,8 @@ def run_highscore_menu() -> None:
 
     config = load_game_config("config.json")
     level = config["level_size"][0]
-    width = level['width']
-    height = level['height']
+    width = level["width"]
+    height = level["height"]
     pygame.init()
     pygame.display.set_caption("Highscores")
     pygame.font.init()
@@ -49,5 +53,6 @@ def run_highscore_menu() -> None:
     render_highscores(window, config["highscore_filename"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    # run_highscore_menu()
     run(config=load_game_config("config.json"))
