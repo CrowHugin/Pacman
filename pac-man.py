@@ -7,8 +7,8 @@ def run_highscore_menu() -> None:
 
     config = load_game_config("config.json")
     level = config["level_size"][0]
-    width = level['width']
-    height = level['height']
+    width = level["width"]
+    height = level["height"]
     pygame.init()
     pygame.display.set_caption("Highscores")
     pygame.font.init()
