@@ -4,6 +4,7 @@ from typing import Any
 import pygame
 
 from ..level_generator.level_generator import level_generator
+from .cheat_mode_window import render_cheat_mode
 from .highscore_window import render_highscores
 from .instructions_window import render_instruction
 
@@ -14,6 +15,7 @@ BLACK = (0, 0, 0)
 
 def menu(config: dict[str, Any]) -> None:
     level_nb: int = 0
+    num_level = config["number_level"]
     level = config["level_size"][level_nb]
     width = level["width"]
     height = level["height"]
@@ -78,9 +80,9 @@ def menu(config: dict[str, Any]) -> None:
                 elif text_rect_instructions.collidepoint(event.pos):
                     render_instruction(window)
                 elif text_rect_cheat_mode.collidepoint(event.pos):
-                    print("Button cheat mode.")
+                    render_cheat_mode(window, num_level)
                 elif text_rect_exit.collidepoint(event.pos):
-                    print("Button exit.")
+                    running = False
 
         window.fill(BLACK)
 
