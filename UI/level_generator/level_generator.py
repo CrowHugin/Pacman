@@ -213,7 +213,8 @@ def level_generator(width: int,
                     height: int,
                     level_number: int,
                     infos: tuple[int, int,  int, int, int],
-                    seed: int | None = None,
+                    window: pygame.Surface,
+                    seed: int | None = None
                     ) -> None:
     player = Player(((width // 2) - 1, height // 2), infos[0])
     red = Ghosts(1, (0, 0), (255, 0, 0))
@@ -229,13 +230,9 @@ def level_generator(width: int,
     maze = Maze(width, height, seed)
     WHITE = (255, 255, 255)
     CELL_SIZE = 30
-    SCREEN_WIDTH = maze.width * CELL_SIZE
-    SCREEN_HEIGHT = maze.height * CELL_SIZE
     BLACK = (0, 0, 0)
 
     pygame.init()
-    window = pygame.display.set_mode((SCREEN_WIDTH,
-                                      SCREEN_HEIGHT + (3 * CELL_SIZE)))
     pygame.display.set_caption(f"PAC-MAN - LEVEL {level_number}")
     pygame.font.init()
     font = pygame.font.SysFont("arial", 48)
