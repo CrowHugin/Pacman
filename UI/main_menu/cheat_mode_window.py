@@ -1,135 +1,148 @@
 import pygame
 
+from .ui_helpers import (
+    BLACK,
+    GREY,
+    WHITE,
+    clicked,
+    make_main_menu_button,
+    make_text,
+    wants_to_quit,
+)
 
-def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> None:
+
+def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict:
+    """Render the cheat mode menu."""
     pygame.display.set_caption("Cheat mode")
-    BLACK = (0, 0, 0)
     font = pygame.font.SysFont("arial", 48)
     clock = pygame.time.Clock()
     center_x = window.get_width() // 2
     done = False
 
-    text_main_menu = font.render("Main menu", True, (255, 255, 255))
-    text_rect_main_menu = text_main_menu.get_rect(
-        center=(window.get_height() // 8, window.get_height() // 10)
-    )
-    text_cheat = font.render("Cheats node", True, (255, 255, 255))
-    text_rect_cheat = text_cheat.get_rect(
-        center=(center_x, window.get_height() // 10)
-    )
-    is_invincible = False
-    text_invicibility = font.render("Invicibility", True, (137,137,137))
-    text_rect_invicibility = text_invicibility.get_rect(
-            center=(center_x, text_rect_cheat.bottom + 100)
-    )
-    
-    is_ghost_freeze = False
-    text_ghost_freeze = font.render("Ghost Freeze ", True, (137,137,137))
-    text_rect_ghost_freeze = text_ghost_freeze.get_rect(
-            center=(center_x, text_rect_invicibility.bottom + 50)
-    )
-    # A changer plus tard
-    level = 0
-    text_level = font.render(f"level {level}", True, (255,255,255))
-    text_rect_level = text_level.get_rect(
-            center=(center_x, text_rect_ghost_freeze.bottom + 50)
-    )
-    text_plus = font.render("+", True, (255,255,255))
-    text_minus = font.render("-", True, (255,255,255))
-
-    text_rect_plus_level = text_plus.get_rect(
-            center=(text_rect_level.right + 50, text_rect_ghost_freeze.bottom + 50)
-    )
-    text_rect_minus_level = text_minus.get_rect(
-            center=(text_rect_level.left - 50, text_rect_ghost_freeze.bottom + 50)
-    ) 
-
-    # A changer plus tard
-    player_speed = 0.5
-    text_player_speed = font.render(f"Player speed {player_speed}", True, (255,255,255))
-    text_rect_player_speed = text_player_speed.get_rect(
-            center=(center_x, text_rect_level.bottom + 50)
-    )
-    text_rect_plus_player = text_plus.get_rect(
-            center=(text_rect_player_speed.right + 50, text_rect_level.bottom + 50)
-    )
-    text_rect_minus_player = text_minus.get_rect(
-            center=(text_rect_player_speed.left - 50, text_rect_level.bottom + 50)
+    text_main_menu, rect_main_menu = make_main_menu_button(window, font)
+    text_cheat, rect_cheat = make_text(
+        font, "Cheat mode", center=(center_x, window.get_height() // 10)
     )
 
-    # A changer plus tard
-    extra_lives = 3
-    text_lives = font.render(f"Extra lives {extra_lives}", True, (255,255,255))
-    text_rect_lives = text_lives.get_rect(
-            center=(center_x, text_rect_player_speed.bottom + 50)
+    settings = {
+        "invincible": False,
+        "ghost_freeze": False,
+        "level": 0,
+        "player_speed": 0.5,
+        "lives": 3,
+    }
+
+    text_invincibility, rect_invincibility = make_text(
+        font,
+        "Invincibility",
+        center=(center_x, rect_cheat.bottom + 100),
+        color=GREY,
     )
-    text_rect_plus_lives = text_plus.get_rect(
-            center=(text_rect_lives.right + 50, text_rect_player_speed.bottom + 50)
+    text_ghost_freeze, rect_ghost_freeze = make_text(
+        font,
+        "Ghost Freeze",
+        center=(center_x, rect_invincibility.bottom + 50),
+        color=GREY,
     )
-    text_rect_minus_lives = text_minus.get_rect(
-            center=(text_rect_lives.left - 50, text_rect_player_speed.bottom + 50)
+
+    text_plus = font.render("+", True, WHITE)
+    text_minus = font.render("-", True, WHITE)
+
+    text_level, rect_level = make_text(
+        font, f"Level {settings['level']}",
+        center=(center_x, rect_ghost_freeze.bottom + 50)
     )
+    rect_plus_level = text_plus.get_rect(
+        center=(rect_level.right + 50, rect_level.centery))
+    rect_minus_level = text_minus.get_rect(
+        center=(rect_level.left - 50, rect_level.centery))
+
+    text_speed, rect_speed = make_text(
+        font, f"Player speed {settings['player_speed']}",
+        enter=(center_x, rect_level.bottom + 50)
+    )
+    rect_plus_speed = text_plus.get_rect(
+        center=(rect_speed.right + 50, rect_speed.centery))
+    rect_minus_speed = text_minus.get_rect(
+        center=(rect_speed.left - 50, rect_speed.centery))
+
+    text_lives, rect_lives = make_text(
+        font, f"Lives {settings['lives']}",
+        center=(center_x, rect_speed.bottom + 50)
+    )
+    rect_plus_lives = text_plus.get_rect(
+        center=(rect_lives.right + 50, rect_lives.centery))
+    rect_minus_lives = text_minus.get_rect(
+        center=(rect_lives.left - 50, rect_lives.centery))
 
     while not done:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+            if wants_to_quit(event) or clicked(event, rect_main_menu):
                 done = True
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                done = True
-            if (
-                event.type == pygame.MOUSEBUTTONDOWN
-                and event.button == 1):
-                if text_rect_main_menu.collidepoint(event.pos):
-                    done = True
-                elif text_rect_invicibility.collidepoint(event.pos):
-                    is_invincible = not is_invincible
-                    if is_invincible:
-                        text_invicibility = font.render("Invicibility", True, (255,255,255))
-                    else:
-                        text_invicibility = font.render("Invicibility", True, (137,137,137))
-                elif text_rect_ghost_freeze.collidepoint(event.pos):
-                    is_ghost_freeze = not is_ghost_freeze
-                    if is_ghost_freeze:
-                        text_ghost_freeze = font.render("Ghost Freeze", True, (255,255,255))
-                    else:
-                        text_ghost_freeze = font.render("Ghost Freeze", True, (137,137,137))
-                elif text_rect_plus_level.collidepoint(event.pos) and level <= lvl_max:
-                        level += 1
-                        text_level = font.render(f"level {level}", True, (255,255,255))
-                elif text_rect_minus_level.collidepoint(event.pos) and level > 0:
-                        level -= 1
-                        text_level = font.render(f"level {level}", True, (255,255,255))
-                elif text_rect_plus_player.collidepoint(event.pos):
-                        player_speed = round(max(0.0, player_speed + 0.1), 2)
-                        text_player_speed = font.render(f"Player speed {round(player_speed,2)}", True, (255,255,255))
-                elif text_rect_minus_player.collidepoint(event.pos) and player_speed > 0:
-                        player_speed = round(max(0.0, player_speed - 0.1), 2)
-                        text_player_speed = font.render(f"Player speed {round(player_speed,2)}", True, (255,255,255))
-                elif text_rect_plus_lives.collidepoint(event.pos):
-                        extra_lives += 1
-                        text_lives = font.render(f"Extra lives {extra_lives}", True, (255,255,255))
-                elif text_rect_minus_lives.collidepoint(event.pos) and extra_lives > 1:
-                        extra_lives -= 1
-                        text_lives = font.render(f"Extra lives {extra_lives}", True, (255,255,255))
+
+            elif clicked(event, rect_invincibility):
+                settings["invincible"] = not settings["invincible"]
+                color = WHITE if settings["invincible"] else GREY
+                text_invincibility = font.render("Invincibility", True, color)
+
+            elif clicked(event, rect_ghost_freeze):
+                settings["ghost_freeze"] = not settings["ghost_freeze"]
+                color = WHITE if settings["ghost_freeze"] else GREY
+                text_ghost_freeze = font.render("Ghost Freeze", True, color)
+
+            elif (clicked(event, rect_plus_level)
+                  and settings["level"] < lvl_max - 1):
+                settings["level"] += 1
+                text_level = font.render(
+                    f"Level {settings['level']}", True, WHITE)
+
+            elif clicked(event, rect_minus_level) and settings["level"] > 0:
+                settings["level"] -= 1
+                text_level = font.render(
+                    f"Level {settings['level']}", True, WHITE)
+
+            elif clicked(event, rect_plus_speed):
+                settings["player_speed"] = round(
+                    settings["player_speed"] + 0.1, 2)
+                text_speed = font.render(
+                    f"Player speed {settings['player_speed']}", True, WHITE)
+
+            elif (clicked(event, rect_minus_speed)
+                  and settings["player_speed"] > 0):
+                settings["player_speed"] = round(
+                    max(0.0, settings["player_speed"] - 0.1), 2)
+                text_speed = font.render(
+                    f"Player speed {settings['player_speed']}", True, WHITE)
+
+            elif clicked(event, rect_plus_lives):
+                settings["lives"] += 1
+                text_lives = font.render(
+                    f"Lives {settings['lives']}", True, WHITE)
+
+            elif clicked(event, rect_minus_lives) and settings["lives"] > 3:
+                settings["lives"] -= 1
+                text_lives = font.render(
+                    f"Lives {settings['lives']}", True, WHITE)
+
         window.fill(BLACK)
+        window.blit(text_main_menu, rect_main_menu)
+        window.blit(text_cheat, rect_cheat)
+        window.blit(text_invincibility, rect_invincibility)
+        window.blit(text_ghost_freeze, rect_ghost_freeze)
 
-        window.blit(text_lives, text_rect_lives)
-        window.blit(text_plus, text_rect_plus_lives)
-        window.blit(text_minus, text_rect_minus_lives)
+        window.blit(text_level, rect_level)
+        window.blit(text_minus, rect_minus_level)
+        window.blit(text_plus, rect_plus_level)
 
+        window.blit(text_speed, rect_speed)
+        window.blit(text_minus, rect_minus_speed)
+        window.blit(text_plus, rect_plus_speed)
 
-        window.blit(text_player_speed, text_rect_player_speed)
-        window.blit(text_plus, text_rect_plus_player)
-        window.blit(text_minus, text_rect_minus_player)
+        window.blit(text_lives, rect_lives)
+        window.blit(text_minus, rect_minus_lives)
+        window.blit(text_plus, rect_plus_lives)
 
-        window.blit(text_level, text_rect_level)
-        window.blit(text_minus, text_rect_minus_level)
-        window.blit(text_plus, text_rect_plus_level)
-
-        window.blit(text_cheat, text_rect_cheat)
-        window.blit(text_invicibility, text_rect_invicibility)
-        window.blit(text_ghost_freeze, text_rect_ghost_freeze)
-        window.blit(text_ghost_freeze, text_rect_ghost_freeze)
-        window.blit(text_main_menu, text_rect_main_menu)
         pygame.display.flip()
         clock.tick(30)
+
+    return settings

@@ -1,16 +1,19 @@
 import pygame
 
-from parsing import load_game_config
+from .ui_helpers import BLACK, WHITE, clicked
+from .ui_helpers import make_main_menu_button, wants_to_quit
 
 # from score import get_highscores
 
 
 def render_highscores(window: pygame.Surface, filename: str) -> None:
+    """Render the leaderboard"""
     pygame.display.set_caption("Highscores")
-    BLACK = (0, 0, 0)
     font = pygame.font.SysFont("arial", 48)
     clock = pygame.time.Clock()
     center_x = window.get_width() // 2
+    done = False
+
     # highscores = get_highscores(filename=filename)
     highscores = {
         "Joe": 9999,
@@ -22,45 +25,31 @@ def render_highscores(window: pygame.Surface, filename: str) -> None:
         "Jo": 10,
         "J": 10,
         "": 10,
-        "c": 10
+        "c": 10,
     }
-    
-    done = False
 
-    text_main_menu = font.render("Main Menu", True, (255, 255, 255))
-    text_rect_main_menu = text_main_menu.get_rect(
-        center=(window.get_width() // 10, window.get_height() // 10)
-    )
+    text_main_menu, rect_main_menu = make_main_menu_button(window, font)
+    text_title = font.render("HIGHSCORES", True, WHITE)
+    rect_title = text_title.get_rect(
+        center=(center_x, window.get_height() // 6))
+
+    score_lines: list[tuple[pygame.Surface, pygame.Rect]] = []
+    for i, (name, score) in enumerate(highscores.items()):
+        surface = font.render(f"{name} : {score}", True, WHITE)
+        rect = surface.get_rect(
+            center=(center_x, window.get_height() // 4 + i * 50))
+        score_lines.append((surface, rect))
 
     while not done:
-        pos_score = 0
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                done = True
-            if (
-                event.type == pygame.MOUSEBUTTONDOWN
-                and event.button == 1
-                and text_rect_main_menu.collidepoint(event.pos)
-            ):
+            if wants_to_quit(event) or clicked(event, rect_main_menu):
                 done = True
 
         window.fill(BLACK)
-        text_surface = font.render("HIGHSCORES", True, (255, 255, 255))
-        text_rect_highscore = text_surface.get_rect(
-            center=(center_x, window.get_height() // 6)
-        )
-        window.blit(text_surface, text_rect_highscore)
-        window.blit(text_main_menu, text_rect_main_menu)
-
-        for i, (name, score) in enumerate(highscores.items()):
-            text_score = font.render(f"{name} : {score}", True, (255, 255, 255))
-            pos_score = i * 50
-            text_rect_scores = text_score.get_rect(
-                center=(center_x, (window.get_height() // 4) + pos_score)
-            )
-            window.blit(text_score, text_rect_scores)
+        window.blit(text_title, rect_title)
+        window.blit(text_main_menu, rect_main_menu)
+        for surface, rect in score_lines:
+            window.blit(surface, rect)
 
         pygame.display.flip()
         clock.tick(30)
