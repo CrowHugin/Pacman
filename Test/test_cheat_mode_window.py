@@ -55,7 +55,7 @@ class TestCheatMode(unittest.TestCase):
                 "ghost_freeze": False,
                 "level": 0,
                 "player_speed": 0.5,
-                "extra_lives": 3,
+                "lives": 3,
             },
         )
 
@@ -94,7 +94,7 @@ class TestCheatMode(unittest.TestCase):
                                     [minus_click], [quit_event]])
         self.assertAlmostEqual(settings["player_speed"], 0.6)
 
-    def test_extra_lives_regression_bug_minus_button_now_works(self) -> None:
+    def test_lives_regression_bug_minus_button_now_works(self) -> None:
         minus_pos = (300 - 50, 485)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
@@ -103,16 +103,16 @@ class TestCheatMode(unittest.TestCase):
         settings = self.run_screen([[click], [click],
                                     [click], [click], [quit_event]])
         # 3 -> 2 -> 1 -> 0, un 4e clic ne doit pas passer sous 0
-        self.assertEqual(settings["extra_lives"], 0)
+        self.assertEqual(settings["lives"], 3)
 
-    def test_extra_lives_plus_button_increments(self) -> None:
+    def test_lives_plus_button_increments(self) -> None:
         plus_pos = (500 + 50, 485)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=plus_pos)
 
         settings = self.run_screen([[click], [click], [quit_event]])
-        self.assertEqual(settings["extra_lives"], 5)
+        self.assertEqual(settings["lives"], 5)
 
     def test_level_increment_is_capped_at_lvl_max_minus_one(self) -> None:
         # Avant : "level <= lvl_max" permettait de dépasser le dernier

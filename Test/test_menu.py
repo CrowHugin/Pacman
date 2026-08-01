@@ -114,7 +114,7 @@ class TestMenu(unittest.TestCase):
             "ghost_freeze": False,
             "level": 2,
             "player_speed": 0.5,
-            "extra_lives": 3,
+            "lives": 3,
         }
         cheat_click = self._click_at(button_center_y(3))
         start_click = self._click_at(button_center_y(0))
