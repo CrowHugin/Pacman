@@ -1,5 +1,6 @@
 import os
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pygame
@@ -39,7 +40,8 @@ class TestCheatMode(unittest.TestCase):
         clock_patcher.start()
         self.addCleanup(clock_patcher.stop)
 
-    def run_screen(self, event_batches: list[list]) -> dict:
+    def run_screen(self, event_batches: list[list[pygame.event.Event]]
+                   ) -> dict[str, Any]:
         with patch("pygame.event.get", side_effect=event_batches):
             return render_cheat_mode(self.window, lvl_max=5)
 

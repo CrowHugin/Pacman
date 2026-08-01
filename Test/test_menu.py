@@ -1,5 +1,6 @@
 import os
 import unittest
+from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pygame
@@ -18,7 +19,7 @@ def button_center_y(index: int) -> int:
     return menu_module.SCREEN_HEIGHT // 6 + index * BUTTON_SPACING
 
 
-def make_config() -> dict:
+def make_config() -> dict[str, Any]:
     return {
         "number_level": 3,
         "level_size": [{"width": 10, "height": 10}],
@@ -56,7 +57,8 @@ class TestMenu(unittest.TestCase):
         for p in self.patches.values():
             self.addCleanup(p.stop)
 
-    def run_screen(self, event_batches: list[list]) -> None:
+    def run_screen(self, event_batches: list[list[pygame.event.Event]]
+                   ) -> None:
         with patch("pygame.event.get", side_effect=event_batches):
             menu_module.menu(make_config())
 

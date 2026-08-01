@@ -30,7 +30,7 @@ def menu(config: dict[str, Any]) -> None:
         config["level_max_time"],
     )
 
-    cheat_settings: dict | None = None
+    cheat_settings: dict[str, Any] | None = None
 
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

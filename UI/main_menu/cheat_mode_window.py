@@ -1,3 +1,5 @@
+from typing import Any
+
 import pygame
 
 from .ui_helpers import (
@@ -11,7 +13,7 @@ from .ui_helpers import (
 )
 
 
-def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict:
+def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict[str, Any]:
     """Render the cheat mode menu."""
     pygame.display.set_caption("Cheat mode")
     font = pygame.font.SysFont("arial", 48)
@@ -59,7 +61,7 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict:
 
     text_speed, rect_speed = make_text(
         font, f"Player speed {settings['player_speed']}",
-        enter=(center_x, rect_level.bottom + 50)
+        center=(center_x, rect_level.bottom + 50)
     )
     rect_plus_speed = text_plus.get_rect(
         center=(rect_speed.right + 50, rect_speed.centery))
