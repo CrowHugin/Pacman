@@ -10,6 +10,7 @@ class TestMazeRender(unittest.TestCase):
     """
         Test if the draw function works correctly
     """
+
     def setUp(self) -> None:
         """
             Setup fonction to run before each test
@@ -17,6 +18,11 @@ class TestMazeRender(unittest.TestCase):
         pygame.init()
         self.surface = pygame.Surface((300, 300))
         self.cell_size: int = 20
+
+        maze_width_px = 1 * self.cell_size
+        maze_height_px = 1 * self.cell_size
+        self.offset_x = (self.surface.get_width() - maze_width_px) // 2
+        self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
 
     def test_draw_maze_pixels(self) -> None:
         """
@@ -39,7 +45,9 @@ class TestMazeRender(unittest.TestCase):
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 0))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y)
+        )[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
 
     def test_pacgum(self) -> None:
@@ -69,7 +77,9 @@ class TestMazeRender(unittest.TestCase):
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 10))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y + 10)
+        )[:3]
         self.assertEqual(pixel_color, (240, 240, 240))
 
     def test_super_pacgum(self) -> None:
@@ -99,7 +109,9 @@ class TestMazeRender(unittest.TestCase):
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 10))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y + 10)
+        )[:3]
         self.assertEqual(pixel_color, (255, 165, 0))
 
 

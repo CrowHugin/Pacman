@@ -11,7 +11,7 @@ def game_over(window: pygame.Surface,
     pygame.display.set_caption("GAME OVER")
     text_surface = font.render("GAME OVER", True, COLOR)
     text_rect = text_surface.get_rect(
-       center=(window.get_width() // 2, window.get_height() // 2)
+        center=(window.get_width() // 2, window.get_height() // 2)
     )
     window.blit(text_surface, text_rect)
 
@@ -23,7 +23,7 @@ def win_screen(window: pygame.Surface,
     pygame.display.set_caption(f"Level - {level}")
     text_surface = font.render("CONGRATULATION", True, COLOR)
     text_rect = text_surface.get_rect(
-       center=(window.get_width() // 2, window.get_height() // 2)
+        center=(window.get_width() // 2, window.get_height() // 2)
     )
     window.blit(text_surface, text_rect)
 
@@ -37,7 +37,7 @@ def infos_screen_left(window: pygame.Surface,
                       ) -> None:
     text_surface = font_info.render(msg, True, color)
     text_rect = text_surface.get_rect(
-       bottomleft=size
+        bottomleft=size
     )
     window.blit(text_surface, text_rect)
 
@@ -51,7 +51,7 @@ def infos_screen_right(window: pygame.Surface,
                        ) -> None:
     text_surface = font_info.render(msg, True, color)
     text_rect = text_surface.get_rect(
-       bottomright=size
+        bottomright=size
     )
     window.blit(text_surface, text_rect)
 
@@ -74,16 +74,21 @@ def draw_maze(window: pygame.Surface,
     SCREEN_WIDTH = maze.width * CELL_SIZE
     SCREEN_HEIGHT = maze.height * CELL_SIZE
 
+    window_width = window.get_width()
+    window_height = window.get_height()
+    offset_x = (window_width - SCREEN_WIDTH) // 2
+    offset_y = (window_height - SCREEN_HEIGHT) // 2 - 40
+
     for row_idx in range(maze.height):
         for col_idx in range(maze.width):
-            x = col_idx * CELL_SIZE
-            y = row_idx * CELL_SIZE
+            x = col_idx * CELL_SIZE + offset_x
+            y = row_idx * CELL_SIZE + offset_y
             cell_value = maze.maze[row_idx][col_idx]
 
             left = x
-            right = min(x + CELL_SIZE - 1, SCREEN_WIDTH - 1)
+            right = min(x + CELL_SIZE - 1, offset_x + SCREEN_WIDTH - 1)
             top = y
-            bottom = min(y + CELL_SIZE - 1, SCREEN_HEIGHT - 1)
+            bottom = min(y + CELL_SIZE - 1, offset_y + SCREEN_HEIGHT - 1)
 
             top_left = (left, top)
             top_right = (right, top)
@@ -151,22 +156,23 @@ def draw_maze(window: pygame.Surface,
                           font_info,
                           player,
                           WHITE,
-                          (15, SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
+                          (15,
+                           offset_y + SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
                           f"Lives: {player.nb_lives}")
 
         infos_screen_left(window,
                           font_info,
                           player,
                           WHITE,
-                          (15, SCREEN_HEIGHT + (3 * CELL_SIZE)),
+                          (15, offset_y + SCREEN_HEIGHT + (3 * CELL_SIZE)),
                           f"Score: {player.score}")
 
         infos_screen_right(window,
                            font_info,
                            player,
                            WHITE,
-                           (SCREEN_WIDTH - 30,
-                            SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
+                           (window_width,
+                            offset_y + SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
                            f"Current level: {level}",
                            )
 
@@ -174,14 +180,14 @@ def draw_maze(window: pygame.Surface,
                            font_info,
                            player,
                            WHITE,
-                           (SCREEN_WIDTH - 30,
-                            SCREEN_HEIGHT + (3 * CELL_SIZE)),
+                           (window_width,
+                            offset_y + SCREEN_HEIGHT + (3 * CELL_SIZE)),
                            f"Time left: {time // 1000} s",
                            )
 
         if player.coords:
-            player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2
-            player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2
+            player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2 + offset_x
+            player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
             # -5 to avoid drawing on walls
             radius = ((CELL_SIZE // 2) - 2) - 5
 
@@ -192,8 +198,8 @@ def draw_maze(window: pygame.Surface,
 
     if ghosts_tuple:
         for ghost in ghosts_tuple:
-            x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2
-            y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2
+            x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2 + offset_x
+            y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
             radius = (CELL_SIZE // 2 - 2) - 5
 
             pygame.draw.circle(window,
@@ -226,7 +232,7 @@ def level_generator(width: int,
         green,
         blue,
         pink
-     )
+    )
     maze = Maze(width, height, seed)
     WHITE = (255, 255, 255)
     CELL_SIZE = 30

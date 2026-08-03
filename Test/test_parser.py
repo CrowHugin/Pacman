@@ -79,7 +79,3 @@ class TestConfigParser(unittest.TestCase):
         self.assertEqual(config["number_level"], 10)
         for level in config["level_size"]:
             self.assertEqual(level, {"width": 15, "height": 15})
-
-
-if __name__ == "__main__":
-    unittest.main()
