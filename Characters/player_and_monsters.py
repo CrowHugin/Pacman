@@ -63,17 +63,18 @@ class Ghosts(Mobs):
     def movements(self, maze: "Maze") -> None:
         directions = []
         x, y = self.coords
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 1:
-            directions.append(self.move_up)
+        if (x, y) in maze.cases:
+            if not maze.cases[(x, y)].content & 1:
+                directions.append(self.move_up)
 
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 2:
-            directions.append(self.move_right)
+            if not maze.cases[(x, y)].content & 2:
+                directions.append(self.move_right)
 
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 4:
-            directions.append(self.move_down)
+            if not maze.cases[(x, y)].content & 4:
+                directions.append(self.move_down)
 
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 8:
-            directions.append(self.move_left)
+            if not maze.cases[(x, y)].content & 8:
+                directions.append(self.move_left)
 
 
         random.choice(directions)(maze)
