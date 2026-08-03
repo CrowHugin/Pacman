@@ -9,6 +9,8 @@ class Mobs(ABC):
                  coords_spawn: tuple[int, int]) -> None:
         self.coords_spawn = coords_spawn
         self.coords = self.coords_spawn
+        self.death_time: int = 0
+        self.is_dead: bool = False
 
     def move_up(self, maze: "Maze") -> None:
         x, y = self.coords
@@ -53,8 +55,6 @@ class Ghosts(Mobs):
         super().__init__(coords_spawn)
         self.speed = speed
         self.color = color
-        self.is_dead: bool = False
-        self.death_time: int = 0
         self.last_moves_time: int = 0
         self.move_delay = 300
 
@@ -91,4 +91,3 @@ class Ghosts(Mobs):
 
     def eat(self, target: Player) -> None:
         target.nb_lives -= 1
-        target.coords = target.coords_spawn

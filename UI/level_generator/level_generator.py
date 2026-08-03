@@ -230,7 +230,7 @@ def level_generator(width: int,
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
-                if player:
+                if player and not player.is_dead:
                     if event.key == pygame.K_UP:
                         if not maze.cases[player.coords].content & 1:
                             player.move_up(maze)
@@ -245,18 +245,24 @@ def level_generator(width: int,
                             player.move_left(maze)
 
         if player:
-            if player.super:
-                if current_time - player.super_time >= 3000:
-                    player.super = False
-            if maze.cases[(player.coords)].has_pacgum:
-                player.eat(infos[1])
-                maze.cases[(player.coords)].has_pacgum = False
+            if player.is_dead:
+                if current_time - player.death_time >= 2000:
+                    player.is_dead = False
+                    player.coords = player.coords_spawn
 
-            elif maze.cases[(player.coords)].has_super_pacgum:
-                player.eat(infos[2])
-                maze.cases[(player.coords)].has_super_pacgum = False
-                player.super = True
-                player.super_time = current_time
+            if player.coords != (-1, -1) and not player.is_dead:
+                if player.super:
+                    if current_time - player.super_time >= 3000:
+                        player.super = False
+                if maze.cases[(player.coords)].has_pacgum:
+                    player.eat(infos[1])
+                    maze.cases[(player.coords)].has_pacgum = False
+
+                elif maze.cases[(player.coords)].has_super_pacgum:
+                    player.eat(infos[2])
+                    maze.cases[(player.coords)].has_super_pacgum = False
+                    player.super = True
+                    player.super_time = current_time
 
             if ghosts_tuple:
                 for ghost in ghosts_tuple:
@@ -274,11 +280,15 @@ def level_generator(width: int,
                     if ghost.coords == player.coords:
                         if not player.super:
                             ghost.eat(player)
+                            player.is_dead = True
+                            player.death_time = pygame.time.get_ticks()
+                            player.coords = (-1, -2)
                         else:
                             player.eat(3)
                             ghost.is_dead = True
                             ghost.death_time = pygame.time.get_ticks()
                             ghost.coords = (-1, -1)
+
 
         time_limit = infos[4] * 1000
         window.fill(BLACK)
