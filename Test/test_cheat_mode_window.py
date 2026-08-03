@@ -15,6 +15,7 @@ FONT_SIZE = (200, 50)
 
 
 def make_fake_font() -> MagicMock:
+    """Mock a font"""
     fake_font = MagicMock(spec=pygame.font.Font)
     fake_font.render.side_effect = lambda text, aa, color: pygame.Surface(
         FONT_SIZE)
@@ -23,6 +24,7 @@ def make_fake_font() -> MagicMock:
 
 class TestCheatMode(unittest.TestCase):
     def setUp(self) -> None:
+        """Setup the window and the font"""
         pygame.init()
         pygame.display.set_mode((800, 600))
         self.window = MagicMock(spec=pygame.Surface)
@@ -42,10 +44,12 @@ class TestCheatMode(unittest.TestCase):
 
     def run_screen(self, event_batches: list[list[pygame.event.Event]]
                    ) -> dict[str, Any]:
+        """Run the cheat mode window"""
         with patch("pygame.event.get", side_effect=event_batches):
             return render_cheat_mode(self.window, lvl_max=5)
 
-    def test_quit_immediately_returns_default_settings(self) -> None:
+    def test_quit_returns_default_settings(self) -> None:
+        """Test if default settings are returns"""
         quit_event = pygame.event.Event(pygame.QUIT)
         settings = self.run_screen([[quit_event]])
         self.assertEqual(
@@ -59,14 +63,16 @@ class TestCheatMode(unittest.TestCase):
             },
         )
 
-    def test_main_menu_button_closes_screen_without_changes(self) -> None:
+    def test_main_menu_button_closes(self) -> None:
+        """Test if main menu button work"""
         click = pygame.event.Event(
             pygame.MOUSEBUTTONDOWN, button=1, pos=(800 // 8, 600 // 10)
         )
         settings = self.run_screen([[click]])
         self.assertEqual(settings["level"], 0)
 
-    def test_toggle_invincibility(self) -> None:
+    def test_invincibility(self) -> None:
+        """Test if invicibility is true when clicked"""
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=(400, 185))
         quit_event = pygame.event.Event(pygame.QUIT)
@@ -74,7 +80,8 @@ class TestCheatMode(unittest.TestCase):
         self.assertTrue(settings["invincible"])
         self.fake_font.render.assert_any_call("Invincibility", True, WHITE)
 
-    def test_toggle_ghost_freeze(self) -> None:
+    def test_ghost_freeze(self) -> None:
+        """Test if ghost freeze is true when clicked"""
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=(400, 260))
         quit_event = pygame.event.Event(pygame.QUIT)
@@ -82,6 +89,7 @@ class TestCheatMode(unittest.TestCase):
         self.assertTrue(settings["ghost_freeze"])
 
     def test_player_speed_increases_and_decreases(self) -> None:
+        """Test if speed buttons works"""
         plus_pos = (500 + 50, 410)
         minus_pos = (300 - 50, 410)
         quit_event = pygame.event.Event(pygame.QUIT)
@@ -94,7 +102,8 @@ class TestCheatMode(unittest.TestCase):
                                     [minus_click], [quit_event]])
         self.assertAlmostEqual(settings["player_speed"], 0.6)
 
-    def test_lives_regression_bug_minus_button_now_works(self) -> None:
+    def test_lives_regression_cant_go_under_3(self) -> None:
+        """Test if we can't go under 3 when lives buttons are clicked"""
         minus_pos = (300 - 50, 485)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
@@ -102,7 +111,6 @@ class TestCheatMode(unittest.TestCase):
 
         settings = self.run_screen([[click], [click],
                                     [click], [click], [quit_event]])
-        # 3 -> 2 -> 1 -> 0, un 4e clic ne doit pas passer sous 0
         self.assertEqual(settings["lives"], 3)
 
     def test_lives_plus_button_increments(self) -> None:
@@ -114,19 +122,18 @@ class TestCheatMode(unittest.TestCase):
         settings = self.run_screen([[click], [click], [quit_event]])
         self.assertEqual(settings["lives"], 5)
 
-    def test_level_increment_is_capped_at_lvl_max_minus_one(self) -> None:
-        # Avant : "level <= lvl_max" permettait de dépasser le dernier
-        # niveau valide (index 0..lvl_max-1). Corrigé en "< lvl_max - 1".
-        plus_pos = (500 + 50, 335)  # rect_level.right + 50, rect_level.centery
+    def test_level_increment_is_capped_at_lvl_max(self) -> None:
+        """Test if level increase is capped at lvl max """
+        plus_pos = (500 + 50, 335)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=plus_pos)
 
-        # lvl_max=5 -> dernier index valide = 4. On clique 6 fois.
         settings = self.run_screen([[click]] * 6 + [[quit_event]])
         self.assertEqual(settings["level"], 4)
 
     def test_level_decrement_cannot_go_below_zero(self) -> None:
+        """Test to not go under 0 for levels"""
         minus_pos = (300 - 50, 335)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
@@ -134,7 +141,3 @@ class TestCheatMode(unittest.TestCase):
 
         settings = self.run_screen([[click], [click], [quit_event]])
         self.assertEqual(settings["level"], 0)
-
-
-if __name__ == "__main__":
-    unittest.main()

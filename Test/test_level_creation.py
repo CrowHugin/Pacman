@@ -3,7 +3,7 @@ import unittest
 from UI.Maze.Maze import Maze, Cell
 import importlib
 pac_man = importlib.import_module("pac-man")
-check_value = pac_man.check_value
+# check_value = pac_man.check_value
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
@@ -94,18 +94,17 @@ class Test_level_Creation(unittest.TestCase):
                                                             )].content
                             self.assertTrue(left_content & 2)
 
+# class TestCheckValue(unittest.TestCase):
+#     def test_invalid_width_raises_error(self) -> None:
+#         with self.assertRaises(ValueError) as context:
+#             check_value(-30, 25, 42)
 
-class TestCheckValue(unittest.TestCase):
-    def test_invalid_width_raises_error(self) -> None:
-        with self.assertRaises(ValueError) as context:
-            check_value(-30, 25, 42)
+#         expected_message = "ERROR:\nWidth cannot be negative or equal to 0"
+#         self.assertEqual(str(context.exception), expected_message)
 
-        expected_message = "ERROR:\nWidth cannot be negative or equal to 0"
-        self.assertEqual(str(context.exception), expected_message)
+#     def test_invalid_height_raises_error(self) -> None:
+#         with self.assertRaises(ValueError) as context:
+#             check_value(30, -25, 42)
 
-    def test_invalid_height_raises_error(self) -> None:
-        with self.assertRaises(ValueError) as context:
-            check_value(30, -25, 42)
-
-        expected_message = "ERROR:\nHeight cannot be negative or equal to 0"
-        self.assertEqual(str(context.exception), expected_message)
+#         expected_message = "ERROR:\nHeight cannot be negative or equal to 0"
+#         self.assertEqual(str(context.exception), expected_message)

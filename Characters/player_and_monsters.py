@@ -1,7 +1,9 @@
 import random
-from typing import Any
-from UI.Maze.Maze import Maze
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from UI.Maze.Maze import Maze
 
 
 class Mobs(ABC):

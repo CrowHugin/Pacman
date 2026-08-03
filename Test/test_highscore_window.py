@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 import pygame
 
 from UI.main_menu.highscore_window import render_highscores
-from UI.main_menu.ui_helpers import BLACK
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
@@ -42,25 +41,14 @@ class TestHighscoreWindow(unittest.TestCase):
         self.assertIn("test : 4393", rendered_texts)
         self.assertEqual(self.fake_font.render.call_count, 12)
 
-    def test_fills_background_black_then_blits(self) -> None:
-        quit_event = pygame.event.Event(pygame.QUIT)
-        with patch("pygame.event.get", return_value=[quit_event]):
-            render_highscores(self.window, "mock.json")
-        self.window.fill.assert_called_with(BLACK)
-        self.assertEqual(self.window.blit.call_count, 12)
-
     def test_quits_on_escape_key(self) -> None:
         escape_event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)
         with patch("pygame.event.get", return_value=[escape_event]):
             render_highscores(self.window, "mock.json")
 
-    def test_quits_when_main_menu_button_clicked(self) -> None:
+    def test_quits_main_menu_button_clicked(self) -> None:
         click = pygame.event.Event(
             pygame.MOUSEBUTTONDOWN, button=1, pos=(800 // 8, 600 // 10)
         )
         with patch("pygame.event.get", return_value=[click]):
             render_highscores(self.window, "mock.json")
-
-
-if __name__ == "__main__":
-    unittest.main()

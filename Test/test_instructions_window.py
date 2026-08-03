@@ -8,27 +8,39 @@ from UI.main_menu.instructions_window import render_instruction
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 
+FONT_SIZE = (200, 50)
+
+
+def make_fake_font() -> MagicMock:
+    """Mock a font"""
+    fake_font = MagicMock(spec=pygame.font.Font)
+    fake_font.render.side_effect = lambda text, aa, color: pygame.Surface(
+        FONT_SIZE)
+    return fake_font
+
 
 class TestInstructionsWindow(unittest.TestCase):
     def setUp(self) -> None:
+        """Setup the window and the font"""
         pygame.init()
         pygame.display.set_mode((800, 600))
         self.window = MagicMock(spec=pygame.Surface)
         self.window.get_width.return_value = 800
         self.window.get_height.return_value = 600
 
-        self.fake_font = MagicMock(spec=pygame.font.Font)
-        self.fake_font.render.side_effect = (
-            lambda text, aa, color: pygame.Surface((100, 30))
-        )
-        self.addCleanup(
-            patch("pygame.font.SysFont",
-                  return_value=self.fake_font).start().stop
-        )
+        self.fake_font = make_fake_font()
+        self.fake_font = make_fake_font()
+
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.fake_font)
+        font_patcher.start()
+        self.addCleanup(font_patcher.stop)
+
         self.addCleanup(patch("pygame.time.Clock",
                               return_value=MagicMock()).start().stop)
 
     def test_renders_all_instruction(self) -> None:
+        """Test if all instruction are display"""
         quit_event = pygame.event.Event(pygame.QUIT)
         with patch("pygame.event.get", return_value=[quit_event]):
             render_instruction(self.window)
@@ -50,7 +62,3 @@ class TestInstructionsWindow(unittest.TestCase):
         quit_event = pygame.event.Event(pygame.QUIT)
         with patch("pygame.event.get", return_value=[quit_event]):
             render_instruction(self.window)
-
-
-if __name__ == "__main__":
-    unittest.main()

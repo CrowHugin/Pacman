@@ -1,6 +1,5 @@
 import os
 import unittest
-from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pygame
@@ -14,23 +13,8 @@ BUTTON_SPACING = 115
 
 
 def button_center_y(index: int) -> int:
-    """index: 0=Start game, 1=Leaderboard,
-    2=Instructions, 3=Cheat mode, 4=Exit."""
+    """Position of the differents button"""
     return menu_module.SCREEN_HEIGHT // 6 + index * BUTTON_SPACING
-
-
-def make_config() -> dict[str, Any]:
-    return {
-        "number_level": 3,
-        "level_size": [{"width": 10, "height": 10}],
-        "seed": 42,
-        "highscore_filename": "scores.json",
-        "lives": 3,
-        "points_per_pacgum": 10,
-        "points_per_super_pacgum": 50,
-        "points_per_ghost": 200,
-        "level_max_time": 60,
-    }
 
 
 class TestMenu(unittest.TestCase):
@@ -56,22 +40,33 @@ class TestMenu(unittest.TestCase):
         self.mocks = {name: p.start() for name, p in self.patches.items()}
         for p in self.patches.values():
             self.addCleanup(p.stop)
+        self.mock_config = {
+            "number_level": 3,
+            "level_size": [{"width": 10, "height": 10}],
+            "seed": 42,
+            "highscore_filename": "scores.json",
+            "lives": 3,
+            "points_per_pacgum": 10,
+            "points_per_super_pacgum": 50,
+            "points_per_ghost": 200,
+            "level_max_time": 60,
+        }
 
     def run_screen(self, event_batches: list[list[pygame.event.Event]]
                    ) -> None:
         with patch("pygame.event.get", side_effect=event_batches):
-            menu_module.menu(make_config())
+            menu_module.menu(self.mock_config)
 
     def _click_at(self, y: int) -> pygame.event.Event:
+        """Mock the click button"""
         return pygame.event.Event(
             pygame.MOUSEBUTTONDOWN,
             button=1,
             pos=(menu_module.SCREEN_WIDTH // 2, y),
         )
 
-    def test_start_game(
-        self,
-    ) -> None:
+    def test_start_game(self) -> None:
+        """Test if the level 0 is start"""
         start_click = self._click_at(button_center_y(0))
         self.run_screen([[start_click]])
 
@@ -79,7 +74,8 @@ class TestMenu(unittest.TestCase):
         _, _, start_level, *_ = self.mocks["level_generator"].call_args.args
         self.assertEqual(start_level, 0)
 
-    def test_leaderboard_button_opens_highscores_screen(self) -> None:
+    def test_leaderboard_screen(self) -> None:
+        """Test if leaderboard screen is start"""
         click = self._click_at(button_center_y(1))
         quit_event = pygame.event.Event(pygame.QUIT)
         self.run_screen([[click], [quit_event]])
@@ -87,14 +83,16 @@ class TestMenu(unittest.TestCase):
         self.mocks["render_highscores"].assert_called_once()
         self.mocks["level_generator"].assert_not_called()
 
-    def test_instructions_button_opens_instructions_screen(self) -> None:
+    def test_instructions_screen(self) -> None:
+        """Test if instructions screen is start"""
         click = self._click_at(button_center_y(2))
         quit_event = pygame.event.Event(pygame.QUIT)
         self.run_screen([[click], [quit_event]])
 
         self.mocks["render_instruction"].assert_called_once()
 
-    def test_exit_button_quits_without_starting_a_game(self) -> None:
+    def test_exit_button(self) -> None:
+        """Test if exit button close the window"""
         click = self._click_at(button_center_y(4))
         self.run_screen([[click]])
 
@@ -102,6 +100,7 @@ class TestMenu(unittest.TestCase):
         self.mocks["sys_exit"].assert_called_once()
 
     def test_escape_key_quits_the_menu(self) -> None:
+        """Test if escape button close the window"""
         escape_event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)
         self.run_screen([[escape_event]])
 
@@ -109,6 +108,8 @@ class TestMenu(unittest.TestCase):
         self.mocks["sys_exit"].assert_called_once()
 
     def test_cheat_mode_level_is_used_when_starting_a_game(self) -> None:
+        """Test if the cheat mode screen is called
+        and return with values """
         self.mocks["render_cheat_mode"].return_value = {
             "invincible": False,
             "ghost_freeze": False,
@@ -123,7 +124,3 @@ class TestMenu(unittest.TestCase):
         self.mocks["render_cheat_mode"].assert_called_once()
         _, _, start_level, *_ = self.mocks["level_generator"].call_args.args
         self.assertEqual(start_level, 2)
-
-
-if __name__ == "__main__":
-    unittest.main()

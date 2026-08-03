@@ -43,6 +43,7 @@ class TestMakeMainMenuButton(unittest.TestCase):
         self.font.render.return_value = pygame.Surface((10, 10))
 
     def test_button_is_positioned_from_window_size(self) -> None:
+        """Test if main menu button is correctly positioned """
         _, rect = make_main_menu_button(self.window, self.font)
         self.font.render.assert_called_once_with("Main menu", True, WHITE)
         self.assertEqual(rect.center, (800 // 8, 600 // 10))
@@ -94,7 +95,3 @@ class TestRenderStaticScreen(unittest.TestCase):
                 patch("pygame.time.Clock", return_value=MagicMock()):
             render_static_screen(self.window,
                                  "caption", [("Line", 0)], self.font)
-
-
-if __name__ == "__main__":
-    unittest.main()

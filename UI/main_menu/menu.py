@@ -75,7 +75,6 @@ def menu(config: dict[str, Any]) -> None:
                 render_instruction(window)
             elif clicked(event, rect_cheat_mode):
                 cheat_settings = render_cheat_mode(window, num_level)
-                print(cheat_settings)
             elif clicked(event, rect_exit):
                 running = False
 
