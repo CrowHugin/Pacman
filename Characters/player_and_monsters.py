@@ -60,24 +60,32 @@ class Ghosts(Mobs):
         self.last_moves_time: int = 0
         self.move_delay = 300
 
-    def movements(self, maze: "Maze") -> None:
+    def movements(self, maze: "Maze", player: "Player") -> None:
         directions = []
+        weight: list[int] = []
         x, y = self.coords
+        dx: int = player.coords[0] - x
+        dy: int = player.coords[1] - y
         if (x, y) in maze.cases:
             if not maze.cases[(x, y)].content & 1:
                 directions.append(self.move_up)
+                weight.append(2 if dy < 0 else 1)
 
             if not maze.cases[(x, y)].content & 2:
                 directions.append(self.move_right)
+                weight.append(2 if dx > 0 else 1)
 
             if not maze.cases[(x, y)].content & 4:
                 directions.append(self.move_down)
+                weight.append(2 if dy > 0 else 1)
 
             if not maze.cases[(x, y)].content & 8:
                 directions.append(self.move_left)
+                weight.append(2 if dx < 0 else 1)
 
-
-        random.choice(directions)(maze)
+        if directions:
+            chosen_move = random.choices(directions, weight, k=1)[0]
+            chosen_move(maze)
 
     def eat(self, target: Player) -> None:
         target.nb_lives -= 1
