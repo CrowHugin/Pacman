@@ -269,7 +269,7 @@ def level_generator(width: int,
 
                     if (current_time - ghost.last_moves_time
                             >= ghost.move_delay):
-                        ghost.movements(maze, player)
+                        ghost.movements(maze, player,level_number)
                         ghost.last_moves_time = current_time
                     if ghost.coords == player.coords:
                         if not player.super:
