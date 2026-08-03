@@ -232,13 +232,17 @@ def level_generator(width: int,
                     running = False
                 if player:
                     if event.key == pygame.K_UP:
-                        player.move_up(maze)
+                        if not maze.cases[player.coords].content & 1:
+                            player.move_up(maze)
                     elif event.key == pygame.K_DOWN:
-                        player.move_down(maze)
+                        if not maze.cases[player.coords].content & 4:
+                            player.move_down(maze)
                     elif event.key == pygame.K_RIGHT:
-                        player.move_right(maze)
+                        if not maze.cases[player.coords].content & 2:
+                            player.move_right(maze)
                     elif event.key == pygame.K_LEFT:
-                        player.move_left(maze)
+                        if not maze.cases[player.coords].content & 8:
+                            player.move_left(maze)
 
         if player:
             if player.super:
