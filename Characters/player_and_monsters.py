@@ -14,23 +14,19 @@ class Mobs(ABC):
 
     def move_up(self, maze: "Maze") -> None:
         x, y = self.coords
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 1:
-            self.coords = (x, y - 1)
+        self.coords = (x, y - 1)
 
     def move_right(self, maze: "Maze") -> None:
         x, y = self.coords
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 2:
-            self.coords = (x + 1, y)
+        self.coords = (x + 1, y)
 
     def move_down(self, maze: "Maze") -> None:
         x, y = self.coords
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 4:
-            self.coords = (x, y + 1)
+        self.coords = (x, y + 1)
 
     def move_left(self, maze: "Maze") -> None:
         x, y = self.coords
-        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 8:
-            self.coords = (x - 1, y)
+        self.coords = (x - 1, y)
 
     @abstractmethod
     def eat(self, target: Any) -> None:
@@ -65,10 +61,21 @@ class Ghosts(Mobs):
         self.move_delay = 300
 
     def movements(self, maze: "Maze") -> None:
-        directions = [self.move_up,
-                      self.move_down,
-                      self.move_left,
-                      self.move_right]
+        directions = []
+        x, y = self.coords
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 1:
+            directions.append(self.move_up)
+
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 2:
+            directions.append(self.move_right)
+
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 4:
+            directions.append(self.move_down)
+
+        if (x, y) in maze.cases and not maze.cases[(x, y)].content & 8:
+            directions.append(self.move_left)
+
+
         random.choice(directions)(maze)
 
     def eat(self, target: Player) -> None:
