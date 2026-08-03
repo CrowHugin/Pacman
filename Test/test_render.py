@@ -38,6 +38,11 @@ class TestMazeRender(unittest.TestCase):
         self.offset_x = (self.surface.get_width() - maze_width_px) // 2
         self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
 
+        maze_width_px = 1 * self.cell_size
+        maze_height_px = 1 * self.cell_size
+        self.offset_x = (self.surface.get_width() - maze_width_px) // 2
+        self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
+
     def test_draw_maze_pixels(self) -> None:
         """
             Function to test if the draw maze function does work
