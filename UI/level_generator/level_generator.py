@@ -300,22 +300,22 @@ def level_generator(width: int,
                         else:
                             continue
 
-                    if (current_time - ghost.last_moves_time
-                            >= ghost.move_delay):
-                        ghost.movements(maze, player,level_number)
-                        ghost.last_moves_time = current_time
-                    if ghost.coords == player.coords:
-                        if not player.super:
-                            ghost.eat(player)
-                            player.is_dead = True
-                            player.death_time = pygame.time.get_ticks()
-                            player.coords = (-1, -2)
-                        else:
-                            player.eat(3)
-                            ghost.is_dead = True
-                            ghost.death_time = pygame.time.get_ticks()
-                            ghost.coords = (-1, -1)
-
+                    if not ghost.is_dead:
+                        if (current_time - ghost.last_moves_time
+                                >= ghost.move_delay):
+                            ghost._movements(maze, player, level_number)
+                            ghost.last_moves_time = current_time
+                        if ghost.coords == player.coords:
+                            if not player.super:
+                                ghost.eat(player)
+                                player.is_dead = True
+                                player.death_time = pygame.time.get_ticks()
+                                player.coords = (-1, -2)
+                            else:
+                                player.eat(3)
+                                ghost.is_dead = True
+                                ghost.death_time = pygame.time.get_ticks()
+                                ghost.coords = (-1, -1)
 
         time_limit = infos[4] * 1000
         window.fill(BLACK)
