@@ -78,22 +78,6 @@ class TestHighscore(unittest.TestCase):
             handle.write.assert_called_once_with(
                 json.dumps({"Axel": 100, "Kidax": 20}, indent=4)
             )
-    # A faire dans le highscore window
-    # @patch("pathlib.Path.is_file", return_value=True)
-    # def test_highscores_only_space_name_not_registered(
-    #     self, _: Any
-    # ) -> None:
-    #     """Test to keep the best score from the same player"""
-    #     with patch(
-    #         "builtins.open",
-    #         new=mock_open(read_data=self.mock_highscores_content),
-    #         create=True,
-    #     ) as mock_file:
-    #         set_highscore(self.mock_filename, ("  ", 999))
-    #         handle = mock_file()
-    #         handle.write.assert_called_once_with(
-    #             json.dumps({"Axel": 100, "Kidax": 20}, indent=4)
-    #         )
 
     @patch("pathlib.Path.is_file", return_value=True)
     def test_write_highscores_10_scores(self, _: Any) -> None:
