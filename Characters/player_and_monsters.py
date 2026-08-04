@@ -57,6 +57,7 @@ class Ghosts(Mobs):
         self.color = color
         self.last_moves_time: int = 0
         self.move_delay = 300
+        self.last_move: None | str = None
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
         DIRECTIONS = [
@@ -102,15 +103,27 @@ class Ghosts(Mobs):
             "DOWN": self.move_down,
             "LEFT": self.move_left,
         }
+        opposites = {
+            "UP": "DOWN",
+            "DOWN": "UP",
+            "LEFT": "RIGHT",
+            "RIGHT": "LEFT"
+        }
         possible_moves: list[str] = self._get_possible_moves(maze)
-        weight: list[int] = self._get_weight(level, player, possible_moves)
+
+        if self.last_move:
+            opposite_move = opposites[self.last_move]
+            if opposite_move in possible_moves and len(possible_moves) > 1:
+                possible_moves.remove(opposite_move)
 
         if len(possible_moves) == 1:
-            chosen_move = move_actions[possible_moves[0]]
+            chosen_move_name = possible_moves[0]
         else:
-            choice_random = random.choices(possible_moves, weight, k=1)[0]
-            chosen_move = move_actions[choice_random]
+            weight: list[int] = self._get_weight(level, player, possible_moves)
+            chosen_move_name = random.choices(possible_moves, weight, k=1)[0]
 
+        self.last_move = chosen_move_name
+        chosen_move = move_actions[chosen_move_name]
         chosen_move(maze)
 
     def eat(self, target: Player) -> None:
