@@ -6,18 +6,6 @@ from Characters.player_and_monsters import Player, Ghosts
 from ..game_over_visual import game_over
 
 
-def win_screen(window: pygame.Surface,
-               COLOR: tuple[int, int, int],
-               font: pygame.font.Font,
-               level: int) -> None:
-    pygame.display.set_caption(f"Level - {level}")
-    text_surface = font.render("CONGRATULATION", True, COLOR)
-    text_rect = text_surface.get_rect(
-       center=(window.get_width() // 2, window.get_height() // 2)
-    )
-    window.blit(text_surface, text_rect)
-
-
 def infos_screen_left(window: pygame.Surface,
                       font_info: pygame.font.Font,
                       player: Player,
@@ -27,7 +15,7 @@ def infos_screen_left(window: pygame.Surface,
                       ) -> None:
     text_surface = font_info.render(msg, True, color)
     text_rect = text_surface.get_rect(
-       bottomleft=size
+        bottomleft=size
     )
     window.blit(text_surface, text_rect)
 
@@ -41,7 +29,7 @@ def infos_screen_right(window: pygame.Surface,
                        ) -> None:
     text_surface = font_info.render(msg, True, color)
     text_rect = text_surface.get_rect(
-       bottomright=size
+        bottomright=size
     )
     window.blit(text_surface, text_rect)
 
@@ -215,7 +203,7 @@ def level_generator(width: int,
         green,
         blue,
         pink
-     )
+    )
     maze = Maze(width, height, seed)
     WHITE = (255, 255, 255)
     CELL_SIZE = 30
@@ -292,10 +280,10 @@ def level_generator(width: int,
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
-                win_screen(window, WHITE, font, 1)
+                game_over(window, WHITE, font, True, infos[5], 99999)
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        current_time <= 0):
-                game_over(window, WHITE, font, infos[5], player.score)
+                game_over(window, WHITE, font, False, infos[5], player.score)
             else:
                 draw_maze(window,
                           maze,

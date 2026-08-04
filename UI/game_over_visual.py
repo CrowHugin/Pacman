@@ -9,10 +9,15 @@ def game_over(
     window: pygame.Surface,
     BLACK: tuple[int, int, int],
     font: pygame.font.Font,
+    is_win: bool,
     highscore_file: str,
     score: int,
 ) -> None:
-    pygame.display.set_caption("GAME OVER")
+    if not is_win:
+        pygame.display.set_caption("GAME OVER")
+    else:
+        pygame.display.set_caption("CONGRATULATION")
+
     BLACK = (0, 0, 0)
 
     window.fill(BLACK)
@@ -67,7 +72,10 @@ def game_over(
 
         window.fill(BLACK)
 
-        text_surface = font.render("GAME OVER", True, (255, 0, 0))
+        if not is_win:
+            text_surface = font.render("GAME OVER", True, (255, 0, 0))
+        else:
+            text_surface = font.render("CONGRATULATION", True, (0, 255, 0))
         text_rect = text_surface.get_rect(center=(center_x,
                                                   window.get_height() // 6))
         window.blit(text_surface, text_rect)

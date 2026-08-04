@@ -1,0 +1,51 @@
+import os
+import unittest
+from unittest.mock import MagicMock, patch
+
+import pygame
+
+from UI.highscore_menu import render_highscores
+
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+
+
+class TestHighscoreWindowRender(unittest.TestCase):
+    def setUp(self) -> None:
+        pygame.init()
+        self.window = MagicMock(spec=pygame.Surface)
+        self.window.get_width.return_value = 800
+        self.window.get_height.return_value = 600
+        self.mock_filename = "mock_score.json"
+
+        for target in (
+            "UI.highscore_window.pygame.display.flip",
+            "UI.highscore_window.pygame.quit",
+            "UI.highscore_window.exit",
+        ):
+            patcher = patch(target)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    @patch("UI.highscore_window.get_highscores")
+    @patch("UI.highscore_window.pygame.event.get")
+    def test_displays_scores(
+        self, mock_event_get: MagicMock, mock_get_highscores: MagicMock
+    ) -> None:
+        """Test scores are display"""
+        mock_get_highscores.return_value = {"Axel": 100, "Kidax": 20}
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+
+        render_highscores(self.window, self.mock_filename)
+
+        self.window.blit.assert_called()
+
+    @patch("UI.highscore_window.get_highscores")
+    @patch("UI.highscore_window.pygame.event.get")
+    def test_render_no_scores(
+        self, mock_event_get: MagicMock, mock_get_highscores: MagicMock
+    ) -> None:
+        """Test no scores are display"""
+        mock_get_highscores.return_value = {}
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+
+        render_highscores(self.window, self.mock_filename)
