@@ -42,6 +42,8 @@ class Player(Mobs):
         self.score = -20
         self.super: bool = False
         self.super_time: int = 0
+        self.last_moves: int = 0
+        self.move_delay: int = 100
 
     def eat(self, score: int) -> None:
         self.score += score
