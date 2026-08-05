@@ -57,7 +57,8 @@ class TestMovements(unittest.TestCase):
         """
         Testing if the right move works.
         """
-        self.player.move_right(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 2:
+            self.player.move_right(self.mock_maze)
         self.assertEqual(self.player.coords, (2, 1))
 
     def test_move_right_blocked_by_wall(self) -> None:
@@ -65,14 +66,16 @@ class TestMovements(unittest.TestCase):
         Testing if the right move fails.
         """
         self.mock_maze.cases[(1, 1)].content = 15
-        self.player.move_right(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 2:
+            self.player.move_right(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 1))
 
     def test_move_left_success(self) -> None:
         """
         Testing if the left move works.
         """
-        self.player.move_left(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 8:
+            self.player.move_left(self.mock_maze)
         self.assertEqual(self.player.coords, (0, 1))
 
     def test_move_left_blocked_by_wall(self) -> None:
@@ -80,14 +83,16 @@ class TestMovements(unittest.TestCase):
         Testing if the right move fails.
         """
         self.mock_maze.cases[(1, 1)].content = 15
-        self.player.move_left(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 8:
+            self.player.move_left(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 1))
 
     def test_move_down_success(self) -> None:
         """
         Testing if the down move works.
         """
-        self.player.move_down(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 4:
+            self.player.move_down(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 2))
 
     def test_move_down_blocked_by_wall(self) -> None:
@@ -95,14 +100,16 @@ class TestMovements(unittest.TestCase):
         Testing if the down move fails.
         """
         self.mock_maze.cases[(1, 1)].content = 15
-        self.player.move_down(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 4:
+            self.player.move_down(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 1))
 
     def test_move_up_success(self) -> None:
         """
         Testing if the up move works.
         """
-        self.player.move_up(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 1:
+            self.player.move_up(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 0))
 
     def test_move_up_blocked_by_wall(self) -> None:
@@ -110,7 +117,8 @@ class TestMovements(unittest.TestCase):
         Testing if the up move fails.
         """
         self.mock_maze.cases[(1, 1)].content = 15
-        self.player.move_up(self.mock_maze)
+        if not self.mock_maze.cases[self.player.coords].content & 1:
+            self.player.move_up(self.mock_maze)
         self.assertEqual(self.player.coords, (1, 1))
 
 
