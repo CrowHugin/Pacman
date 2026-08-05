@@ -1,15 +1,8 @@
 import pygame
 
-from .ui_helpers import BLACK, WHITE, clicked
-from .ui_helpers import make_main_menu_button, wants_to_quit
+from score import get_highscores
 
-# from score import get_highscores
-
-# Only here for the tests, will remove it
-
-
-def get_highscores() -> dict[str, int]:
-    return {}
+from .ui_helpers import BLACK, WHITE, clicked, make_main_menu_button, wants_to_quit
 
 
 def render_highscores(window: pygame.Surface, filename: str) -> None:
@@ -20,19 +13,7 @@ def render_highscores(window: pygame.Surface, filename: str) -> None:
     center_x = window.get_width() // 2
     done = False
 
-    # highscores = get_highscores(filename=filename)
-    highscores = {
-        "Joe": 9999,
-        "test": 4393,
-        "pkpas": 4373,
-        "blblbl": 20,
-        "Josh": 10,
-        "Jos": 10,
-        "Jo": 10,
-        "J": 10,
-        "": 10,
-        "c": 10,
-    }
+    highscores = get_highscores(filename=filename)
 
     text_main_menu, rect_main_menu = make_main_menu_button(window, font)
     text_title = font.render("HIGHSCORES", True, WHITE)

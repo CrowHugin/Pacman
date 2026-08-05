@@ -4,6 +4,9 @@ import pygame
 
 from score import set_highscore
 
+# from .main_menu.menu import menu
+from .main_menu.ui_helpers import clicked, make_text
+
 
 def game_over(
     window: pygame.Surface,
@@ -34,16 +37,36 @@ def game_over(
     done = False
     is_saved = False
 
-    text_main_menu = font.render("Main menu", True, (255, 255, 255))
-    text_rect_main_menu = text_main_menu.get_rect(
-        center=(center_x - 200, window.get_height() // 1.5)
+    text_main_menu, rect_main_menu = make_text(
+        font, "Main menu", center=(center_x - 200, window.get_height() // 1.5)
+    )
+    text_new_game, rect_new_game = make_text(
+        font, "New game", center=(center_x + 200, rect_main_menu.centery)
+    )
+    if not is_win:
+        text_status, rect_status = make_text(
+            font, "GAME OVER", center=(center_x,
+                                       window.get_height() // 6)
+        )
+    else:
+        text_status, rect_status = make_text(
+            font, "CONGRATULATION", center=(center_x,
+                                            window.get_height() // 6)
+        )
+    text_score, rect_score = make_text(
+        font, f"Your score {score}", center=(center_x, rect_status.bottom + 100)
+    )
+    text_nickname, rect_nickname = make_text(
+        font, "Enter Nickname", center=(center_x, rect_score.bottom + 80)
     )
 
-    text_new_game = font.render("New game", True, (255, 255, 255))
-    text_rect_new_game = text_new_game.get_rect(
-        center=(center_x + 200, window.get_height() // 1.5)
-    )
-
+    if is_saved:
+        tmp_font = pygame.font.SysFont("arial", 20)
+        text_saved, rect_saved = make_text(
+            tmp_font, "Score saved", center=(rect_nickname.right + 50,
+                                             rect_nickname.bottom + 35)
+        )
+        window.blit(text_saved, rect_saved)
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -51,7 +74,7 @@ def game_over(
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     done = True
-                elif event.key == pygame.K_RETURN :
+                elif event.key == pygame.K_RETURN:
                     if len(text.strip()) != 0:
                         set_highscore(highscore_file, (text, score))
                         is_saved = True
@@ -65,65 +88,32 @@ def game_over(
                             color = default_color
                     else:
                         color = color_limit_reached
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                if text_rect_main_menu.collidepoint(event.pos):
-                    print("Button pressed.")
-                elif text_rect_new_game.collidepoint(event.pos):
-                    print("new game.")
+            # elif clicked(event, rect_main_menu):
+            #     menu()
+            # elif clicked(event, rect_new_game):
+            #     print("new game.")
 
         window.fill(BLACK)
-
-        if not is_win:
-            text_surface = font.render("GAME OVER", True, (255, 0, 0))
-        else:
-            text_surface = font.render("CONGRATULATION", True, (0, 255, 0))
-        text_rect = text_surface.get_rect(center=(center_x,
-                                                  window.get_height() // 6))
-        window.blit(text_surface, text_rect)
-
-        # Draw score
-        text_score = font.render(f"Your score {score}", True, (255, 255, 255))
-        text_rect_highscore = text_score.get_rect(
-            center=(center_x, text_rect.bottom + 100)
-        )
-        window.blit(text_score, text_rect_highscore)
-
-        text_nickname = font.render("Enter Nickname", True, (255, 255, 255))
-        text_rect_nickname = text_nickname.get_rect(
-            center=(center_x, text_rect_highscore.bottom + 80)
-        )
-        # center=(center_x, window.get_height() // 2.5))
-        window.blit(text_nickname, text_rect_nickname)
+        window.blit(text_status, rect_status)
+        window.blit(text_score, rect_score)
+        window.blit(text_nickname, rect_nickname)
+        window.blit(text_main_menu, rect_main_menu)
+        window.blit(text_new_game, rect_new_game)
 
         # Draw input box
-        box_y = text_rect_nickname.bottom + 15
+        box_y = rect_nickname.bottom + 15
         input_box = pygame.Rect(box_x, box_y, box_width, box_height)
         pygame.draw.rect(window, color, input_box, 2)
-
-        if is_saved:
-            tmp_font = pygame.font.SysFont("arial", 20)
-            text_score_saved = tmp_font.render("Score saved",
-                                               True, (255, 255, 255))
-            text_rect_score_saved = text_score_saved.get_rect(
-                center=(text_rect_nickname.right + 50,
-                        text_rect_nickname.bottom + 35)
-            )
-            window.blit(text_score_saved, text_rect_score_saved)
 
         # Draw the input letters
         txt_surface = font.render(text, True, (255, 255, 255))
         window.blit(txt_surface, (input_box.x + 10, input_box.y + 5))
 
-        text_instruction = font.render("Press enter to save",
-                                       True, (255, 255, 255))
-        text_rect_instruction = text_instruction.get_rect(
-            center=(center_x, input_box.bottom + 80)
+        text_instruction, rect_instruction = make_text(
+            font, "Press enter to save", center=(center_x, input_box.bottom + 80)
         )
-        # center=(center_x, window.get_height() // 1.8))
-        window.blit(text_instruction, text_rect_instruction)
-        window.blit(text_main_menu, text_rect_main_menu)
-        window.blit(text_new_game, text_rect_new_game)
 
+        window.blit(text_instruction, rect_instruction)
         pygame.display.flip()
         clock.tick(30)
 

@@ -21,13 +21,13 @@ def menu(config: dict[str, Any]) -> None:
     width = level["width"]
     height = level["height"]
     seed: int = config["seed"]
-    filename = config["highscore_filename"]
     infos: tuple[int, int, int, int, int] = (
         config["lives"],
         config["points_per_pacgum"],
         config["points_per_super_pacgum"],
         config["points_per_ghost"],
         config["level_max_time"],
+        config["highscore_filename"]
     )
 
     cheat_settings: dict[str, Any] | None = None
@@ -70,7 +70,7 @@ def menu(config: dict[str, Any]) -> None:
                                 start_level, infos, window, seed)
                 running = False
             elif clicked(event, rect_leaderboard):
-                render_highscores(window, filename)
+                render_highscores(window, config["highscore_filename"])
             elif clicked(event, rect_instructions):
                 render_instruction(window)
             elif clicked(event, rect_cheat_mode):
