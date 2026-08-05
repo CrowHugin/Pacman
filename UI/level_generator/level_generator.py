@@ -230,23 +230,21 @@ def level_generator(width: int,
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     running = False
+                if player and not player.is_dead:
+                    if event.key == pygame.K_UP:
+                        if not maze.cases[player.coords].content & 1:
+                            player.move_up(maze)
+                    elif event.key == pygame.K_DOWN:
+                        if not maze.cases[player.coords].content & 4:
+                            player.move_down(maze)
+                    elif event.key == pygame.K_RIGHT:
+                        if not maze.cases[player.coords].content & 2:
+                            player.move_right(maze)
+                    elif event.key == pygame.K_LEFT:
+                        if not maze.cases[player.coords].content & 8:
+                            player.move_left(maze)
+
         if player:
-            if not player.is_dead:
-                keys = pygame.key.get_pressed()
-                if (current_time - player.last_moves >= player.move_delay):
-                    content: int = maze.cases[player.coords].content
-                    if keys[pygame.K_UP] and not (content & 1):
-                        player.move_up(maze)
-                        player.last_moves = current_time
-                    elif keys[pygame.K_DOWN] and not (content & 4):
-                        player.move_down(maze)
-                        player.last_moves = current_time
-                    elif keys[pygame.K_RIGHT] and not (content & 2):
-                        player.move_right(maze)
-                        player.last_moves = current_time
-                    elif keys[pygame.K_LEFT] and not (content & 8):
-                        player.move_left(maze)
-                        player.last_moves = current_time
             if player.is_dead:
                 if current_time - player.death_time >= 2000:
                     player.is_dead = False
