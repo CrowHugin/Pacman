@@ -15,6 +15,7 @@ class Test_level_Creation(unittest.TestCase):
             Test if cases content to be between 0 and 15
             Test if walls are correct
     """
+
     def setUp(self) -> None:
         """
             Setup function to create the maze before each test
@@ -93,18 +94,3 @@ class Test_level_Creation(unittest.TestCase):
                                                             ind_row
                                                             )].content
                             self.assertTrue(left_content & 2)
-
-# class TestCheckValue(unittest.TestCase):
-#     def test_invalid_width_raises_error(self) -> None:
-#         with self.assertRaises(ValueError) as context:
-#             check_value(-30, 25, 42)
-
-#         expected_message = "ERROR:\nWidth cannot be negative or equal to 0"
-#         self.assertEqual(str(context.exception), expected_message)
-
-#     def test_invalid_height_raises_error(self) -> None:
-#         with self.assertRaises(ValueError) as context:
-#             check_value(30, -25, 42)
-
-#         expected_message = "ERROR:\nHeight cannot be negative or equal to 0"
-#         self.assertEqual(str(context.exception), expected_message)

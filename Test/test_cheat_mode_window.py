@@ -4,22 +4,11 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pygame
+from utils import WHITE, make_fake_font
 
 from UI.main_menu.cheat_mode_window import render_cheat_mode
-from UI.main_menu.ui_helpers import WHITE
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
-
-
-FONT_SIZE = (200, 50)
-
-
-def make_fake_font() -> MagicMock:
-    """Mock a font"""
-    fake_font = MagicMock(spec=pygame.font.Font)
-    fake_font.render.side_effect = lambda text, aa, color: pygame.Surface(
-        FONT_SIZE)
-    return fake_font
 
 
 class TestCheatMode(unittest.TestCase):

@@ -198,6 +198,8 @@ def draw_maze(window: pygame.Surface,
 
     if ghosts_tuple:
         for ghost in ghosts_tuple:
+            if ghost.is_dead:
+                continue
             x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2 + offset_x
             y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
             radius = (CELL_SIZE // 2 - 2) - 5

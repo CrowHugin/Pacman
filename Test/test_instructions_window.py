@@ -3,20 +3,11 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
+from utils import WHITE, make_fake_font
 
 from UI.main_menu.instructions_window import render_instruction
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
-
-FONT_SIZE = (200, 50)
-
-
-def make_fake_font() -> MagicMock:
-    """Mock a font"""
-    fake_font = MagicMock(spec=pygame.font.Font)
-    fake_font.render.side_effect = lambda text, aa, color: pygame.Surface(
-        FONT_SIZE)
-    return fake_font
 
 
 class TestInstructionsWindow(unittest.TestCase):
@@ -39,24 +30,26 @@ class TestInstructionsWindow(unittest.TestCase):
         self.addCleanup(patch("pygame.time.Clock",
                               return_value=MagicMock()).start().stop)
 
-    def test_renders_all_instruction(self) -> None:
+    @patch("UI.main_menu.instructions_window.pygame.event.get")
+    def test_renders_all_instruction(self, mock_event_get: MagicMock) -> None:
         """Test if all instruction are display"""
-        quit_event = pygame.event.Event(pygame.QUIT)
-        with patch("pygame.event.get", return_value=[quit_event]):
-            render_instruction(self.window)
-
-        rendered_texts = [c.args[0] for c in
-                          self.fake_font.render.call_args_list]
-        self.assertIn("Main menu", rendered_texts)
-        self.assertIn("Instruction", rendered_texts)
-        self.assertIn("Use the arrow key to move freely in the maze",
-                      rendered_texts)
-        self.assertIn("you will be able to eat a ghost", rendered_texts)
-        self.assertIn(
-            "within the time limit or if you loose your 3 lives",
-            rendered_texts
-        )
-        self.assertEqual(self.fake_font.render.call_count, 11)
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+        render_instruction(self.window)
+        instructions = [
+            "Instruction",
+            "Use the arrow key to move freely in the maze",
+            "Avoid the ghosts to not lose a life",
+            "Walk on the pacgum to increase your score",
+            "Walk on superpacgum and for 3 secondes",
+            "you will be able to eat a ghost",
+            "To win you have to collect all the pacgum",
+            "within the time limit",
+            "You lose if you don't collect all the pacgum",
+            "within the time limit or if you loose your 3 lives"
+        ]
+        for text in instructions:
+            self.fake_font.render.assert_any_call(
+                text, True, (WHITE))
 
     def test_quits_on_quit_event(self) -> None:
         quit_event = pygame.event.Event(pygame.QUIT)

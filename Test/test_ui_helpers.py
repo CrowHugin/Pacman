@@ -3,9 +3,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
+from utils import WHITE, make_fake_font
 
 from UI.main_menu.ui_helpers import (
-    WHITE,
     clicked,
     make_main_menu_button,
     make_text,
@@ -19,18 +19,20 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 class TestMakeText(unittest.TestCase):
     def setUp(self) -> None:
         pygame.init()
-        self.font = MagicMock(spec=pygame.font.Font)
-        self.font.render.return_value = pygame.Surface((10, 10))
+        self.mock_font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.mock_font)
+        font_patcher.start()
 
     def test_make_text_renders_with_given_color(self) -> None:
-        _, rect = make_text(self.font, "Hello",
+        _, rect = make_text(self.mock_font, "Hello",
                             center=(50, 60), color=(1, 2, 3))
-        self.font.render.assert_called_once_with("Hello", True, (1, 2, 3))
+        self.mock_font.render.assert_called_once_with("Hello", True, (1, 2, 3))
         self.assertEqual(rect.center, (50, 60))
 
     def test_make_text_defaults_to_white(self) -> None:
-        make_text(self.font, "Hello", center=(0, 0))
-        self.font.render.assert_called_once_with("Hello", True, WHITE)
+        make_text(self.mock_font, "Hello", center=(0, 0))
+        self.mock_font.render.assert_called_once_with("Hello", True, WHITE)
 
 
 class TestMakeMainMenuButton(unittest.TestCase):
@@ -39,13 +41,15 @@ class TestMakeMainMenuButton(unittest.TestCase):
         self.window = MagicMock(spec=pygame.Surface)
         self.window.get_width.return_value = 800
         self.window.get_height.return_value = 600
-        self.font = MagicMock(spec=pygame.font.Font)
-        self.font.render.return_value = pygame.Surface((10, 10))
+        self.mock_font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.mock_font)
+        font_patcher.start()
 
     def test_button_is_positioned_from_window_size(self) -> None:
         """Test if main menu button is correctly positioned """
-        _, rect = make_main_menu_button(self.window, self.font)
-        self.font.render.assert_called_once_with("Main menu", True, WHITE)
+        _, rect = make_main_menu_button(self.window, self.mock_font)
+        self.mock_font.render.assert_called_once_with("Main menu", True, WHITE)
         self.assertEqual(rect.center, (800 // 8, 600 // 10))
 
 
@@ -84,8 +88,8 @@ class TestRenderStaticScreen(unittest.TestCase):
         self.window = MagicMock(spec=pygame.Surface)
         self.window.get_width.return_value = 800
         self.window.get_height.return_value = 600
-        self.font = MagicMock(spec=pygame.font.Font)
-        self.font.render.return_value = pygame.Surface((100, 30))
+        self.mock_font = MagicMock(spec=pygame.font.Font)
+        self.mock_font.render.return_value = pygame.Surface((100, 30))
 
     def test_quit_main_menu_button_is_clicked(self) -> None:
         click = pygame.event.Event(
@@ -94,4 +98,4 @@ class TestRenderStaticScreen(unittest.TestCase):
         with patch("pygame.event.get", return_value=[click]), \
                 patch("pygame.time.Clock", return_value=MagicMock()):
             render_static_screen(self.window,
-                                 "caption", [("Line", 0)], self.font)
+                                 "caption", [("Line", 0)], self.mock_font)

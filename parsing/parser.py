@@ -64,13 +64,13 @@ def validate_level_size(level_size: Any) -> tuple[int, int, bool]:
     level_height = level_size.get("height")
     flag = False
 
-    if isinstance(level_width, int) and 10 <= level_width <= 40:
+    if isinstance(level_width, int) and 7 <= level_width <= 40:
         width = level_width
     else:
         width = default_width
         flag = True
 
-    if isinstance(level_height, int) and 10 <= level_height <= 30:
+    if isinstance(level_height, int) and 7 <= level_height <= 30:
         height = level_height
     else:
         height = default_height

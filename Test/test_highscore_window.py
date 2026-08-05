@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
+from utils import WHITE, make_fake_font
 
 from UI.main_menu.highscore_window import render_highscores
 
@@ -12,34 +13,51 @@ os.environ["SDL_VIDEODRIVER"] = "dummy"
 class TestHighscoreWindow(unittest.TestCase):
     def setUp(self) -> None:
         pygame.init()
-        pygame.display.set_mode((800, 600))
         self.window = MagicMock(spec=pygame.Surface)
         self.window.get_width.return_value = 800
         self.window.get_height.return_value = 600
+        self.mock_filename = "mock_score.json"
 
-        self.fake_font = MagicMock(spec=pygame.font.Font)
-        self.fake_font.render.side_effect = (
-            lambda text, aa, color: pygame.Surface((100, 30))
-        )
-        self.addCleanup(
-            patch("pygame.font.SysFont",
-                  return_value=self.fake_font).start().stop
-        )
-        self.addCleanup(patch("pygame.time.Clock",
-                              return_value=MagicMock()).start().stop)
+        self.fake_font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.fake_font)
+        font_patcher.start()
 
-    def test_renders_score_(self) -> None:
-        quit_event = pygame.event.Event(pygame.QUIT)
-        with patch("pygame.event.get", return_value=[quit_event]):
-            render_highscores(self.window, "mock_highscores.json")
+        patch("UI.main_menu.highscore_window.pygame.display.flip").start()
+        patch("UI.main_menu.highscore_window.pygame.quit").start()
+        patch("UI.main_menu.highscore_window.exit").start()
+        self.addCleanup(patch.stopall)
 
-        rendered_texts = [c.args[0] for c in
-                          self.fake_font.render.call_args_list]
-        self.assertIn("HIGHSCORES", rendered_texts)
-        self.assertIn("Main menu", rendered_texts)
-        self.assertIn("Joe : 9999", rendered_texts)
-        self.assertIn("test : 4393", rendered_texts)
-        self.assertEqual(self.fake_font.render.call_count, 12)
+    @patch("UI.main_menu.highscore_window.get_highscores")
+    @patch("UI.main_menu.highscore_window.pygame.event.get")
+    def test_displays_scores_content(
+        self, mock_event_get: MagicMock, mock_get_highscores: MagicMock
+    ) -> None:
+        """Test scores are display"""
+        mock_get_highscores.return_value = {"Joe": 9999, "test": 4393}
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+
+        render_highscores(self.window, self.mock_filename)
+
+        self.fake_font.render.assert_any_call(
+            "HIGHSCORES", True, (WHITE))
+        self.fake_font.render.assert_any_call(
+            "Main menu", True, (WHITE))
+        self.fake_font.render.assert_any_call(
+            "Joe : 9999", True, (WHITE))
+        self.fake_font.render.assert_any_call(
+            "test : 4393", True, (WHITE))
+
+    @patch("UI.main_menu.highscore_window.get_highscores")
+    @patch("UI.main_menu.highscore_window.pygame.event.get")
+    def test_render_no_scores(
+        self, mock_event_get: MagicMock, mock_get_highscores: MagicMock
+    ) -> None:
+        """Test no scores are display"""
+        mock_get_highscores.return_value = {}
+        mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
+
+        render_highscores(self.window, self.mock_filename)
 
     def test_quits_on_escape_key(self) -> None:
         escape_event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_ESCAPE)

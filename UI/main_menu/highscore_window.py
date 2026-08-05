@@ -5,6 +5,12 @@ from .ui_helpers import make_main_menu_button, wants_to_quit
 
 # from score import get_highscores
 
+# Only here for the tests, will remove it
+
+
+def get_highscores() -> dict[str, int]:
+    return {}
+
 
 def render_highscores(window: pygame.Surface, filename: str) -> None:
     """Render the leaderboard"""

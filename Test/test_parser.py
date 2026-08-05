@@ -43,7 +43,7 @@ class TestConfigParser(unittest.TestCase):
 
     def test_level_size_invalid(self) -> None:
         """Test for invalid value, the default value is returned"""
-        width, height, flag = validate_level_size({"width": 9, "height": 10})
+        width, height, flag = validate_level_size({"width": 2, "height": 10})
         self.assertEqual(width, 15)
         self.assertEqual(height, 10)
         self.assertTrue(flag)
