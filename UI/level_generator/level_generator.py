@@ -158,7 +158,11 @@ def draw_maze(window: pygame.Surface,
                            )
 
         if player.coords:
-            player_x = player.coords[0] * CELL_SIZE + CELL_SIZE // 2
+            if maze.cases[player.coords].content == 15:
+                x: int = player.coords[0] + 1
+            else:
+                x = player.coords[0]
+            player_x = x * CELL_SIZE + CELL_SIZE // 2
             player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2
             # -5 to avoid drawing on walls
             radius = ((CELL_SIZE // 2) - 2) - 5
