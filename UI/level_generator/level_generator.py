@@ -294,10 +294,10 @@ def level_generator(width: int,
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
-                game_over(window, WHITE, font, True, infos[5], 99999)
+                game_over(window, WHITE, font, True, infos[5], player.score)
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        current_time <= 0):
-                game_over(window, WHITE, font, False, infos[5], player.score)
+                game_over(window, WHITE, font, False, infos[5], 9999)
             else:
                 draw_maze(window,
                           maze,

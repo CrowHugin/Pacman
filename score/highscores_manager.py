@@ -1,15 +1,14 @@
 import json
 from pathlib import Path
-from typing import Dict
 
 
-def get_highscores(filename: str) -> Dict[str, int]:
+def get_highscores(filename: str) -> dict[str, int]:
     """Get the file with the best scores"""
     my_file = Path(filename)
     if my_file.is_file():
         with open(my_file, "r", encoding="utf-8") as file:
             try:
-                result: Dict[str, int] = json.load(file)
+                result: dict[str, int] = json.load(file)
                 return result
             except json.decoder.JSONDecodeError:
                 return {}
@@ -22,8 +21,8 @@ def set_highscore(filename: str, new_highscore: tuple[str, int]) -> None:
     scores = list(get_highscores(filename=filename).items())
     scores.append(new_highscore)
     scores.sort(key=lambda s: s[1], reverse=True)
-    scores_copy = list()
-    name_already_see = list()
+    scores_copy = []
+    name_already_see = []
 
     # Keep the best score from the same player
     for name, score in scores:

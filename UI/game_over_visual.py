@@ -51,9 +51,10 @@ def game_over(
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     done = True
-                elif event.key == pygame.K_RETURN:
-                    set_highscore(highscore_file, (text, score))
-                    is_saved = True
+                elif event.key == pygame.K_RETURN :
+                    if len(text.strip()) != 0:
+                        set_highscore(highscore_file, (text, score))
+                        is_saved = True
                 elif event.key == pygame.K_BACKSPACE:
                     text = text[:-1]
                     color = default_color

@@ -22,8 +22,6 @@ class TestGameOverRender(unittest.TestCase):
         self.mock_score = 999
         self.mock_file = "mock_file.json"
 
-        # Patches nécessaires pour que la boucle ne plante pas et se
-        # termine (window est un mock, pas une vraie Surface)
         for target in (
             "UI.game_over_visual.pygame.draw.rect",
             "UI.game_over_visual.pygame.display.flip",
