@@ -38,6 +38,7 @@ def load_json_remove_comments(file: str) -> Dict[str, Any]:
                 if line_stripped:
                     json_stripped.append(line_stripped)
         content = "".join(json_stripped)
+
         if not content:
             return {}
         # Removes commas before brackets or braces

@@ -1,31 +1,12 @@
 import sys
-import pygame
 from typing import Optional
+
+import pygame
+
+from Characters.player_and_monsters import Ghosts, Player
 from UI.Maze.Maze import Maze
-from Characters.player_and_monsters import Player, Ghosts
 
-
-def game_over(window: pygame.Surface,
-              COLOR: tuple[int, int, int],
-              font: pygame.font.Font) -> None:
-    pygame.display.set_caption("GAME OVER")
-    text_surface = font.render("GAME OVER", True, COLOR)
-    text_rect = text_surface.get_rect(
-        center=(window.get_width() // 2, window.get_height() // 2)
-    )
-    window.blit(text_surface, text_rect)
-
-
-def win_screen(window: pygame.Surface,
-               COLOR: tuple[int, int, int],
-               font: pygame.font.Font,
-               level: int) -> None:
-    pygame.display.set_caption(f"Level - {level}")
-    text_surface = font.render("CONGRATULATION", True, COLOR)
-    text_rect = text_surface.get_rect(
-        center=(window.get_width() // 2, window.get_height() // 2)
-    )
-    window.blit(text_surface, text_rect)
+from ..game_over_visual import game_over
 
 
 def infos_screen_left(window: pygame.Surface,
@@ -222,7 +203,7 @@ def check_pacgum(maze: "Maze") -> bool:
 def level_generator(width: int,
                     height: int,
                     level_number: int,
-                    infos: tuple[int, int,  int, int, int],
+                    infos: tuple[int, int,  int, int, int, str],
                     window: pygame.Surface,
                     seed: int | None = None
                     ) -> None:
@@ -325,10 +306,10 @@ def level_generator(width: int,
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
-                win_screen(window, WHITE, font, 1)
+                game_over(window, WHITE, font, True, infos[5], player.score)
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        current_time <= 0):
-                game_over(window, WHITE, font)
+                game_over(window, WHITE, font, False, infos[5], player.score)
             else:
                 draw_maze(window,
                           maze,
