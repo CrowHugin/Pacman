@@ -1,10 +1,7 @@
-import sys
-
 import pygame
 
 from score import set_highscore
 
-# from .main_menu.menu import menu
 from .main_menu.ui_helpers import clicked, make_text
 
 
@@ -14,7 +11,7 @@ def game_over(
     is_win: bool,
     highscore_file: str,
     score: int,
-) -> None:
+) -> str:
     if not is_win:
         pygame.display.set_caption("GAME OVER")
     else:
@@ -33,7 +30,8 @@ def game_over(
     color_limit_reached = pygame.Color("red")
     color = default_color
     text = "Joe"
-    done = False
+    running = True
+    action = "main menu"
     is_saved = False
 
     if not is_win:
@@ -63,18 +61,18 @@ def game_over(
         window.blit(text_saved, rect_saved)
 
     text_main_menu, rect_main_menu = make_text(
-        font, "Main menu", center=(center_x - 200, rect_nickname.bottom + 80)
+        font, "Main menu", center=(center_x - 200, rect_nickname.bottom + 100)
     )
     text_new_game, rect_new_game = make_text(
         font, "New game", center=(center_x + 200, rect_main_menu.centery)
     )
-    while not done:
+    while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
+                return "quit"
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    done = True
+                    return "quit"
                 elif event.key == pygame.K_RETURN:
                     if len(text.strip()) != 0:
                         set_highscore(highscore_file, (text, score))
@@ -90,10 +88,9 @@ def game_over(
                     else:
                         color = color_limit_reached
             elif clicked(event, rect_main_menu):
-                # menu()
-                print("main menu.")
+                return "main menu"
             elif clicked(event, rect_new_game):
-                print("new game.")
+                return "new game"
 
         window.fill(BLACK)
         window.blit(text_status, rect_status)
@@ -113,12 +110,11 @@ def game_over(
 
         text_instruction, rect_instruction = make_text(
             font, "Press enter to save", center=(center_x,
-                                                 input_box.bottom + 80)
+                                                 input_box.bottom + 100)
         )
 
         window.blit(text_instruction, rect_instruction)
         pygame.display.flip()
         clock.tick(30)
 
-    pygame.quit()
-    sys.exit()
+    return action

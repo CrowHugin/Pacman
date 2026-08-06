@@ -166,7 +166,7 @@ def draw_maze(window: pygame.Surface,
                            f"Time left: {time // 1000} s",
                            )
 
-        if player.coords:
+        if player.coords and not player.is_dead:
             if maze.cases[player.coords].content == 15:
                 player_new_x: int = player.coords[0] + 1
             else:
@@ -206,7 +206,7 @@ def level_generator(width: int,
                     infos: tuple[int, int,  int, int, int, str],
                     window: pygame.Surface,
                     seed: int | None = None
-                    ) -> None:
+                    ) -> str | None:
     player = Player(((width // 2) - 1, height // 2), infos[0])
     red = Ghosts(1, (0, 0), (255, 0, 0))
     green = Ghosts(1, (0, height - 1), (0, 128, 0))
@@ -231,6 +231,7 @@ def level_generator(width: int,
     clock = pygame.time.Clock()
 
     running: bool = True
+    status = "quit"
     while running:
         current_time = pygame.time.get_ticks()
         for event in pygame.event.get():
@@ -305,10 +306,12 @@ def level_generator(width: int,
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
-                game_over(window, font, True, infos[5], player.score)
+                status = game_over(window, font, True, infos[5], player.score)
+                running = not running
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        current_time <= 0):
-                game_over(window, font, False, infos[5], player.score)
+                status = game_over(window, font, False, infos[5], player.score)
+                running = not running
             else:
                 draw_maze(window,
                           maze,
@@ -321,4 +324,13 @@ def level_generator(width: int,
         pygame.display.flip()
         clock.tick(60)
 
-    sys.exit()
+    if status == "quit":
+        sys.exit()
+    elif status == "new game":
+        return level_generator(width,
+                               height,
+                               level_number,
+                               infos,
+                               window,
+                               seed)
+    return status

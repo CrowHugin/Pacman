@@ -41,7 +41,6 @@ def menu(config: dict[str, Any]) -> None:
     center_x = window.get_width() // 2
     clock = pygame.time.Clock()
     running: bool = True
-
     text_start_game, rect_start_game = make_text(
         font, "Start game", center=(center_x, window.get_height() // 6)
     )
@@ -66,9 +65,10 @@ def menu(config: dict[str, Any]) -> None:
                 start_level = cheat_settings["level"] if cheat_settings else 0
                 infos = ((cheat_settings["lives"],)
                          + infos[1:]) if cheat_settings else infos
-                level_generator(width, height,
-                                start_level, infos, window, seed)
-                running = False
+                res = level_generator(width, height,
+                                      start_level, infos, window, seed)
+                if res == "quit":
+                    running = False
             elif clicked(event, rect_leaderboard):
                 render_highscores(window, config["highscore_filename"])
             elif clicked(event, rect_instructions):
