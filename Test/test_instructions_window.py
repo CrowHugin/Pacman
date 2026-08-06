@@ -20,8 +20,6 @@ class TestInstructionsWindow(unittest.TestCase):
         self.window.get_height.return_value = 600
 
         self.fake_font = make_fake_font()
-        self.fake_font = make_fake_font()
-
         font_patcher = patch("pygame.font.SysFont",
                              return_value=self.fake_font)
         font_patcher.start()

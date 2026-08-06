@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 import pygame
+from utils import WHITE, make_fake_font
 
 from UI.game_over_visual import game_over
 
@@ -16,9 +17,10 @@ class TestGameOverRender(unittest.TestCase):
         self.window.get_width.return_value = 800
         self.window.get_height.return_value = 600
 
-        self.font = MagicMock(spec=pygame.font.Font)
-        self.font.render.return_value = MagicMock(spec=pygame.Surface)
-
+        self.font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.font)
+        font_patcher.start()
         self.mock_score = 999
         self.mock_file = "mock_file.json"
 
@@ -37,10 +39,10 @@ class TestGameOverRender(unittest.TestCase):
         """Test display GAME OVER text."""
         mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
 
-        game_over(self.window, (255, 255, 255), self.font,
+        game_over(self.window, self.font,
                   False, self.mock_file, self.mock_score)
 
-        self.font.render.assert_any_call("GAME OVER", True, (255, 0, 0))
+        self.font.render.assert_any_call("GAME OVER", True, WHITE)
         self.window.blit.assert_called()
 
     @patch("UI.game_over_visual.pygame.event.get")
@@ -50,11 +52,11 @@ class TestGameOverRender(unittest.TestCase):
         """Test display CONGRATULATION text."""
         mock_event_get.return_value = [pygame.event.Event(pygame.QUIT)]
 
-        game_over(self.window, (255, 255, 255), self.font,
+        game_over(self.window, self.font,
                   True, self.mock_file, self.mock_score)
 
         self.font.render.assert_any_call(
-            "CONGRATULATION", True, (0, 255, 0))
+            "CONGRATULATION", True, WHITE)
 
     @patch("UI.game_over_visual.set_highscore")
     @patch("UI.game_over_visual.pygame.event.get")
@@ -69,7 +71,7 @@ class TestGameOverRender(unittest.TestCase):
             [pygame.event.Event(pygame.QUIT)],
         ]
 
-        game_over(self.window, (255, 255, 255), self.font,
+        game_over(self.window, self.font,
                   False, self.mock_file, self.mock_score)
 
         mock_set_highscore.assert_called_once_with(
@@ -83,28 +85,68 @@ class TestGameOverRender(unittest.TestCase):
             pygame.KEYDOWN, key=pygame.K_ESCAPE)
         mock_event_get.return_value = [escape_event]
 
-        game_over(self.window, (255, 255, 255), self.font,
+        game_over(self.window, self.font,
                   False, self.mock_file, self.mock_score)
 
     @patch("UI.game_over_visual.sys.exit")
     @patch("UI.game_over_visual.pygame.quit")
     @patch("UI.game_over_visual.pygame.display.flip")
+    @patch("UI.game_over_visual.pygame.draw.rect")
+    @patch("UI.game_over_visual.pygame.event.get")
+    def test_add_character(
+        self, mock_event_get: MagicMock, mock_draw_rect: MagicMock,
+        mock_flip: MagicMock, mock_quit: MagicMock, mock_exit: MagicMock
+    ) -> None:
+        """Test to add character"""
+
+        key_a = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_a, unicode="A")
+        quit_event = pygame.event.Event(pygame.QUIT)
+        mock_event_get.side_effect = [[key_a], [quit_event]]
+
+        with patch("UI.game_over_visual.set_highscore"):
+            game_over(self.window, self.font,
+                      False, self.mock_file, self.mock_score)
+
+        self.font.render.assert_any_call("JoeA", True, WHITE)
+
+    @patch("UI.game_over_visual.sys.exit")
+    @patch("UI.game_over_visual.pygame.quit")
+    @patch("UI.game_over_visual.pygame.display.flip")
+    @patch("UI.game_over_visual.pygame.draw.rect")
     @patch("UI.game_over_visual.pygame.event.get")
     def test_backspace_removes_character(
-        self, mock_event_get: MagicMock,
+        self, mock_event_get: MagicMock, mock_draw_rect: MagicMock,
         mock_flip: MagicMock, mock_quit: MagicMock, mock_exit: MagicMock
     ) -> None:
         """Test to see if backspace removes character"""
-        key_a = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_a, unicode="A")
-        backspace = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_BACKSPACE,
-                                       unicode="")
+        backspace = pygame.event.Event(
+            pygame.KEYDOWN, key=pygame.K_BACKSPACE, unicode="")
         quit_event = pygame.event.Event(pygame.QUIT)
-        mock_event_get.side_effect = [[key_a], [backspace], [quit_event]]
+        mock_event_get.side_effect = [[backspace], [quit_event]]
 
         with patch("UI.game_over_visual.set_highscore"):
-            game_over(self.window, (255, 255, 255), self.font,
+            game_over(self.window, self.font,
                       False, self.mock_file, self.mock_score)
 
-        rendered_texts = [c.args[0] for c in self.font.render.call_args_list]
-        self.assertIn("JoeA", rendered_texts)
-        self.assertIn("Joe", rendered_texts)
+        self.font.render.assert_any_call("Jo", True, WHITE)
+
+    @patch("UI.game_over_visual.sys.exit")
+    @patch("UI.game_over_visual.pygame.quit")
+    @patch("UI.game_over_visual.pygame.display.flip")
+    @patch("UI.game_over_visual.pygame.draw.rect")
+    @patch("UI.game_over_visual.pygame.event.get")
+    def test_limit_character_nickname(
+        self, mock_event_get: MagicMock, mock_draw_rect: MagicMock,
+        mock_flip: MagicMock, mock_quit: MagicMock, mock_exit: MagicMock
+    ) -> None:
+        """Test nickname is limit to 10"""
+
+        key_a = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_a, unicode="A")
+        quit_event = pygame.event.Event(pygame.QUIT)
+        mock_event_get.side_effect = [[key_a] * 10, [quit_event]]
+
+        with patch("UI.game_over_visual.set_highscore"):
+            game_over(self.window, self.font,
+                      False, self.mock_file, self.mock_score)
+
+        self.font.render.assert_any_call("JoeAAAAAAA", True, WHITE)
