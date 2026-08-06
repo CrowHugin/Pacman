@@ -219,7 +219,6 @@ def level_generator(width: int,
         pink
     )
     maze = Maze(width, height, seed)
-    WHITE = (255, 255, 255)
     CELL_SIZE = 30
     BLACK = (0, 0, 0)
 
@@ -306,10 +305,10 @@ def level_generator(width: int,
         window.fill(BLACK)
         if maze:
             if check_pacgum(maze):
-                game_over(window, WHITE, font, True, infos[5], player.score)
+                game_over(window, font, True, infos[5], player.score)
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        current_time <= 0):
-                game_over(window, WHITE, font, False, infos[5], player.score)
+                game_over(window, font, False, infos[5], player.score)
             else:
                 draw_maze(window,
                           maze,

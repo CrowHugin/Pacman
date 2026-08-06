@@ -21,7 +21,7 @@ def menu(config: dict[str, Any]) -> None:
     width = level["width"]
     height = level["height"]
     seed: int = config["seed"]
-    infos: tuple[int, int, int, int, int] = (
+    infos: tuple[int, int, int, int, int, str] = (
         config["lives"],
         config["points_per_pacgum"],
         config["points_per_super_pacgum"],

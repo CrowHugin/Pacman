@@ -2,7 +2,8 @@ import pygame
 
 from score import get_highscores
 
-from .ui_helpers import BLACK, WHITE, clicked, make_main_menu_button, wants_to_quit
+from .ui_helpers import BLACK, WHITE, clicked, make_main_menu_button
+from .ui_helpers import wants_to_quit
 
 
 def render_highscores(window: pygame.Surface, filename: str) -> None:
@@ -18,7 +19,7 @@ def render_highscores(window: pygame.Surface, filename: str) -> None:
     text_main_menu, rect_main_menu = make_main_menu_button(window, font)
     text_title = font.render("HIGHSCORES", True, WHITE)
     rect_title = text_title.get_rect(
-        center=(center_x, window.get_height() // 6))
+        center=(center_x, window.get_height() // 10))
 
     score_lines: list[tuple[pygame.Surface, pygame.Rect]] = []
     for i, (name, score) in enumerate(highscores.items()):

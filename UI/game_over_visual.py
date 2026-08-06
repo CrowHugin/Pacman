@@ -10,7 +10,6 @@ from .main_menu.ui_helpers import clicked, make_text
 
 def game_over(
     window: pygame.Surface,
-    BLACK: tuple[int, int, int],
     font: pygame.font.Font,
     is_win: bool,
     highscore_file: str,
@@ -37,12 +36,6 @@ def game_over(
     done = False
     is_saved = False
 
-    text_main_menu, rect_main_menu = make_text(
-        font, "Main menu", center=(center_x - 200, window.get_height() // 1.5)
-    )
-    text_new_game, rect_new_game = make_text(
-        font, "New game", center=(center_x + 200, rect_main_menu.centery)
-    )
     if not is_win:
         text_status, rect_status = make_text(
             font, "GAME OVER", center=(center_x,
@@ -54,7 +47,8 @@ def game_over(
                                             window.get_height() // 6)
         )
     text_score, rect_score = make_text(
-        font, f"Your score {score}", center=(center_x, rect_status.bottom + 100)
+        font, f"Your score {score}", center=(center_x,
+                                             rect_status.bottom + 100)
     )
     text_nickname, rect_nickname = make_text(
         font, "Enter Nickname", center=(center_x, rect_score.bottom + 80)
@@ -67,6 +61,13 @@ def game_over(
                                              rect_nickname.bottom + 35)
         )
         window.blit(text_saved, rect_saved)
+
+    text_main_menu, rect_main_menu = make_text(
+        font, "Main menu", center=(center_x - 200, rect_nickname.bottom + 80)
+    )
+    text_new_game, rect_new_game = make_text(
+        font, "New game", center=(center_x + 200, rect_main_menu.centery)
+    )
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -88,10 +89,11 @@ def game_over(
                             color = default_color
                     else:
                         color = color_limit_reached
-            # elif clicked(event, rect_main_menu):
-            #     menu()
-            # elif clicked(event, rect_new_game):
-            #     print("new game.")
+            elif clicked(event, rect_main_menu):
+                # menu()
+                print("main menu.")
+            elif clicked(event, rect_new_game):
+                print("new game.")
 
         window.fill(BLACK)
         window.blit(text_status, rect_status)
@@ -110,7 +112,8 @@ def game_over(
         window.blit(txt_surface, (input_box.x + 10, input_box.y + 5))
 
         text_instruction, rect_instruction = make_text(
-            font, "Press enter to save", center=(center_x, input_box.bottom + 80)
+            font, "Press enter to save", center=(center_x,
+                                                 input_box.bottom + 80)
         )
 
         window.blit(text_instruction, rect_instruction)
