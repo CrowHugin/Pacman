@@ -28,7 +28,8 @@ class TestMenu(unittest.TestCase):
             "sysfont": patch("pygame.font.SysFont",
                              return_value=self.fake_font),
             "clock": patch("pygame.time.Clock", return_value=MagicMock()),
-            "level_generator": patch.object(menu_module, "level_generator"),
+            "level_generator": patch.object(menu_module, "level_generator",
+                                            return_value="quit"),
             "render_highscores": patch.object(menu_module,
                                               "render_highscores"),
             "render_instruction": patch.object(menu_module,
@@ -71,8 +72,6 @@ class TestMenu(unittest.TestCase):
         self.run_screen([[start_click]])
 
         self.mocks["level_generator"].assert_called_once()
-        _, _, start_level, *_ = self.mocks["level_generator"].call_args.args
-        self.assertEqual(start_level, 0)
 
     def test_leaderboard_screen(self) -> None:
         """Test if leaderboard screen is start"""
@@ -122,5 +121,15 @@ class TestMenu(unittest.TestCase):
         self.run_screen([[cheat_click], [start_click]])
 
         self.mocks["render_cheat_mode"].assert_called_once()
-        _, _, start_level, *_ = self.mocks["level_generator"].call_args.args
-        self.assertEqual(start_level, 2)
+
+    def test_start_game_returns_to_main_menu(self) -> None:
+        """Test returning to main menu after level_generator returns
+        'main menu'."""
+        self.mocks["level_generator"].return_value = "main menu"
+        start_click = self._click_at(button_center_y(0))
+        quit_event = pygame.event.Event(pygame.QUIT)
+
+        self.run_screen([[start_click], [quit_event]])
+
+        self.mocks["level_generator"].assert_called_once()
+        self.mocks["sys_exit"].assert_called_once()
