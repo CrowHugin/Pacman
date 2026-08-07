@@ -179,7 +179,7 @@ def draw_maze(window: pygame.Surface,
                            f"Time left: {time // 1000} s",
                            )
 
-        if player.coords:
+        if player.coords and not player.is_dead:
             if maze.cases[player.coords].content == 15:
                 player_new_x: int = player.coords[0] + 1
             else:
