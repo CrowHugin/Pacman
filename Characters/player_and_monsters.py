@@ -56,16 +56,16 @@ class Player(Mobs):
 
 class Ghosts(Mobs):
     def __init__(self,
-                 speed: float,
                  coords_spawn: tuple[int, int],
                  color: tuple[int, int, int],
                  level: int) -> None:
         super().__init__(coords_spawn)
-        self.speed = speed
         self.color = color
         self.last_moves_time: int = 0
         self.last_move: None | str = None
-        self.move_delay = 1000 // level if level != 0 else 1500
+        self.list_past_level: list[int] = [item for item in range(level)]
+        self.level: int = random.choice(self.list_past_level)
+        self.move_delay = 1000 // self.level if self.level != 0 else 1500
         self.respawn_delay = 2000 // level if level != 0 else 2000
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
@@ -105,7 +105,7 @@ class Ghosts(Mobs):
             ]
         return list_weight
 
-    def _movements(self, maze: "Maze", player: "Player", level: int) -> None:
+    def movements(self, maze: "Maze", player: "Player", level: int) -> None:
         move_actions = {
             "UP": self.move_up,
             "RIGHT": self.move_right,

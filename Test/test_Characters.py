@@ -13,7 +13,7 @@ class TestCharactersCreation(unittest.TestCase):
         """
         Testing if the player creation works.
         """
-        player = Player((5, 5))
+        player = Player((5, 5), 0)
         self.assertEqual(player.coords, (5, 5))
         self.assertEqual(player.nb_lives, 3)
 
@@ -21,7 +21,7 @@ class TestCharactersCreation(unittest.TestCase):
         """
         Testing if the ghosts creation works.
         """
-        ghost = Ghosts(speed=1, coords_spawn=(10, 10), color=(255, 0, 0))
+        ghost = Ghosts(coords_spawn=(10, 10), color=(255, 0, 0), level=0)
         self.assertEqual(ghost.coords, (10, 10))
         self.assertEqual(ghost.color, (255, 0, 0))
 
@@ -34,7 +34,7 @@ class TestMovements(unittest.TestCase):
         """
         Set up a grid for movements before each tests.
         """
-        self.player = Player((1, 1))
+        self.player = Player((1, 1), 0)
         self.mock_maze = MagicMock()
 
         grid = [
@@ -132,12 +132,12 @@ class TestInteractions(unittest.TestCase):
         """
         Context initialisation
         """
-        self.player = Player(coords_spawn=(1, 1))
+        self.player = Player(coords_spawn=(1, 1), level=0)
         self.player.coords = (1, 1)
         self.player.score = 0
         self.player.super = False
 
-        self.ghost = Ghosts(speed=1, coords_spawn=(10, 10), color=(255, 0, 0))
+        self.ghost = Ghosts(coords_spawn=(10, 10), color=(255, 0, 0), level=0)
         self.ghost.coords = (5, 5)
 
     def test_ghost_eats_player(self) -> None:
