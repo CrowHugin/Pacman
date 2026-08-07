@@ -13,6 +13,7 @@ class Mobs(ABC):
         self.coords = self.coords_spawn
         self.death_time: int = 0
         self.is_dead: bool = False
+        self.respawn_delay: int = 0
 
     def move_up(self, maze: "Maze") -> None:
         x, y = self.coords
@@ -38,7 +39,8 @@ class Mobs(ABC):
 class Player(Mobs):
     def __init__(self,
                  coords_spawn: tuple[int, int],
-                 nb_lives: int = 3) -> None:
+                 level: int,
+                 nb_lives: int = 3,) -> None:
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
         self.score = -20
@@ -46,6 +48,7 @@ class Player(Mobs):
         self.super_time: int = 0
         self.last_moves: int = 0
         self.move_delay: int = 100
+        self.respawn_delay: int = (500 * level)
 
     def eat(self, score: int) -> None:
         self.score += score
@@ -61,8 +64,9 @@ class Ghosts(Mobs):
         self.speed = speed
         self.color = color
         self.last_moves_time: int = 0
-        self.move_delay = 1000 // level if level != 0 else 1500
         self.last_move: None | str = None
+        self.move_delay = 1000 // level if level != 0 else 1500
+        self.respawn_delay = 2000 // level if level != 0 else 2000
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
         DIRECTIONS = [
