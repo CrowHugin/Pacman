@@ -209,10 +209,10 @@ def level_generator(width: int,
                     seed: int | None = None
                     ) -> str | None:
     player = Player(((width // 2) - 1, height // 2), infos[0])
-    red = Ghosts(1, (0, 0), (255, 0, 0))
-    green = Ghosts(1, (0, height - 1), (0, 128, 0))
-    blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
-    pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203))
+    red = Ghosts(1, (0, 0), (255, 0, 0), level_number)
+    green = Ghosts(1, (0, height - 1), (0, 128, 0), level_number)
+    blue = Ghosts(1, (width - 1, 0), (0, 0, 255), level_number)
+    pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203), level_number)
     ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
         red,
         green,

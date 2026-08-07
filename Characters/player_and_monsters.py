@@ -55,12 +55,13 @@ class Ghosts(Mobs):
     def __init__(self,
                  speed: float,
                  coords_spawn: tuple[int, int],
-                 color: tuple[int, int, int]) -> None:
+                 color: tuple[int, int, int],
+                 level: int) -> None:
         super().__init__(coords_spawn)
         self.speed = speed
         self.color = color
         self.last_moves_time: int = 0
-        self.move_delay = 300
+        self.move_delay = 1000 // level if level != 0 else 1500
         self.last_move: None | str = None
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
