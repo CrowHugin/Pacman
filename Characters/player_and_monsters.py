@@ -48,7 +48,8 @@ class Player(Mobs):
         self.super_time: int = 0
         self.last_moves: int = 0
         self.move_delay: int = 100
-        self.respawn_delay: int = (500 * level)
+        self.respawn_delay: int = (500 * level if level != 0
+                                   and level != 1 else 1000)
 
     def eat(self, score: int) -> None:
         self.score += score
