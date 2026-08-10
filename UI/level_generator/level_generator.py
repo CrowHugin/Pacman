@@ -306,7 +306,8 @@ def level_generator(width: int,
                             if (current_time - ghost.last_blink
                                     >= ghost.blink_delay):
                                 ghost.blink()
-                        elif ghost.color_to_draw == WHITE:
+                                ghost.last_blink = current_time
+                        elif ghost.color_to_draw == BLACK:
                             ghost.blink()
                         if (current_time - ghost.last_moves_time
                                 >= ghost.move_delay):
