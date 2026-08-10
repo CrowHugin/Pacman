@@ -289,8 +289,8 @@ def level_generator(width: int,
 
                     if not ghost.is_dead:
                         if player.super:
-                            if (current_time - ghost.last_blink 
-                                >= ghost.blink_delay):
+                            if (current_time - ghost.last_blink
+                                    >= ghost.blink_delay):
                                 ghost.blink()
                         elif ghost.color_to_draw == WHITE:
                             ghost.blink()
