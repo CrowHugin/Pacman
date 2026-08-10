@@ -1,15 +1,21 @@
-import pygame
 import unittest
-from unittest.mock import MagicMock
-from UI.level_generator.level_generator import (draw_maze,
-                                                infos_screen_left,
-                                                infos_screen_right)
+from unittest.mock import MagicMock, patch
+
+import pygame
+from utils import WHITE, make_fake_font
+
+from UI.level_generator.level_generator import (
+    draw_maze,
+    infos_screen_left,
+    infos_screen_right,
+)
 
 
 class TestMazeRender(unittest.TestCase):
     """
         Test if the draw function works correctly
     """
+
     def setUp(self) -> None:
         """
             Setup fonction to run before each test
@@ -17,6 +23,25 @@ class TestMazeRender(unittest.TestCase):
         pygame.init()
         self.surface = pygame.Surface((300, 300))
         self.cell_size: int = 20
+        self.mock_font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.mock_font)
+        font_patcher.start()
+
+        maze_width_px = 1 * self.cell_size
+        maze_height_px = 1 * self.cell_size
+        self.offset_x = (self.surface.get_width() - maze_width_px) // 2
+        self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
+
+        maze_width_px = 1 * self.cell_size
+        maze_height_px = 1 * self.cell_size
+        self.offset_x = (self.surface.get_width() - maze_width_px) // 2
+        self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
+
+        maze_width_px = 1 * self.cell_size
+        maze_height_px = 1 * self.cell_size
+        self.offset_x = (self.surface.get_width() - maze_width_px) // 2
+        self.offset_y = (self.surface.get_height() - maze_height_px) // 2 - 40
 
     def test_draw_maze_pixels(self) -> None:
         """
@@ -29,17 +54,18 @@ class TestMazeRender(unittest.TestCase):
 
         self.surface.fill((0, 0, 0))
 
-        mock_font = MagicMock()
         draw_maze(self.surface,
                   mock_maze,
                   self.cell_size,
                   None,
                   1,
-                  mock_font,
+                  self.mock_font,
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 0))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y)
+        )[:3]
         self.assertEqual(pixel_color, (33, 33, 255))
 
     def test_pacgum(self) -> None:
@@ -56,8 +82,6 @@ class TestMazeRender(unittest.TestCase):
         mock_case.has_super_pacgum = False
         mock_maze.cases = {(0, 0): mock_case}
 
-        mock_font = MagicMock()
-
         self.surface.fill((0, 0, 0))
 
         draw_maze(self.surface,
@@ -65,11 +89,13 @@ class TestMazeRender(unittest.TestCase):
                   self.cell_size,
                   None,
                   1,
-                  mock_font,
+                  self.mock_font,
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 10))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y + 10)
+        )[:3]
         self.assertEqual(pixel_color, (240, 240, 240))
 
     def test_super_pacgum(self) -> None:
@@ -86,8 +112,6 @@ class TestMazeRender(unittest.TestCase):
         mock_case.has_super_pacgum = True
         mock_maze.cases = {(0, 0): mock_case}
 
-        mock_font = MagicMock()
-
         self.surface.fill((0, 0, 0))
 
         draw_maze(self.surface,
@@ -95,11 +119,13 @@ class TestMazeRender(unittest.TestCase):
                   self.cell_size,
                   None,
                   1,
-                  mock_font,
+                  self.mock_font,
                   1000,
                   None)
 
-        pixel_color = self.surface.get_at((10, 10))[:3]
+        pixel_color = self.surface.get_at(
+            (self.offset_x + 10, self.offset_y + 10)
+        )[:3]
         self.assertEqual(pixel_color, (255, 165, 0))
 
 
@@ -109,12 +135,13 @@ class TestDisplayFunctionsDummy(unittest.TestCase):
         Setup for infos display's test
         """
         self.window = pygame.display.set_mode((800, 600))
-        self.font_info = pygame.font.SysFont("arial", 30)
+        self.mock_font = make_fake_font()
+        font_patcher = patch("pygame.font.SysFont",
+                             return_value=self.mock_font)
+        font_patcher.start()
         self.dummy_player = MagicMock()
         self.dummy_player.nb_lives = 3
         self.dummy_player.score = 1500
-
-        self.WHITE = (255, 255, 255)
 
     def test_infos_screen_left(self) -> None:
         """
@@ -124,9 +151,9 @@ class TestDisplayFunctionsDummy(unittest.TestCase):
         text_to_display = f"Lives: {self.dummy_player.nb_lives}"
         infos_screen_left(
             self.window,
-            self.font_info,
+            self.mock_font,
             self.dummy_player,
-            self.WHITE,
+            WHITE,
             position,
             text_to_display
         )
@@ -139,9 +166,9 @@ class TestDisplayFunctionsDummy(unittest.TestCase):
         text_to_display = "Current level: 1"
         infos_screen_right(
             self.window,
-            self.font_info,
+            self.mock_font,
             self.dummy_player,
-            self.WHITE,
+            WHITE,
             position,
             text_to_display
         )

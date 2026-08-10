@@ -1,4 +1,5 @@
 import unittest
+# import unittest.mock
 from unittest.mock import mock_open, patch
 from parsing.parser import (
     load_json_remove_comments,
@@ -43,7 +44,7 @@ class TestConfigParser(unittest.TestCase):
 
     def test_level_size_invalid(self) -> None:
         """Test for invalid value, the default value is returned"""
-        width, height, flag = validate_level_size({"width": 9, "height": 10})
+        width, height, flag = validate_level_size({"width": 2, "height": 10})
         self.assertEqual(width, 15)
         self.assertEqual(height, 10)
         self.assertTrue(flag)
@@ -79,7 +80,3 @@ class TestConfigParser(unittest.TestCase):
         self.assertEqual(config["number_level"], 10)
         for level in config["level_size"]:
             self.assertEqual(level, {"width": 15, "height": 15})
-
-
-if __name__ == "__main__":
-    unittest.main()

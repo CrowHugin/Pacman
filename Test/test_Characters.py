@@ -1,7 +1,8 @@
 import unittest
-from UI.Maze.Maze import Cell
 from unittest.mock import MagicMock
-from Characters.player_and_monsters import Player, Ghosts
+
+from Characters.player_and_monsters import Ghosts, Player
+from UI.Maze.Maze import Cell
 
 
 class TestCharactersCreation(unittest.TestCase):

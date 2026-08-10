@@ -19,9 +19,9 @@ debug: install
 	$(VENV_PATH) -m pdb $(NAME_SCRIPT) config.json
 
 clean:
-	rm -rf .mypy_cache	*/.mypy_cache
-	rm -rf __pycache__ */__pycache__
-	rm -rf $(ENV_NAME)
+	rm -rf .mypy_cache	*/.mypy_cache */*/.mypy_cache
+	rm -rf __pycache__ */__pycache__ */*/__pycache__
+# 	rm -rf $(ENV_NAME)
 
 lint: install
 	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN)
