@@ -30,12 +30,20 @@ class TestCheatMode(unittest.TestCase):
         clock_patcher = patch("pygame.time.Clock", return_value=MagicMock())
         clock_patcher.start()
         self.addCleanup(clock_patcher.stop)
+        self.mock_settings = {
+            "invincible": False,
+            "ghost_freeze": False,
+            "level": 0,
+            "player_speed": 0.5,
+            "lives": 3,
+        }
 
     def run_screen(self, event_batches: list[list[pygame.event.Event]]
                    ) -> dict[str, Any]:
         """Run the cheat mode window"""
         with patch("pygame.event.get", side_effect=event_batches):
-            return render_cheat_mode(self.window, lvl_max=5)
+            return render_cheat_mode(self.window, lvl_max=5,
+                                     settings=self.mock_settings)
 
     def test_quit_returns_default_settings(self) -> None:
         """Test if default settings are returns"""

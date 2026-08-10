@@ -30,7 +30,13 @@ def menu(config: dict[str, Any]) -> None:
         config["highscore_filename"]
     )
 
-    cheat_settings: dict[str, Any] | None = None
+    cheat_settings = {
+        "invincible": False,
+        "ghost_freeze": False,
+        "level": 0,
+        "player_speed": 0.5,
+        "lives": 3,
+    }
 
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -62,9 +68,8 @@ def menu(config: dict[str, Any]) -> None:
             if wants_to_quit(event):
                 running = False
             elif clicked(event, rect_start_game):
-                start_level = cheat_settings["level"] if cheat_settings else 0
-                infos = ((cheat_settings["lives"],)
-                         + infos[1:]) if cheat_settings else infos
+                start_level = cheat_settings["level"]
+                infos = ((cheat_settings["lives"],) + infos[1:])
                 res = level_generator(width, height,
                                       start_level, infos, window, seed)
                 if res == "quit":
@@ -74,7 +79,8 @@ def menu(config: dict[str, Any]) -> None:
             elif clicked(event, rect_instructions):
                 render_instruction(window)
             elif clicked(event, rect_cheat_mode):
-                cheat_settings = render_cheat_mode(window, num_level)
+                cheat_settings = render_cheat_mode(
+                    window, num_level, cheat_settings)
             elif clicked(event, rect_exit):
                 running = False
 

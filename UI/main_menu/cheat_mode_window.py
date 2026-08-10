@@ -13,7 +13,8 @@ from .ui_helpers import (
 )
 
 
-def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict[str, Any]:
+def render_cheat_mode(window: pygame.Surface, lvl_max: int,
+                      settings: dict[str, Any]) -> dict[str, Any]:
     """Render the cheat mode menu."""
     pygame.display.set_caption("Cheat mode")
     font = pygame.font.SysFont("arial", 48)
@@ -25,14 +26,6 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int) -> dict[str, Any]:
     text_cheat, rect_cheat = make_text(
         font, "Cheat mode", center=(center_x, window.get_height() // 10)
     )
-
-    settings = {
-        "invincible": False,
-        "ghost_freeze": False,
-        "level": 0,
-        "player_speed": 0.5,
-        "lives": 3,
-    }
 
     text_invincibility, rect_invincibility = make_text(
         font,
