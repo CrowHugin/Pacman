@@ -69,13 +69,13 @@ class Ghosts(Mobs):
         self.level: int = random.choice(self.list_past_level)
         self.move_delay = 1000 // self.level if self.level != 0 else 1500
         self.respawn_delay = 2000 // level if level != 0 else 2000
-        self.blink_delay: int = 500
+        self.blink_delay: int = 200
         self.last_blink: int = 0
 
     def blink(self) -> None:
-        WHITE = (0, 0, 0)
+        BLACK = (0, 0, 0)
         if self.color == self.color_to_draw:
-            self.color_to_draw = WHITE
+            self.color_to_draw = BLACK
         else:
             self.color_to_draw = self.color
 
