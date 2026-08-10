@@ -189,7 +189,7 @@ def draw_maze(window: pygame.Surface,
                 radius = (CELL_SIZE // 2 - 2) - 5
 
                 pygame.draw.circle(window,
-                                ghost.color,
+                                ghost.color_to_draw,
                                 (x, y),
                                 radius)
 
@@ -288,6 +288,12 @@ def level_generator(width: int,
                             continue
 
                     if not ghost.is_dead:
+                        if player.super:
+                            if (current_time - ghost.last_blink 
+                                >= ghost.blink_delay):
+                                ghost.blink()
+                        elif ghost.color_to_draw == WHITE:
+                            ghost.blink()
                         if (current_time - ghost.last_moves_time
                                 >= ghost.move_delay):
                             ghost.movements(maze, player, level_number)
