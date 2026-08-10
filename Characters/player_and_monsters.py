@@ -60,12 +60,22 @@ class Ghosts(Mobs):
                  level: int) -> None:
         super().__init__(coords_spawn)
         self.color = color
+        self.color_to_draw: tuple[int, int, int] = color
         self.last_moves_time: int = 0
         self.last_move: None | str = None
         self.list_past_level: list[int] = [item for item in range(level + 1)]
         self.level: int = random.choice(self.list_past_level)
         self.move_delay = 1000 // self.level if self.level != 0 else 1500
         self.respawn_delay = 2000 // level if level != 0 else 2000
+        self.blink_delay: int = 200
+        self.last_blink: int = 0
+
+    def blink(self) -> None:
+        BLACK = (0, 0, 0)
+        if self.color == self.color_to_draw:
+            self.color_to_draw = BLACK
+        else:
+            self.color_to_draw = self.color
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
         DIRECTIONS = [
