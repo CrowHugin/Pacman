@@ -189,9 +189,9 @@ def draw_maze(window: pygame.Surface,
                 radius = (CELL_SIZE // 2 - 2) - 5
 
                 pygame.draw.circle(window,
-                                ghost.color_to_draw,
-                                (x, y),
-                                radius)
+                                   ghost.color_to_draw,
+                                   (x, y),
+                                   radius)
 
 
 def check_pacgum(maze: "Maze") -> bool:
@@ -204,7 +204,7 @@ def check_pacgum(maze: "Maze") -> bool:
 def level_generator(width: int,
                     height: int,
                     level_number: int,
-                    infos: tuple[int, int,  int, int, int, str],
+                    infos: tuple[int, int, int, int, int, str],
                     window: pygame.Surface,
                     seed: int | None = None
                     ) -> str | None:

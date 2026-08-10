@@ -2,8 +2,14 @@ import pygame
 
 from score import get_highscores
 
-from .ui_helpers import BLACK, WHITE, clicked, make_main_menu_button
-from .ui_helpers import wants_to_quit, make_text
+from .ui_helpers import (
+    BLACK,
+    WHITE,
+    clicked,
+    make_main_menu_button,
+    make_text,
+    wants_to_quit,
+)
 
 
 def render_highscores(window: pygame.Surface, filename: str) -> None:

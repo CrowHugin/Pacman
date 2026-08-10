@@ -68,8 +68,8 @@ def menu(config: dict[str, Any]) -> None:
             if wants_to_quit(event):
                 running = False
             elif clicked(event, rect_start_game):
-                start_level = cheat_settings["level"]
-                infos = ((cheat_settings["lives"],) + infos[1:])
+                start_level = int(cheat_settings["level"])
+                infos = ((int(cheat_settings["lives"]),) + infos[1:])
                 res = level_generator(width, height,
                                       start_level, infos, window, seed)
                 if res == "quit":
