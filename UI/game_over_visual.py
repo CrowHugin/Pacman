@@ -52,14 +52,6 @@ def game_over(
         font, "Enter Nickname", center=(center_x, rect_score.bottom + 80)
     )
 
-    if is_saved:
-        tmp_font = pygame.font.SysFont("arial", 20)
-        text_saved, rect_saved = make_text(
-            tmp_font, "Score saved", center=(rect_nickname.right + 50,
-                                             rect_nickname.bottom + 35)
-        )
-        window.blit(text_saved, rect_saved)
-
     text_main_menu, rect_main_menu = make_text(
         font, "Main menu", center=(center_x - 200, rect_nickname.bottom + 100)
     )
@@ -98,6 +90,14 @@ def game_over(
         window.blit(text_nickname, rect_nickname)
         window.blit(text_main_menu, rect_main_menu)
         window.blit(text_new_game, rect_new_game)
+
+        if is_saved:
+            tmp_font = pygame.font.SysFont("arial", 20)
+            text_saved, rect_saved = make_text(
+                tmp_font, "Score saved", center=(rect_nickname.right + 50,
+                                                 rect_nickname.bottom + 35)
+            )
+            window.blit(text_saved, rect_saved)
 
         # Draw input box
         box_y = rect_nickname.bottom + 15

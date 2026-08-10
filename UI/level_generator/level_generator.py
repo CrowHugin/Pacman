@@ -183,14 +183,15 @@ def draw_maze(window: pygame.Surface,
 
     if ghosts_tuple:
         for ghost in ghosts_tuple:
-            x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2 + offset_x
-            y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
-            radius = (CELL_SIZE // 2 - 2) - 5
+            if not ghost.is_dead:
+                x = ghost.coords[0] * CELL_SIZE + CELL_SIZE // 2 + offset_x
+                y = ghost.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
+                radius = (CELL_SIZE // 2 - 2) - 5
 
-            pygame.draw.circle(window,
-                               ghost.color,
-                               (x, y),
-                               radius)
+                pygame.draw.circle(window,
+                                ghost.color,
+                                (x, y),
+                                radius)
 
 
 def check_pacgum(maze: "Maze") -> bool:
