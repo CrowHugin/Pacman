@@ -70,8 +70,7 @@ class Ghosts(Mobs):
         self.blink_delay: int = 500
         self.last_blink: int = 0
 
-
-    def blink(self):
+    def blink(self) -> None:
         WHITE = (0, 0, 0)
         if self.color == self.color_to_draw:
             self.color_to_draw = WHITE
