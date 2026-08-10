@@ -11,8 +11,8 @@ class TestTimeLogic(unittest.TestCase):
         """
         Context initialisation.
         """
-        self.player = Player(coords_spawn=(1, 1))
-        self.ghost = Ghosts(speed=1, coords_spawn=(10, 10), color=(255, 0, 0))
+        self.player = Player(coords_spawn=(1, 1), level=0)
+        self.ghost = Ghosts(coords_spawn=(10, 10), color=(255, 0, 0), level=0)
 
     def test_super_pacgum_duration(self) -> None:
         """

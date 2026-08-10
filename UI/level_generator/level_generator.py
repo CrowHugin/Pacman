@@ -219,11 +219,11 @@ def level_generator(width: int,
                     infos: tuple[int, int,  int, int, int],
                     seed: int | None = None,
                     ) -> None:
-    player = Player(((width // 2) - 1, height // 2), infos[0])
-    red = Ghosts(1, (0, 0), (255, 0, 0))
-    green = Ghosts(1, (0, height - 1), (0, 128, 0))
-    blue = Ghosts(1, (width - 1, 0), (0, 0, 255))
-    pink = Ghosts(1, (width - 1, height - 1), (255, 192, 203))
+    player = Player(((width // 2) - 1, height // 2), level_number, infos[0])
+    red = Ghosts((0, 0), (255, 0, 0), level_number)
+    green = Ghosts((0, height - 1), (0, 128, 0), level_number)
+    blue = Ghosts((width - 1, 0), (0, 0, 255), level_number)
+    pink = Ghosts((width - 1, height - 1), (255, 192, 203), level_number)
     ghosts_tuple: tuple[Ghosts, Ghosts, Ghosts, Ghosts] = (
         red,
         green,
@@ -274,7 +274,7 @@ def level_generator(width: int,
                         player.move_left(maze)
                         player.last_moves = current_time
             if player.is_dead:
-                if current_time - player.death_time >= 2000:
+                if current_time - player.death_time >= player.respawn_delay:
                     player.is_dead = False
                     player.coords = player.coords_spawn
 
@@ -295,7 +295,8 @@ def level_generator(width: int,
             if ghosts_tuple:
                 for ghost in ghosts_tuple:
                     if ghost.is_dead:
-                        if current_time - ghost.death_time >= 2000:
+                        if (current_time - ghost.death_time
+                                >= ghost.respawn_delay):
                             ghost.is_dead = False
                             ghost.coords = ghost.coords_spawn
                         else:
@@ -304,7 +305,7 @@ def level_generator(width: int,
                     if not ghost.is_dead:
                         if (current_time - ghost.last_moves_time
                                 >= ghost.move_delay):
-                            ghost._movements(maze, player, level_number)
+                            ghost.movements(maze, player, level_number)
                             ghost.last_moves_time = current_time
                         if ghost.coords == player.coords:
                             if not player.super:

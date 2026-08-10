@@ -11,6 +11,7 @@ class Mobs(ABC):
         self.coords = self.coords_spawn
         self.death_time: int = 0
         self.is_dead: bool = False
+        self.respawn_delay: int = 0
 
     def move_up(self, maze: "Maze") -> None:
         x, y = self.coords
@@ -36,7 +37,8 @@ class Mobs(ABC):
 class Player(Mobs):
     def __init__(self,
                  coords_spawn: tuple[int, int],
-                 nb_lives: int = 3) -> None:
+                 level: int,
+                 nb_lives: int = 3,) -> None:
         super().__init__(coords_spawn)
         self.nb_lives = nb_lives
         self.score = -20
@@ -44,6 +46,8 @@ class Player(Mobs):
         self.super_time: int = 0
         self.last_moves: int = 0
         self.move_delay: int = 100
+        self.respawn_delay: int = (500 * level if level != 0
+                                   and level != 1 else 1000)
 
     def eat(self, score: int) -> None:
         self.score += score
@@ -51,15 +55,17 @@ class Player(Mobs):
 
 class Ghosts(Mobs):
     def __init__(self,
-                 speed: float,
                  coords_spawn: tuple[int, int],
-                 color: tuple[int, int, int]) -> None:
+                 color: tuple[int, int, int],
+                 level: int) -> None:
         super().__init__(coords_spawn)
-        self.speed = speed
         self.color = color
         self.last_moves_time: int = 0
-        self.move_delay = 300
         self.last_move: None | str = None
+        self.list_past_level: list[int] = [item for item in range(level + 1)]
+        self.level: int = random.choice(self.list_past_level)
+        self.move_delay = 1000 // self.level if self.level != 0 else 1500
+        self.respawn_delay = 2000 // level if level != 0 else 2000
 
     def _get_possible_moves(self, maze: "Maze") -> list[str]:
         DIRECTIONS = [
@@ -98,7 +104,7 @@ class Ghosts(Mobs):
             ]
         return list_weight
 
-    def _movements(self, maze: "Maze", player: "Player", level: int) -> None:
+    def movements(self, maze: "Maze", player: "Player", level: int) -> None:
         move_actions = {
             "UP": self.move_up,
             "RIGHT": self.move_right,
