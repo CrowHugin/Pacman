@@ -84,6 +84,14 @@ def menu(config: dict[str, Any]) -> None:
                                 )
                 if res == "quit":
                     running = False
+                if res == "main menu":
+                    cheat_settings = {
+                        "invincible": False,
+                        "ghost_freeze": False,
+                        "level": 0,
+                        "lives": config["lives"],
+                    }
+                    print("test")
             elif clicked(event, rect_leaderboard):
                 render_highscores(window, config["highscore_filename"])
             elif clicked(event, rect_instructions):
