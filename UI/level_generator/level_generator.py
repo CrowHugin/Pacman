@@ -380,6 +380,12 @@ def level_generator(width: int,
     if status == "quit":
         sys.exit()
     elif status == "new game":
+        game_progression = {
+        "first_game": True,
+        "current_level": 0,
+        "player_lives": infos[0],
+        "player_score": -20,
+    }
         return level_generator(width,
                                height,
                                level_number,
