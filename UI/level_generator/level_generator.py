@@ -251,9 +251,9 @@ def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
     sub_rect = sub_surf.get_rect(center=(window.get_width() // 2,
                                          window.get_height() // 2 + 50))
     sub_surf_quit = font_small.render("Press q to quit",
-                                 True, (200, 200, 200))
+                                      True, (200, 200, 200))
     sub_rect_quit = sub_surf.get_rect(center=(window.get_width() // 2 + 50,
-                                         window.get_height() // 2 + 100))
+                                      window.get_height() // 2 + 100))
     window.blit(sub_surf, sub_rect)
     window.blit(sub_surf_quit, sub_rect_quit)
 
