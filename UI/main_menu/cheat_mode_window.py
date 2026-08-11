@@ -31,13 +31,13 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
         font,
         "Invincibility",
         center=(center_x, rect_cheat.bottom + 100),
-        color=GREY,
+        color=WHITE if settings["invincible"] else GREY,
     )
     text_ghost_freeze, rect_ghost_freeze = make_text(
         font,
         "Ghost Freeze",
         center=(center_x, rect_invincibility.bottom + 50),
-        color=GREY,
+        color=WHITE if settings["invincible"] else GREY,
     )
 
     text_plus = font.render("+", True, WHITE)

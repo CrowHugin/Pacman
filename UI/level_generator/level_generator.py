@@ -410,7 +410,7 @@ def level_generator(width: int,
         if maze:
             if check_pacgum(maze) and level_number + 1 == infos[5]:
                 status = game_over(window, font, True, highscore_filename,
-                                   player.score)
+                                   game_progression["player_score"])
                 running = not running
             elif check_pacgum(maze):
                 game_progression["first_game"] = False
@@ -420,7 +420,7 @@ def level_generator(width: int,
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        elapsed_time <= 0):
                 status = game_over(window, font, False, highscore_filename,
-                                   player.score)
+                                   game_progression["player_score"])
                 running = not running
             else:
                 draw_maze(window,
