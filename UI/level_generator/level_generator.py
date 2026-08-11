@@ -372,6 +372,7 @@ def level_generator(width: int,
                           level_number + 1,
                           font_info,
                           time_limit - elapsed_time,
+                          game_progression,
                           ghosts_tuple)
         pygame.display.flip()
         clock.tick(60)
