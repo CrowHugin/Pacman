@@ -207,6 +207,7 @@ def new_level(game_progression: dict[str, Any],
               window: pygame.Surface,
               infos: tuple[int, int, int, int, int, int],
               highscore_filename: str,
+              cheat_settings: dict[str, Any],
               seed: int | None = None,
               ) -> str | None:
     if game_progression['first_game']:
@@ -217,7 +218,7 @@ def new_level(game_progression: dict[str, Any],
 
         return level_generator(width, height, 0, infos,
                                game_progression, window,
-                               highscore_filename, seed)
+                               highscore_filename, cheat_settings, seed)
     else:
         level_nb = game_progression['current_level']
         level = game_progression["remaining_level"][level_nb]
@@ -226,7 +227,7 @@ def new_level(game_progression: dict[str, Any],
         infos = (game_progression["player_lives"],) + infos[1:]
         return level_generator(width, height, level_nb,
                                infos, game_progression,
-                               window, highscore_filename)
+                               window, highscore_filename, cheat_settings)
 
 
 def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
@@ -286,6 +287,7 @@ def level_generator(width: int,
                     game_progression: dict[str, Any],
                     window: pygame.Surface,
                     highscore_filename: str,
+                    cheat_settings: dict[str, Any],
                     seed: int | None = None
                     ) -> str | None:
     player = Player(((width // 2) - 1, height // 2), level_number,
@@ -319,6 +321,9 @@ def level_generator(width: int,
     while running:
         current_time = pygame.time.get_ticks() - total_pause_time
         elapsed_time = current_time - level_start_time
+        if cheat_settings["invincible"]:
+            player.super = True
+            player.super_time = current_time
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -382,7 +387,8 @@ def level_generator(width: int,
                         elif ghost.color_to_draw == BLACK:
                             ghost.blink()
                         if (current_time - ghost.last_moves_time
-                                >= ghost.move_delay):
+                                >= ghost.move_delay
+                                and not cheat_settings["ghost_freeze"]):
                             ghost.movements(maze, player, level_number)
                             ghost.last_moves_time = current_time
                         if ghost.coords == player.coords:
@@ -410,7 +416,7 @@ def level_generator(width: int,
                 game_progression["first_game"] = False
                 game_progression["current_level"] += 1
                 return new_level(game_progression, window, infos,
-                                 highscore_filename)
+                                 highscore_filename, cheat_settings)
             elif (player and player.nb_lives <= 0) or (time_limit -
                                                        elapsed_time <= 0):
                 status = game_over(window, font, False, highscore_filename,
@@ -433,11 +439,11 @@ def level_generator(width: int,
         sys.exit()
     elif status == "new game":
         game_progression = {
-        "first_game": True,
-        "current_level": 0,
-        "player_lives": infos[0],
-        "player_score": -20,
-    }
+            "first_game": True,
+            "current_level": 0,
+            "player_lives": infos[0],
+            "player_score": -20,
+        }
         return level_generator(width,
                                height,
                                level_number,
@@ -445,5 +451,6 @@ def level_generator(width: int,
                                game_progression,
                                window,
                                highscore_filename,
+                               cheat_settings,
                                seed)
     return status

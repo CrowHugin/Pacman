@@ -19,7 +19,6 @@ def menu(config: dict[str, Any]) -> None:
         "invincible": False,
         "ghost_freeze": False,
         "level": 0,
-        "player_speed": 0.5,
         "lives": config["lives"],
     }
     level_progression = {
@@ -31,12 +30,12 @@ def menu(config: dict[str, Any]) -> None:
     }
 
     infos: tuple[int, int, int, int, int, int] = (
-                level_progression["player_lives"],
-                config["points_per_pacgum"],
-                config["points_per_super_pacgum"],
-                config["points_per_ghost"],
-                config["level_max_time"],
-                config["number_level"])
+        level_progression["player_lives"],
+        config["points_per_pacgum"],
+        config["points_per_super_pacgum"],
+        config["points_per_ghost"],
+        config["level_max_time"],
+        config["number_level"])
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Main menu")
@@ -80,7 +79,9 @@ def menu(config: dict[str, Any]) -> None:
                     level_progression["current_level"] = start_level
 
                 res = new_level(level_progression, window, infos,
-                                config["highscore_filename"], config["seed"])
+                                config["highscore_filename"], cheat_settings,
+                                config["seed"]
+                                )
                 if res == "quit":
                     running = False
             elif clicked(event, rect_leaderboard):
