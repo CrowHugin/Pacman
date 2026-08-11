@@ -197,7 +197,7 @@ def draw_maze(window: pygame.Surface,
 
 def check_pacgum(maze: "Maze") -> bool:
     for case in maze.cases.values():
-        if case.has_pacgum:
+        if case.has_pacgum or case.has_super_pacgum:
             return False
     return True
 
@@ -266,7 +266,7 @@ def level_generator(width: int,
     status = "quit"
     while running:
         current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - level_start_time 
+        elapsed_time = current_time - level_start_time
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
