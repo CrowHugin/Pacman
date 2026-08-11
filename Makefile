@@ -21,7 +21,8 @@ debug: install
 clean:
 	rm -rf .mypy_cache	*/.mypy_cache */*/.mypy_cache
 	rm -rf __pycache__ */__pycache__ */*/__pycache__
-# 	rm -rf $(ENV_NAME)
+	rm -rf build dist pac-man.spec
+	rm -rf $(ENV_NAME)
 
 lint: install
 	./$(ENV_NAME)/bin/flake8 . --exclude $(ENV_NAME) --exclude $(MAZE_GEN)
@@ -34,9 +35,8 @@ lint-strict: install
 tests: install
 	PYGAME_HIDE_SUPPORT_PROMPT=hide ./$(VENV_PATH) -m unittest discover -s Test -p "test_*.py"
 
-# build: install
-#	 ./$(ENV_NAME)/bin/pip3 install --upgrade build
-#	 ./$(VENV_PATH) -m build
+build: install
+	./$(ENV_NAME)/bin/pyinstaller --onefile pac-man.py
 
 .PHONY: all install run debug clean lint lint-strict
 
