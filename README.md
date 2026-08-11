@@ -8,7 +8,7 @@ The player will control pacman, to win the game, you will have to eat all the pa
 
 ---
 ## ***Instructions***
-To run the program, launch the command `make run`.  
+To run the program, launch the command `make`.  
 It will automatically install all the dependency needed and run the program.
 
 
@@ -42,7 +42,7 @@ Makefile
 | points per super pacgum   | Points win when super pacgum got eat  | 50                      |
 | points per ghost          | Points win when ghost got eat         | 200                     |
 | seed                      | Seed for the generation of the maze   | 42                      |
-| level max time            | Time limit for a level                | 60                      |
+| level max time            | Time limit for a level                | 360                      |
 ---
 ## *Highscore*
 

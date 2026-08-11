@@ -76,7 +76,7 @@ class TestConfigParser(unittest.TestCase):
         self.assertEqual(config["points_per_super_pacgum"], 50)
         self.assertEqual(config["points_per_ghost"], 200)
         self.assertEqual(config["seed"], 42)
-        self.assertEqual(config["level_max_time"], 90)
+        self.assertEqual(config["level_max_time"], 360)
         self.assertEqual(config["number_level"], 10)
         for level in config["level_size"]:
             self.assertEqual(level, {"width": 15, "height": 15})
