@@ -1,14 +1,13 @@
 import sys
-from typing import Any, Optional
+from typing import Optional, Any
 
 import pygame
 
 from Characters.player_and_monsters import Ghosts, Player
-from parsing import load_game_config
-from UI.main_menu.menu import menu
 from UI.Maze.Maze import Maze
 
 from ..game_over_visual import game_over
+from parsing import load_game_config
 
 
 def infos_screen_left(window: pygame.Surface,
