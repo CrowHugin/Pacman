@@ -246,11 +246,16 @@ def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
     window.blit(text_surf, text_rect)
 
     font_small = pygame.font.SysFont("arial", 30)
-    sub_surf = font_small.render("Appuyez sur ECHAP pour reprendre",
+    sub_surf = font_small.render("Press Esc to continue",
                                  True, (200, 200, 200))
     sub_rect = sub_surf.get_rect(center=(window.get_width() // 2,
                                          window.get_height() // 2 + 50))
+    sub_surf_quit = font_small.render("Press q to quit",
+                                 True, (200, 200, 200))
+    sub_rect_quit = sub_surf.get_rect(center=(window.get_width() // 2 + 50,
+                                         window.get_height() // 2 + 100))
     window.blit(sub_surf, sub_rect)
+    window.blit(sub_surf_quit, sub_rect_quit)
 
     pygame.display.flip()
 
@@ -261,6 +266,10 @@ def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_q]:
+                    pygame.quit()
+                    sys.exit()
                 if event.key == pygame.K_ESCAPE:
                     is_paused = False
 
@@ -301,21 +310,14 @@ def level_generator(width: int,
     font_info = pygame.font.SysFont("arial", 30)
 
     clock = pygame.time.Clock()
-<<<<<<< HEAD
     level_start_time = pygame.time.get_ticks()
-=======
     total_pause_time: int = 0
->>>>>>> 41feec9 (Added pause menu)
 
     running: bool = True
     status = "quit"
     while running:
-<<<<<<< HEAD
-        current_time = pygame.time.get_ticks()
-        elapsed_time = current_time - level_start_time
-=======
         current_time = pygame.time.get_ticks() - total_pause_time
->>>>>>> 41feec9 (Added pause menu)
+        elapsed_time = current_time - level_start_time
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
