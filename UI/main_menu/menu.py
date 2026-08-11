@@ -3,7 +3,7 @@ from typing import Any
 
 import pygame
 
-from ..level_generator.level_generator import level_generator
+from ..level_generator.level_generator import new_level
 from .cheat_mode_window import render_cheat_mode
 from .highscore_window import render_highscores
 from .instructions_window import render_instruction
@@ -15,29 +15,28 @@ SCREEN_HEIGHT = 1000
 
 def menu(config: dict[str, Any]) -> None:
     """Render the main menu"""
-    level_nb: int = 0
-    num_level = config["number_level"]
-    level = config["level_size"][level_nb]
-    width = level["width"]
-    height = level["height"]
-    seed: int = config["seed"]
-    infos: tuple[int, int, int, int, int, str] = (
-        config["lives"],
-        config["points_per_pacgum"],
-        config["points_per_super_pacgum"],
-        config["points_per_ghost"],
-        config["level_max_time"],
-        config["highscore_filename"]
-    )
-
     cheat_settings = {
         "invincible": False,
         "ghost_freeze": False,
         "level": 0,
         "player_speed": 0.5,
-        "lives": 3,
+        "lives": config["lives"],
+    }
+    level_progression = {
+        "first_game": True,
+        "current_level": 0,
+        "player_lives": config["lives"],
+        "player_score": -20,
+        "remaining_level": config["level_size"]
     }
 
+    infos: tuple[int, int, int, int, int, int] = (
+                level_progression["player_lives"],
+                config["points_per_pacgum"],
+                config["points_per_super_pacgum"],
+                config["points_per_ghost"],
+                config["level_max_time"],
+                config["number_level"])
     pygame.init()
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Main menu")
@@ -69,9 +68,19 @@ def menu(config: dict[str, Any]) -> None:
                 running = False
             elif clicked(event, rect_start_game):
                 start_level = int(cheat_settings["level"])
-                infos = ((int(cheat_settings["lives"]),) + infos[1:])
-                res = level_generator(width, height,
-                                      start_level, infos, window, seed)
+                level_progression["player_lives"] = int(
+                    cheat_settings["lives"])
+                level_progression["player_score"] = -20
+                level_progression["remaining_level"] = config["level_size"]
+                if start_level == 0:
+                    level_progression["first_game"] = True
+                    level_progression["current_level"] = 0
+                else:
+                    level_progression["first_game"] = False
+                    level_progression["current_level"] = start_level
+
+                res = new_level(level_progression, window, infos,
+                                config["highscore_filename"], config["seed"])
                 if res == "quit":
                     running = False
             elif clicked(event, rect_leaderboard):
@@ -80,7 +89,7 @@ def menu(config: dict[str, Any]) -> None:
                 render_instruction(window)
             elif clicked(event, rect_cheat_mode):
                 cheat_settings = render_cheat_mode(
-                    window, num_level, cheat_settings)
+                    window, config["number_level"], cheat_settings)
             elif clicked(event, rect_exit):
                 running = False
 

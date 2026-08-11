@@ -28,7 +28,7 @@ class TestMenu(unittest.TestCase):
             "sysfont": patch("pygame.font.SysFont",
                              return_value=self.fake_font),
             "clock": patch("pygame.time.Clock", return_value=MagicMock()),
-            "level_generator": patch.object(menu_module, "level_generator",
+            "level_generator": patch.object(menu_module, "new_level",
                                             return_value="quit"),
             "render_highscores": patch.object(menu_module,
                                               "render_highscores"),

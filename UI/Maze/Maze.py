@@ -6,7 +6,7 @@ class Cell:
         self.x = x
         self.y = y
         self.content = content
-        self.has_pacgum = True
+        self.has_pacgum = True if content != 15 else False
         self.has_super_pacgum = False
 
 

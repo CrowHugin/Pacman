@@ -10,20 +10,20 @@ SCREEN_HEIGHT = 990
 BLACK = (0, 0, 0)
 
 
-def menu(config: dict[str, Any]) -> None:
+def menu(config: dict[str, Any], game_progression: dict[str, Any]) -> None:
 
     level_nb: int = 0
     level = config["level_size"][level_nb]
     width = level["width"]
     height = level["height"]
     seed: int = config["seed"]
-    infos: tuple[int, int, int, int, int, str] = (
+    infos: tuple[int, int, int, int, int, int] = (
         config["lives"],
         config["points_per_pacgum"],
         config["points_per_super_pacgum"],
         config["points_per_ghost"],
         config["level_max_time"],
-        config["highscore_filename"]
+        config["number_level"]
     )
 
     pygame.init()
@@ -70,7 +70,9 @@ def menu(config: dict[str, Any]) -> None:
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 if text_rect_start_game.collidepoint(event.pos):
-                    level_generator(width, height, 0, infos, window, seed)
+                    level_generator(width, height,
+                                    0, infos, game_progression,
+                                    window, config["highscore_filename"], seed)
                     running = False
                 elif text_rect_leaderboard.collidepoint(event.pos):
                     print("Button leaderboard.")

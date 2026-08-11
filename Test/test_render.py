@@ -27,6 +27,13 @@ class TestMazeRender(unittest.TestCase):
         font_patcher = patch("pygame.font.SysFont",
                              return_value=self.mock_font)
         font_patcher.start()
+        self.level_progression = {
+            "first_game": True,
+            "current_level": 0,
+            "player_lives": 3,
+            "player_score": -20,
+            "remaining_level": 8
+        }
 
         maze_width_px = 1 * self.cell_size
         maze_height_px = 1 * self.cell_size
@@ -61,6 +68,7 @@ class TestMazeRender(unittest.TestCase):
                   1,
                   self.mock_font,
                   1000,
+                  self.level_progression,
                   None)
 
         pixel_color = self.surface.get_at(
@@ -91,6 +99,7 @@ class TestMazeRender(unittest.TestCase):
                   1,
                   self.mock_font,
                   1000,
+                  self.level_progression,
                   None)
 
         pixel_color = self.surface.get_at(
@@ -121,6 +130,7 @@ class TestMazeRender(unittest.TestCase):
                   1,
                   self.mock_font,
                   1000,
+                  self.level_progression,
                   None)
 
         pixel_color = self.surface.get_at(

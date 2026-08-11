@@ -1,5 +1,5 @@
 import sys
-from typing import Optional
+from typing import Optional, Any
 
 import pygame
 
@@ -44,6 +44,7 @@ def draw_maze(window: pygame.Surface,
               level: int,
               font_info: pygame.font.Font,
               time: int,
+              game_progression: dict[str, Any],
               ghosts_tuple: Optional[tuple["Ghosts", ...]] = None,
               ) -> None:
     WHITE = (255, 255, 255)
@@ -139,14 +140,14 @@ def draw_maze(window: pygame.Surface,
                           WHITE,
                           (15,
                            offset_y + SCREEN_HEIGHT + (1 * CELL_SIZE) + 10),
-                          f"Lives: {player.nb_lives}")
+                          f"Lives: {game_progression["player_lives"]}")
 
         infos_screen_left(window,
                           font_info,
                           player,
                           WHITE,
                           (15, offset_y + SCREEN_HEIGHT + (3 * CELL_SIZE)),
-                          f"Score: {player.score}")
+                          f"Score: {game_progression["player_score"]}")
 
         infos_screen_right(window,
                            font_info,
@@ -196,19 +197,48 @@ def draw_maze(window: pygame.Surface,
 
 def check_pacgum(maze: "Maze") -> bool:
     for case in maze.cases.values():
-        if case.has_pacgum:
+        if case.has_pacgum or case.has_super_pacgum:
             return False
     return True
+
+
+def new_level(game_progression: dict[str, Any],
+              window: pygame.Surface,
+              infos: tuple[int, int, int, int, int, int],
+              highscore_filename: str,
+              seed: int | None = None,
+              ) -> str | None:
+    if game_progression['first_game']:
+        level_nb: int = 0
+        level = game_progression["remaining_level"][level_nb]
+        width = level['width']
+        height = level['height']
+
+        return level_generator(width, height, 0, infos,
+                               game_progression, window,
+                               highscore_filename, seed)
+    else:
+        level_nb = game_progression['current_level']
+        level = game_progression["remaining_level"][level_nb]
+        width = level['width']
+        height = level['height']
+        infos = (game_progression["player_lives"],) + infos[1:]
+        return level_generator(width, height, level_nb,
+                               infos, game_progression,
+                               window, highscore_filename)
 
 
 def level_generator(width: int,
                     height: int,
                     level_number: int,
-                    infos: tuple[int, int, int, int, int, str],
+                    infos: tuple[int, int, int, int, int, int],
+                    game_progression: dict[str, Any],
                     window: pygame.Surface,
+                    highscore_filename: str,
                     seed: int | None = None
                     ) -> str | None:
-    player = Player(((width // 2) - 1, height // 2), level_number, infos[0])
+    player = Player(((width // 2) - 1, height // 2), level_number,
+                    game_progression["player_lives"])
     red = Ghosts((0, 0), (255, 0, 0), level_number)
     green = Ghosts((0, height - 1), (0, 128, 0), level_number)
     blue = Ghosts((width - 1, 0), (0, 0, 255), level_number)
@@ -224,17 +254,19 @@ def level_generator(width: int,
     BLACK = (0, 0, 0)
 
     pygame.init()
-    pygame.display.set_caption(f"PAC-MAN - LEVEL {level_number}")
+    pygame.display.set_caption(f"PAC-MAN - LEVEL {level_number + 1}")
     pygame.font.init()
     font = pygame.font.SysFont("arial", 48)
     font_info = pygame.font.SysFont("arial", 30)
 
     clock = pygame.time.Clock()
+    level_start_time = pygame.time.get_ticks()
 
     running: bool = True
     status = "quit"
     while running:
         current_time = pygame.time.get_ticks()
+        elapsed_time = current_time - level_start_time
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
@@ -269,10 +301,12 @@ def level_generator(width: int,
                         player.super = False
                 if maze.cases[(player.coords)].has_pacgum:
                     player.eat(infos[1])
+                    game_progression["player_score"] += infos[1]
                     maze.cases[(player.coords)].has_pacgum = False
 
                 elif maze.cases[(player.coords)].has_super_pacgum:
                     player.eat(infos[2])
+                    game_progression["player_score"] += infos[2]
                     maze.cases[(player.coords)].has_super_pacgum = False
                     player.super = True
                     player.super_time = current_time
@@ -303,10 +337,12 @@ def level_generator(width: int,
                             if not player.super:
                                 ghost.eat(player)
                                 player.is_dead = True
+                                game_progression["player_lives"] -= 1
                                 player.death_time = pygame.time.get_ticks()
                                 player.coords = (-1, -2)
                             else:
                                 player.eat(3)
+                                game_progression["player_score"] += infos[3]
                                 ghost.is_dead = True
                                 ghost.death_time = pygame.time.get_ticks()
                                 ghost.coords = (-1, -1)
@@ -314,21 +350,29 @@ def level_generator(width: int,
         time_limit = infos[4] * 1000
         window.fill(BLACK)
         if maze:
-            if check_pacgum(maze):
-                status = game_over(window, font, True, infos[5], player.score)
+            if check_pacgum(maze) and level_number + 1 == infos[5]:
+                status = game_over(window, font, True, highscore_filename,
+                                   player.score)
                 running = not running
+            elif check_pacgum(maze):
+                game_progression["first_game"] = False
+                game_progression["current_level"] += 1
+                return new_level(game_progression, window, infos,
+                                 highscore_filename)
             elif (player and player.nb_lives <= 0) or (time_limit -
-                                                       current_time <= 0):
-                status = game_over(window, font, False, infos[5], player.score)
+                                                       elapsed_time <= 0):
+                status = game_over(window, font, False, highscore_filename,
+                                   player.score)
                 running = not running
             else:
                 draw_maze(window,
                           maze,
                           CELL_SIZE,
                           player,
-                          level_number,
+                          level_number + 1,
                           font_info,
-                          time_limit - current_time,
+                          time_limit - elapsed_time,
+                          game_progression,
                           ghosts_tuple)
         pygame.display.flip()
         clock.tick(60)
@@ -340,6 +384,8 @@ def level_generator(width: int,
                                height,
                                level_number,
                                infos,
+                               game_progression,
                                window,
+                               highscore_filename,
                                seed)
     return status
