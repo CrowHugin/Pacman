@@ -173,10 +173,11 @@ def draw_maze(window: pygame.Surface,
                 player_new_x: int = player.coords[0] + 1
             else:
                 player_new_x = player.coords[0]
+            player.coords = (player_new_x, player.coords[1])
             player_x = player_new_x * CELL_SIZE + CELL_SIZE // 2 + offset_x
             player_y = player.coords[1] * CELL_SIZE + CELL_SIZE // 2 + offset_y
             # -5 to avoid drawing on walls
-            radius = ((CELL_SIZE // 2) - 2) - 5
+            radius = max(5, ((CELL_SIZE // 2) - 2) - 5)
 
             pygame.draw.circle(window,
                                PLAYER_COLOR,
