@@ -31,13 +31,13 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
         font,
         "Invincibility",
         center=(center_x, rect_cheat.bottom + 100),
-        color=GREY,
+        color=WHITE if settings["invincible"] else GREY,
     )
     text_ghost_freeze, rect_ghost_freeze = make_text(
         font,
         "Ghost Freeze",
         center=(center_x, rect_invincibility.bottom + 50),
-        color=GREY,
+        color=WHITE if settings["invincible"] else GREY,
     )
 
     text_plus = font.render("+", True, WHITE)
@@ -52,18 +52,9 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
     rect_minus_level = text_minus.get_rect(
         center=(rect_level.left - 50, rect_level.centery))
 
-    text_speed, rect_speed = make_text(
-        font, f"Player speed {settings['player_speed']}",
-        center=(center_x, rect_level.bottom + 50)
-    )
-    rect_plus_speed = text_plus.get_rect(
-        center=(rect_speed.right + 50, rect_speed.centery))
-    rect_minus_speed = text_minus.get_rect(
-        center=(rect_speed.left - 50, rect_speed.centery))
-
     text_lives, rect_lives = make_text(
         font, f"Lives {settings['lives']}",
-        center=(center_x, rect_speed.bottom + 50)
+        center=(center_x, rect_level.bottom + 50)
     )
     rect_plus_lives = text_plus.get_rect(
         center=(rect_lives.right + 50, rect_lives.centery))
@@ -96,19 +87,6 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
                 text_level = font.render(
                     f"Level {settings['level']}", True, WHITE)
 
-            elif clicked(event, rect_plus_speed):
-                settings["player_speed"] = round(
-                    settings["player_speed"] + 0.1, 2)
-                text_speed = font.render(
-                    f"Player speed {settings['player_speed']}", True, WHITE)
-
-            elif (clicked(event, rect_minus_speed)
-                  and settings["player_speed"] > 0):
-                settings["player_speed"] = round(
-                    max(0.0, settings["player_speed"] - 0.1), 2)
-                text_speed = font.render(
-                    f"Player speed {settings['player_speed']}", True, WHITE)
-
             elif clicked(event, rect_plus_lives):
                 settings["lives"] += 1
                 text_lives = font.render(
@@ -128,10 +106,6 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
         window.blit(text_level, rect_level)
         window.blit(text_minus, rect_minus_level)
         window.blit(text_plus, rect_plus_level)
-
-        window.blit(text_speed, rect_speed)
-        window.blit(text_minus, rect_minus_speed)
-        window.blit(text_plus, rect_plus_speed)
 
         window.blit(text_lives, rect_lives)
         window.blit(text_minus, rect_minus_lives)

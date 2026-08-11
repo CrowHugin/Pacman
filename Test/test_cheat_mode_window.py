@@ -34,7 +34,6 @@ class TestCheatMode(unittest.TestCase):
             "invincible": False,
             "ghost_freeze": False,
             "level": 0,
-            "player_speed": 0.5,
             "lives": 3,
         }
 
@@ -55,7 +54,6 @@ class TestCheatMode(unittest.TestCase):
                 "invincible": False,
                 "ghost_freeze": False,
                 "level": 0,
-                "player_speed": 0.5,
                 "lives": 3,
             },
         )
@@ -85,23 +83,9 @@ class TestCheatMode(unittest.TestCase):
         settings = self.run_screen([[click], [quit_event]])
         self.assertTrue(settings["ghost_freeze"])
 
-    def test_player_speed_increases_and_decreases(self) -> None:
-        """Test if speed buttons works"""
-        plus_pos = (500 + 50, 410)
-        minus_pos = (300 - 50, 410)
-        quit_event = pygame.event.Event(pygame.QUIT)
-        plus_click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
-                                        button=1, pos=plus_pos)
-        minus_click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
-                                         button=1, pos=minus_pos)
-
-        settings = self.run_screen([[plus_click], [plus_click],
-                                    [minus_click], [quit_event]])
-        self.assertAlmostEqual(settings["player_speed"], 0.6)
-
     def test_lives_regression_cant_go_under_3(self) -> None:
         """Test if we can't go under 3 when lives buttons are clicked"""
-        minus_pos = (300 - 50, 485)
+        minus_pos = (300 - 50, 410)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=minus_pos)
@@ -111,7 +95,7 @@ class TestCheatMode(unittest.TestCase):
         self.assertEqual(settings["lives"], 3)
 
     def test_lives_plus_button_increments(self) -> None:
-        plus_pos = (500 + 50, 485)
+        plus_pos = (500 + 50, 410)
         quit_event = pygame.event.Event(pygame.QUIT)
         click = pygame.event.Event(pygame.MOUSEBUTTONDOWN,
                                    button=1, pos=plus_pos)
