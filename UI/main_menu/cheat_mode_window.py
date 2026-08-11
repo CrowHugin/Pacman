@@ -44,7 +44,7 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
     text_minus = font.render("-", True, WHITE)
 
     text_level, rect_level = make_text(
-        font, f"Level {settings['level']}",
+        font, f"Level {settings["level"] + 1}",
         center=(center_x, rect_ghost_freeze.bottom + 50)
     )
     rect_plus_level = text_plus.get_rect(
@@ -60,7 +60,6 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
         center=(rect_lives.right + 50, rect_lives.centery))
     rect_minus_lives = text_minus.get_rect(
         center=(rect_lives.left - 50, rect_lives.centery))
-
     while not done:
         for event in pygame.event.get():
             if wants_to_quit(event) or clicked(event, rect_main_menu):
@@ -80,12 +79,12 @@ def render_cheat_mode(window: pygame.Surface, lvl_max: int,
                   and settings["level"] < lvl_max - 1):
                 settings["level"] += 1
                 text_level = font.render(
-                    f"Level {settings['level']}", True, WHITE)
+                    f"Level {settings['level'] + 1}", True, WHITE)
 
             elif clicked(event, rect_minus_level) and settings["level"] > 0:
                 settings["level"] -= 1
                 text_level = font.render(
-                    f"Level {settings['level']}", True, WHITE)
+                    f"Level {settings['level'] + 1}", True, WHITE)
 
             elif clicked(event, rect_plus_lives):
                 settings["lives"] += 1

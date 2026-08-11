@@ -91,7 +91,6 @@ def menu(config: dict[str, Any]) -> None:
                         "level": 0,
                         "lives": config["lives"],
                     }
-                    print("test")
             elif clicked(event, rect_leaderboard):
                 render_highscores(window, config["highscore_filename"])
             elif clicked(event, rect_instructions):
