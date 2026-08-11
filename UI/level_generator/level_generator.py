@@ -215,8 +215,8 @@ def new_level(game_progression: dict[str, Any],
         height = level['height']
 
         return level_generator(width, height, 0, infos,
-                               game_progression, highscore_filename,
-                               window, seed)
+                               game_progression, window,
+                               highscore_filename, seed)
     else:
         level_nb = game_progression['current_level']
         level = game_progression["remaining_level"][level_nb]
@@ -225,16 +225,16 @@ def new_level(game_progression: dict[str, Any],
         infos = (game_progression["player_lives"],) + infos[1:]
         return level_generator(width, height, level_nb,
                                infos, game_progression,
-                               highscore_filename, window)
+                               window, highscore_filename)
 
 
 def level_generator(width: int,
                     height: int,
                     level_number: int,
-                    infos: tuple[int, int, int, int, int],
+                    infos: tuple[int, int, int, int, int, int],
                     game_progression: dict[str, Any],
-                    highscore_filename: str,
                     window: pygame.Surface,
+                    highscore_filename: str,
                     seed: int | None = None
                     ) -> str | None:
     player = Player(((width // 2) - 1, height // 2), level_number,
@@ -385,7 +385,7 @@ def level_generator(width: int,
                                level_number,
                                infos,
                                game_progression,
-                               highscore_filename,
                                window,
+                               highscore_filename,
                                seed)
     return status
