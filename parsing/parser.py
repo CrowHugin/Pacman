@@ -24,7 +24,7 @@ DEFAULT_MAZE_CONFIG: Dict[str, Any] = {
     "points_per_super_pacgum": 50,
     "points_per_ghost": 200,
     "seed": 42,
-    "level_max_time": 90
+    "level_max_time": 360
 }
 
 
@@ -117,7 +117,7 @@ def load_game_config(file: str) -> dict[str, Any]:
         "seed", json_data, config["seed"], None)
 
     config["level_max_time"] = validate_int_field(
-        "level_max_time", json_data, config["level_max_time"], 60)
+        "level_max_time", json_data, config["level_max_time"], 360)
 
     config["number_level"] = validate_int_field(
         "number_level", json_data, config["number_level"], 10)

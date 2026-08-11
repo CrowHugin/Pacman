@@ -3,10 +3,14 @@
 ---
 ## ***Description***
 
-This activity is about creating a pacman from a maze generator. 
+This activity is about to recreate a pacman from a maze generator.  
+The player will control pacman, to win the game, you will have to eat all the pacgum from a defined number of level while avoiding the ghost chasing you or not.
 
 ---
 ## ***Instructions***
+To run the program, launch the command `make`.  
+It will automatically install all the dependency needed and run the program.
+
 
 Makefile
 
@@ -19,23 +23,43 @@ Makefile
 | lint        | Run flake8 and mypy                 |
 | lint-strict | Run flake8 and mypy --strict        |
 | tests       | Run Tests, see Test folder          |
-| build ?     | make the build, see if needed later |
+| build       | make the build                      |
+
+
 
 ## ***Resources***
 
 - [unittest](https://docs.python.org/3/library/unittest.html)
 - [pygame](https://www.pygame.org/docs/)
-### *Configuration*
+## *Configuration*
+| Config                    | Description                           | Default Value           |
+| ------------------------- | ------------------------------------- | ----------------------- |
+| highscore filename        | Name scores file                      | score.json              |
+| number level              | Number of levels for the game         | 10                      |
+| level size                | Size of a maze                        | width : 15, height : 15 |
+| lives                     | Number lives for the player           | 3                       |
+| points per pacgum         | Points win when  pacgum got eat       | 20                      |
+| points per super pacgum   | Points win when super pacgum got eat  | 50                      |
+| points per ghost          | Points win when ghost got eat         | 200                     |
+| seed                      | Seed for the generation of the maze   | 42                      |
+| level max time            | Time limit for a level                | 360                      |
 ---
-### *Highscore*
+## *Highscore*
 
-### *Maze Generation*
+The highscore will only keep the 10 best scores. If a player is already registered, we keep the best score. I decided to do that way, because I took reference from some games where only the best score is kept.
+
+---
+## *Maze Generation*
 
 The assigned packaged was used to randomly create mazes.
-The level_1 is created with a seed (which one ?), the others are random
-### *Implementation*
-
-### *General Software Architecture*
+The level_1 is created with a seed determined by the user, the others are random
+## *Implementation*
+--**`UI/`**: Handle everything that is related to the visual  
+--**`Test/`**: Contains unit test and mock data  
+--**`score/`**: Manage the highscore system  
+--**`Characters/`**: Handle the creation of the player and monster  
+--**`parsing/`**: Get the config file, check if the values are good and if not clamp default values  
+## *General Software Architecture*
 
 ```mermaid
 
@@ -92,7 +116,7 @@ style Levels fill:#fff3e0,stroke:#f57c00,stroke-width:2px
 style GameSystems fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
 ```
 
-### *Project management*
+## *Project management*
 
 Board management exemple:
 ![project_image](./README_images/Board.png)
@@ -103,4 +127,3 @@ Roadmap management exemple:
 
 
 - [github](https://github.com/users/CrowHugin/projects/4)
-%%
