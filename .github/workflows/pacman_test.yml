@@ -40,7 +40,7 @@ jobs:
     runs-on: windows-latest
 
     permissions:
-      content: write
+      contents: write
 
     steps:
       - name: Code
