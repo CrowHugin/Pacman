@@ -7,6 +7,7 @@ from Characters.player_and_monsters import Ghosts, Player
 from UI.Maze.Maze import Maze
 
 from ..game_over_visual import game_over
+from parsing import load_game_config
 
 
 def infos_screen_left(window: pygame.Surface,
@@ -268,8 +269,8 @@ def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
             if event.type == pygame.KEYDOWN:
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_q]:
-                    pygame.quit()
-                    sys.exit()
+                    from UI.main_menu.menu import menu
+                    menu(load_game_config("config.json"))
                 if event.key == pygame.K_ESCAPE:
                     is_paused = False
 
