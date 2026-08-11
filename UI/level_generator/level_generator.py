@@ -228,6 +228,47 @@ def new_level(game_progression: dict[str, Any],
                                window, highscore_filename)
 
 
+def pause(window: pygame.Surface, clock: pygame.time.Clock) -> int:
+    """
+    Pause the game and return time passed while paused
+    """
+    pause_start = pygame.time.get_ticks()
+    overlay = pygame.Surface((window.get_width(),
+                              window.get_height()),
+                             pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 150))
+    window.blit(overlay, (0, 0))
+
+    font = pygame.font.SysFont("arial", 80, bold=True)
+    text_surf = font.render("PAUSE", True, (255, 255, 255))
+    text_rect = text_surf.get_rect(center=(window.get_width() // 2,
+                                           window.get_height() // 2 - 50))
+    window.blit(text_surf, text_rect)
+
+    font_small = pygame.font.SysFont("arial", 30)
+    sub_surf = font_small.render("Appuyez sur ECHAP pour reprendre",
+                                 True, (200, 200, 200))
+    sub_rect = sub_surf.get_rect(center=(window.get_width() // 2,
+                                         window.get_height() // 2 + 50))
+    window.blit(sub_surf, sub_rect)
+
+    pygame.display.flip()
+
+    is_paused = True
+    while is_paused:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    is_paused = False
+
+        clock.tick(15)
+
+    return pygame.time.get_ticks() - pause_start
+
+
 def level_generator(width: int,
                     height: int,
                     level_number: int,
@@ -260,19 +301,27 @@ def level_generator(width: int,
     font_info = pygame.font.SysFont("arial", 30)
 
     clock = pygame.time.Clock()
+<<<<<<< HEAD
     level_start_time = pygame.time.get_ticks()
+=======
+    total_pause_time: int = 0
+>>>>>>> 41feec9 (Added pause menu)
 
     running: bool = True
     status = "quit"
     while running:
+<<<<<<< HEAD
         current_time = pygame.time.get_ticks()
         elapsed_time = current_time - level_start_time
+=======
+        current_time = pygame.time.get_ticks() - total_pause_time
+>>>>>>> 41feec9 (Added pause menu)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
-                    running = False
+                    total_pause_time += pause(window, clock)
         if player:
             if not player.is_dead:
                 keys = pygame.key.get_pressed()
