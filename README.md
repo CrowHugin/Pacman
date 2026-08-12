@@ -9,10 +9,23 @@ The player will control pacman, to win the game, you will have to eat all the pa
 ---
 ## ***Instructions***
 To run the program, launch the command `make`.  
-It will automatically install all the dependency needed and run the program.
+It will automatically install all the dependenc needed and start the program.
 
+**Building the Executable**:
 
-Makefile
+Run make install followed by `pyinstaller --onefile pac-man.py`.
+
+Go to the newly created dist/ directory.
+
+Launch the game using ./pac-man.
+
+**Configuration**:
+
+By default, the game uses the base configuration. For custom settings, pass your configuration file as an argument:
+
+./pac-man path/to/config.json  
+
+**Makefile**
 
 | Commands    | Use                                 |
 | ----------- | ----------------------------------- |
@@ -117,6 +130,7 @@ style GameSystems fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
 ```
 
 ## *Project management*
+We planned to finish the project at the end of August, but we managed to finish it early. The organization was simple, Bastien focused on the core gameplay, while Axel worked on everything around it.
 
 Board management exemple:
 ![project_image](./README_images/Board.png)
@@ -124,6 +138,11 @@ Board management exemple:
 Roadmap management exemple:
 ![project_timeline](./README_images/timeline.png)
 
+CI of the project
+![project_CI](./README_images/CI_project.png)
 
+The Continuous Integration allow us to know when we do a pull request or a push if there is errors or the tests fails.
 
-- [github](https://github.com/users/CrowHugin/projects/4)
+We tested all kinds of features: pac-gums filling every cell, ghosts being correctly eaten, and ghosts spawning at the right positions.
+
+However, a bug was found: when the maze had an odd width greater than 15, the player was unable to move at spawn. He actually spawned inside wall 42, even though he appeared outside it visually. We fixed the bug by shifting the player's spawn position by one case.
